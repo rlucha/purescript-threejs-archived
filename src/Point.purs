@@ -1,10 +1,17 @@
 module Point where
+
 import Prelude
+import Data.Generic.Rep (class Generic)
+import Data.Generic.Rep.Show (genericShow)
+import Data.Foreign.Class (class Encode, encode)
+import Data.Foreign.Generic (defaultOptions, genericEncode)
 
 data Point = Point { x :: Number, y :: Number }
 
-instance showPoint :: Show Point where
-  show (Point p) = show p.x <> " , " <> show p.y
+derive instance genPoint :: Generic Point _
+instance showPoint :: Show Point where show = genericShow
+instance encodePoint :: Encode Point where
+  encode = genericEncode $ defaultOptions {unwrapSingleConstructors = true}
 
 instance semiringPoint :: Semiring Point where
   add = sumPoint
