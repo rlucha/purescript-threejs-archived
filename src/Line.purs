@@ -1,9 +1,11 @@
 module Line where
+
 import Prelude
-import Point
 import Data.Int (toNumber)
 import Data.Array ((..), zip)
 import Data.Tuple
+
+import Point
 
 type Steps = Int
 
@@ -18,14 +20,3 @@ interpolateLine (Point a) (Point b) s =
       bi = interpolate a.y b.y s
       ri = zip ai bi
     in map (\(Tuple a b) -> Point {x:a, y:b}) $ ri
-
--- map (\x -> toNumber x + 0.2) $ 0..10
-
-
--- data Line = Line (List Point)
-
-
-
-
--- -- interpolateLine :: Point -> Point -> Steps -> List Point
--- -- interpolateLine a b s = 
