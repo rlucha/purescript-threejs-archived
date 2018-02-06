@@ -31,4 +31,4 @@ plane = concat $ zipWith (\x y -> Line.interpolateLine x y steps) la lb
 thing = concat $ sequence (la : lb : lc :Nil)
 -- doCube = map( )
 
-scene = Scene (toUnfoldable thing)
+scene = Scene (toUnfoldable plane)
