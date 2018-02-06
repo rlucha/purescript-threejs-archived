@@ -26,7 +26,7 @@ scene.add(spotLight);
 
 // Camera
 const camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
-camera.position.set(0, 0, 250)
+camera.position.set(0, 0, 500)
 camera.lookAt(0, 0, 0)
 
 // Controls
@@ -53,10 +53,10 @@ var matProps = {
 var material = new THREE.MeshPhongMaterial(matProps);
 
 // Make pixels & position them
-export const doPoints = points => points.forEach(({x,y}) => {
+export const doPoints = points => points.forEach(({x,y,z}) => {
   var pixel = new THREE.Mesh( geometry, material);
   pixel.castShadow = true;
-  pixel.position.set(x,y,0)
+  pixel.position.set(x,y,z)
   scene.add( pixel );
 });
 
