@@ -12,6 +12,7 @@ import Line (interpolateLine)
 import Scene (Scene(..))
 
 import Scenes.BoxOfPoints (scene) as BoxOfPoints
+import Scenes.SimpleLine (scene) as SimpleLine
 
 -- import Control.Monad.Eff (Eff)
 -- import Control.Monad.Eff.Console (CONSOLE, log)

@@ -16,7 +16,7 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 
 // Camera
 const camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
-camera.position.set(0, 1, 500)
+camera.position.set(0, 0, 500)
 camera.lookAt(new THREE.Vector3())
 
 // Controls
@@ -34,8 +34,8 @@ document.body.appendChild( renderer.domElement );
 // Scene data prep
 const sceneData = JSON.parse(sceneJSON);
 
-var geometry = new THREE.BoxGeometry( 1, 1, 1);
-var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+var geometry = new THREE.BoxGeometry(1, 1, 1);
+var material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
 
 // Make pixels & position them
 export const doPoints = points => points.forEach(({x,y}) => {
