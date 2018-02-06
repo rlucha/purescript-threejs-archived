@@ -4,7 +4,8 @@ import Prelude
 import Point
 import Line as Line
 import Scene
-import Data.List (List, toUnfoldable, zipWith, concat)
+import Data.List (List(..), (:), toUnfoldable, zipWith, concat)
+import Data.Traversable (sequence)
 
 steps = 25
 
@@ -23,6 +24,7 @@ lb = Line.interpolateLine c d steps
 -- How to create a plane with limits? interpolation of two lines?
 plane = concat $ zipWith (\x y -> Line.interpolateLine x y steps) la lb
 
+thing = concat $ sequence (la : lb : Nil)
 -- doCube = map( )
 
 scene = Scene (toUnfoldable plane)

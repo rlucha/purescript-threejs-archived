@@ -14,19 +14,26 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
 
+const ambientLight = new THREE.AmbientLight(0x090909);
+scene.add(ambientLight);
+
+
+var spotLight = new THREE.SpotLight();
+spotLight.position.set(10, 80, 200);
+spotLight.castShadow = true;
+scene.add(spotLight);
+
+
 // Camera
 const camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
-camera.position.set(0, 0, 500)
-camera.lookAt(new THREE.Vector3())
+camera.position.set(0, 0, 250)
+camera.lookAt(0, 0, 0)
 
 // Controls
-
 const controls = new OrbitControls(camera)
-// controls.addEventListener( 'change', render ); // remove when using animation loop
-// enable animation loop when using damping or autorotation
-//controls.enableDamping = true;
-//controls.dampingFactor = 0.25;
-controls.enableZoom = false;
+controls.enableZoom = true;
+controls.autoRotate = true;
+
 
 // Attach canvas canvas
 document.body.appendChild( renderer.domElement );
@@ -35,18 +42,28 @@ document.body.appendChild( renderer.domElement );
 const sceneData = JSON.parse(sceneJSON);
 
 var geometry = new THREE.BoxGeometry(1, 1, 1);
-var material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+
+var matProps = {
+  specular: '#a9fcff',
+  color: '#00abb1',
+  emissive: '#006063',
+  shininess: 10
+}
+
+var material = new THREE.MeshPhongMaterial(matProps);
 
 // Make pixels & position them
 export const doPoints = points => points.forEach(({x,y}) => {
   var pixel = new THREE.Mesh( geometry, material);
+  pixel.castShadow = true;
   pixel.position.set(x,y,0)
   scene.add( pixel );
 });
 
 // Start LOOP
 function animate() {
-	requestAnimationFrame( animate );
+  requestAnimationFrame( animate );
+  controls.update();
 	renderer.render( scene, camera );
 }
 
