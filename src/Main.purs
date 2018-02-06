@@ -18,11 +18,11 @@ data Scene = Scene (Array Point)
 derive instance genScene :: Generic Scene _
 instance showScene :: Show Scene where show = genericShow
 
-a = Point {x: 0.0, y: 0.0}
+a = Point {x: 200.0, y: 120.0}
 
-b = Point {x: 10.0, y: 5.0}
+b = Point {x: 90.0, y: 25.0}
 
-c = interpolateLine a b 10
+c = interpolateLine a b 50
 
 scene = Scene (toUnfoldable c)
 

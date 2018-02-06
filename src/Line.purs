@@ -17,5 +17,5 @@ interpolateLine :: Point -> Point -> Steps -> List Point
 interpolateLine (Point a) (Point b) s =
   let ai = interpolate a.x b.x s
       bi = interpolate a.y b.y s
-      ri = zip ai bi
+      ri = zip ai bi --zipwith to avoid map again
     in map (\(Tuple a b) -> Point {x:a, y:b}) $ ri
