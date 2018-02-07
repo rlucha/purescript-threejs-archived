@@ -19,6 +19,10 @@ interpolateLine (Point a) (Point b) s =
   let ai = interpolate a.x b.x s
       bi = interpolate a.y b.y s
       ci = interpolate a.z b.z s
-      ri = zip ci $ zip ai bi 
+      ri = zip ai $ zip bi ci
     -- in map (\(Tuple a b c) -> Point {x:a, y:b, z:c}) $ ri
-    in map (\(Tuple x (Tuple y z)) -> Point {x, y, z}) ri
+    in map (\(Tuple x (Tuple y z)) -> Point {x, y, z}) ri 
+
+-- Amarr's suggestion, use applicate of List
+-- f x y z = Tuple3 x y z
+-- ri = toList (f <$> ZipList bi <*> (ZipList ci) <*> (ZipList ai))

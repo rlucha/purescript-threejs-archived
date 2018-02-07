@@ -8,6 +8,7 @@ import Data.Foreign.Generic (defaultOptions, genericEncode)
 
 data Point = Point { x :: Number, y :: Number, z :: Number }
 
+derive instance eqPoint :: Eq Point
 derive instance genPoint :: Generic Point _
 instance showPoint :: Show Point where show = genericShow
 instance encodePoint :: Encode Point where

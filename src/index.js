@@ -17,22 +17,25 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 const ambientLight = new THREE.AmbientLight(0x090909);
 scene.add(ambientLight);
 
-
 var spotLight = new THREE.SpotLight();
 spotLight.position.set(10, 80, 200);
 spotLight.castShadow = true;
 scene.add(spotLight);
 
+// Axis helper
+const axesHelper = new THREE.AxesHelper( 100 );
+scene.add( axesHelper );
 
 // Camera
 const camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
-camera.position.set(0, 0, 500)
-camera.lookAt(0, 0, 0)
+camera.position.set(250, 250, 250)
+camera.lookAt(0, 0, 0) 
+// camera.up.set(0,0,1)
 
 // Controls
 const controls = new OrbitControls(camera)
 controls.enableZoom = true;
-controls.autoRotate = true;
+// controls.autoRotate = true;
 
 
 // Attach canvas canvas
