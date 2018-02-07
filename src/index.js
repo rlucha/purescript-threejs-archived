@@ -14,11 +14,12 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
 
-const ambientLight = new THREE.AmbientLight(0x090909);
+const ambientLight = new THREE.AmbientLight(0x404040);
 scene.add(ambientLight);
 
 var spotLight = new THREE.SpotLight();
-spotLight.position.set(10, 80, 200);
+spotLight.position.set(500, 1000, 1000);
+spotLight.power = 3;
 spotLight.castShadow = true;
 scene.add(spotLight);
 
@@ -35,7 +36,7 @@ camera.lookAt(0, 0, 0)
 // Controls
 const controls = new OrbitControls(camera)
 controls.enableZoom = true;
-// controls.autoRotate = true;
+controls.autoRotate = true;
 
 
 // Attach canvas canvas
@@ -44,13 +45,16 @@ document.body.appendChild( renderer.domElement );
 // Scene data prep
 const sceneData = JSON.parse(sceneJSON);
 
-var geometry = new THREE.BoxGeometry(1, 1, 1);
+var geometry = new THREE.BoxGeometry(10, 10, 10);
 
 var matProps = {
   specular: '#a9fcff',
   color: '#00abb1',
   emissive: '#006063',
-  shininess: 10
+  shininess: 10,
+  transparent: true,
+  opacity: 0.5,
+
 }
 
 var material = new THREE.MeshPhongMaterial(matProps);

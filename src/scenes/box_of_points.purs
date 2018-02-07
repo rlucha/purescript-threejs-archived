@@ -1,14 +1,14 @@
 module Scenes.BoxOfPoints where
 
-import Point
+
 import Prelude
+import Data.List (List(..), (:), toUnfoldable, zipWith, concat)
+
+import Point
+import Line as Line
 import Scene
 
-import Data.List (List(..), (:), toUnfoldable, zipWith, concat)
-import Data.Traversable (sequence)
-import Line as Line
-
-steps = 20
+steps = 10
 size = 200.0
 
 a = Point {x: 0.0, y: 0.0, z: 0.0}
