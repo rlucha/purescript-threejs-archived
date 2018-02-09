@@ -1,12 +1,15 @@
 module Scenes.SimpleLine where
   
-import Point
-import Line as Line
+import Point (create) as Point
+import Line (create, interpolateLine) as Line
 import Scene
 import Data.List (List, toUnfoldable)
 
-a = Point {x: 200.0, y: 120.0, z: 0.0}
-b = Point {x: 90.0, y: 50.0, z: 0.0}
-c = Line.interpolateLine a b 50
+steps = 50
 
-scene = Scene (toUnfoldable c)
+-- Export create function as helpers
+la = Line.create (Point.create 200.0 120.0 0.0) (Point.create 90.0 50.0 0.0)
+
+lai = Line.interpolateLine la steps
+
+scene = Scene (toUnfoldable lai)

@@ -20,6 +20,9 @@ instance semiringPoint :: Semiring Point where
   zero = Point { x:0.0, y:0.0, z:0.0}
   one = Point { x:1.0, y:1.0, z:1.0}
 
+create :: Number -> Number -> Number -> Point
+create x y z = Point {x: x, y: y, z: z}
+
 sumPoint :: Point -> Point -> Point
 sumPoint (Point a) (Point b) = Point { x: a.x + b.x , y: a.y + b.y, z: a.z + b.z}
 
