@@ -94,3 +94,10 @@ function animate() {
 
 animate();
 doPoints(sceneData);
+
+// Webpack HMR
+if (module.hot) {
+  module.hot.accept('../dist/main.js', function() {
+    doPoints(sceneData);
+  })
+}

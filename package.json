@@ -8,7 +8,8 @@
   },
   "scripts": {
     "dev": "webpack --config config/webpack.config.js --mode development",
-    "build": "webpack --config config/webpack.config.js --mode production"
+    "build": "webpack --config config/webpack.config.js --mode production",
+    "start:dev": "webpack-dev-server --config ./config/webpack.config.js"
   },
   "repository": {
     "type": "git",
@@ -25,7 +26,8 @@
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
     "webpack": "^4.0.0-beta.0",
-    "webpack-cli": "^2.0.4"
+    "webpack-cli": "^2.0.4",
+    "webpack-dev-server": "^2.11.1"
   },
   "dependencies": {
     "three": "^0.89.0",

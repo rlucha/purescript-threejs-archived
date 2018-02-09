@@ -1,51 +1,60 @@
 module Scenes.BoxOfPoints where
 
+-- TODO reimplement BoxOfPoints from Line create constructor
 
 import Prelude
 import Data.List (List(..), (:), toUnfoldable, zipWith, concat)
 
-import Point
-import Line as Line
+import Point as P
+import Line as L
 import Scene
 
 steps = 25
 size = 50.0
+center = -size*0.5
 
-a = Point {x: 0.0, y: 0.0, z: 0.0}
-b = Point {x: 0.0, y: 0.0, z: size}
-c = Point {x: 0.0, y: size, z: 0.0}
-d = Point {x: 0.0, y: size, z: size}
-e = Point {x: size, y: 0.0, z: 0.0}
-f = Point {x: size, y: size, z: 0.0}
-g = Point {x: size, y: 0.0, z: size}
+interpolateLine a b = L.interpolateLine steps (L.create a b)
+interpolatedPlane l0 l1 = concat $ zipWith interpolateLine l0 l1
 
--- Maybe Line should be a constructor given two points?
--- Then we interpolate the line in an interpolator module?
+-- MOVE to translate module
+translate x y z g = (P.create x y z) + g
+translateX x g = translate x 0.0 0.0 g
+translateY y g = translate 0.0 y 0.0 g
+translateZ z g = translate 0.0 0.0 z g
 
-la = Line.interpolateLine a b steps
-lb = Line.interpolateLine c d steps
-lc = Line.interpolateLine a e steps
-ld = Line.interpolateLine c f steps
-le = Line.interpolateLine e g steps
+-- Points
+a = P.create 0.0 0.0 0.0
+b = P.create 0.0 0.0 size
+c = P.create 0.0 size 0.0
+d = P.create 0.0 size size
+e = P.create size 0.0 0.0
+f = P.create size size 0.0
+g = P.create size 0.0 size
 
--- Add multiplication on any axis to "translate object"
--- Add object copy, and the concept of object
+-- Lines
+la = interpolateLine a b
+lb = interpolateLine c d
+lc = interpolateLine a e
+ld = interpolateLine c f
+le = interpolateLine e g
 
--- How to create a plane with limits? interpolation of two lines?
-planeYZ = concat $ zipWith (\a b -> Line.interpolateLine a b steps) la lb
-planeYX = concat $ zipWith (\a b -> Line.interpolateLine a b steps) lc ld
-planeZX = concat $ zipWith (\a b -> Line.interpolateLine a b steps) la le
+-- Planes
+planeYZ = interpolatedPlane la lb
+planeYX = interpolatedPlane lc ld
+planeZX = interpolatedPlane la le
+planeYZ2 = translateX size <$> planeYZ
+planeYX2 = translateZ size <$> planeYX
+planeZX2 = translateY size <$> planeZX
 
--- TranslateY is just + on x0, yN, z0
-planeYZ2 = ((+) (Point {x:size, y:0.0, z:0.0})) <$> planeYZ
-planeYX2 = ((+) (Point {x:0.0, y:0.0, z:size})) <$> planeYX
-planeZX2 = ((+) (Point {x:0.0, y:size, z:0.0})) <$> planeZX
+-- Binding notes
+-- x >>= f = do y <- x
+--              f y
+-- cube = do geo  <- planeYZ <> planeYX <> planeZX <> planeYZ2 <> planeYX2 <> planeZX2
+--           translate center center center <$> pure geo
 
-cube = planeYZ <> planeYX <> planeZX <> planeYZ2 <> planeYX2 <> planeZX2
+-- Why do I need to use pure here? is it because bind uses the monadic context? 
+-- is there something similar to bind without that?
+cube =  planeYZ <> planeYX <> planeZX <> planeYZ2 <> planeYX2 <> planeZX2 
+        >>= (<$>) (translate center center center) <<< pure
 
--- Offseting by adding negative size / 2
-centeredCube = ((+) (Point {x:(-size*0.5), y:(-size*0.5), z:(-size*0.5)})) <$> cube
-
--- thing = concat $ zipWith (\a b -> Line.interpolateLine a b steps) plane lc
-
-scene = Scene (toUnfoldable centeredCube) -- Why is this plane not in the right orientation? I had expected it to be in the yz plane
+scene = Scene (toUnfoldable cube)

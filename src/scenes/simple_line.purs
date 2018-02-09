@@ -7,9 +7,8 @@ import Data.List (List, toUnfoldable)
 
 steps = 50
 
--- Export create function as helpers
-la = Line.create (Point.create 200.0 120.0 0.0) (Point.create 90.0 50.0 0.0)
+la = Line.create (Point.create 0.0 0.0 0.0) (Point.create 50.0 0.0 70.0)
 
-lai = Line.interpolateLine la steps
+lai = Line.interpolateLine steps la 
 
 scene = Scene (toUnfoldable lai)
