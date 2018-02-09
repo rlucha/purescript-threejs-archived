@@ -1,5 +1,10 @@
 module Main where
 
+-- TODO 
+-- get input from the JS side, scene would be a function with config params that returns an array of points
+-- Connect datGUI to those params to get some interactivity
+-- Think about other UI for inputs
+
 import Prelude
 
 import Data.Generic.Rep (class Generic)

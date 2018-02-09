@@ -1,6 +1,8 @@
 module Scenes.BoxOfPoints where
 
--- TODO reimplement BoxOfPoints from Line create constructor
+-- Todo Plane & Plane interpolation from 4 points (only 3 really needed)
+-- Interpolate looks like an abstraction over n points
+-- given 2 points, gives you a line, given 3+ gives you a surface
 
 import Prelude
 import Data.List (List(..), (:), toUnfoldable, zipWith, concat)
@@ -54,6 +56,7 @@ planeZX2 = translateY size <$> planeZX
 
 -- Why do I need to use pure here? is it because bind uses the monadic context? 
 -- is there something similar to bind without that?
+
 cube =  planeYZ <> planeYX <> planeZX <> planeYZ2 <> planeYX2 <> planeZX2 
         >>= (<$>) (translate center center center) <<< pure
 
