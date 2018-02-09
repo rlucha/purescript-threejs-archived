@@ -21,8 +21,12 @@ interpolateLine (Point a) (Point b) s =
       ci = interpolate a.z b.z s
       ri = zip ai $ zip bi ci
     -- in map (\(Tuple a b c) -> Point {x:a, y:b, z:c}) $ ri
+    -- How to avoid getting nested Tuples?
     in map (\(Tuple x (Tuple y z)) -> Point {x, y, z}) ri 
 
--- Amarr's suggestion, use applicate of List
+-- Amarr's suggestion, use applicative of List
 -- f x y z = Tuple3 x y z
 -- ri = toList (f <$> ZipList bi <*> (ZipList ci) <*> (ZipList ai))
+
+-- zip3 :: List -> List -> List -> List
+-- zip3 (a:as) (b:bs) (c:cs) = (Tuple (a b c) : (zip3 as bs cs))

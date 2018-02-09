@@ -8,8 +8,8 @@ import Point
 import Line as Line
 import Scene
 
-steps = 10
-size = 200.0
+steps = 25
+size = 50.0
 
 a = Point {x: 0.0, y: 0.0, z: 0.0}
 b = Point {x: 0.0, y: 0.0, z: size}

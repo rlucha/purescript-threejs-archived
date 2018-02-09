@@ -45,27 +45,45 @@ document.body.appendChild( renderer.domElement );
 // Scene data prep
 const sceneData = JSON.parse(sceneJSON);
 
-var geometry = new THREE.BoxGeometry(10, 10, 10);
 
-var matProps = {
-  specular: '#a9fcff',
-  color: '#00abb1',
-  emissive: '#006063',
-  shininess: 10,
-  transparent: true,
-  opacity: 0.5,
+// "Pixels"
 
-}
+var dotGeometry = new THREE.Geometry();
+dotGeometry.vertices.push(new THREE.Vector3(0, 0, 0));
+var dotMaterial = new THREE.PointsMaterial( { size: 1, sizeAttenuation: false } );
+var dot = new THREE.Points(dotGeometry, dotMaterial);
+scene.add(dot);
 
-var material = new THREE.MeshPhongMaterial(matProps);
+// var geometry = new THREE.BoxGeometry(10, 10, 10);
+
+// var matProps = {
+//   specular: '#a9fcff',
+//   color: '#00abb1',
+//   emissive: '#006063',
+//   shininess: 10,
+//   transparent: true,
+//   opacity: 0.5,
+
+// }
+
+// var material = new THREE.MeshPhongMaterial(matProps);
 
 // Make pixels & position them
 export const doPoints = points => points.forEach(({x,y,z}) => {
-  var pixel = new THREE.Mesh( geometry, material);
-  pixel.castShadow = true;
-  pixel.position.set(x,y,z)
-  scene.add( pixel );
+  console.log("foo");
+  var dotGeometry = new THREE.Geometry();
+  dotGeometry.vertices.push(new THREE.Vector3(x, y, z));
+  var dotMaterial = new THREE.PointsMaterial( { size: 1, sizeAttenuation: false } );
+  var dot = new THREE.Points(dotGeometry, dotMaterial);
+  scene.add(dot);
+  
 });
+// export const doPoints = points => points.forEach(({x,y,z}) => {
+//   var pixel = new THREE.Mesh( geometry, material);
+//   pixel.castShadow = true;
+//   pixel.position.set(x,y,z)
+//   scene.add( pixel );
+// });
 
 // Start LOOP
 function animate() {
