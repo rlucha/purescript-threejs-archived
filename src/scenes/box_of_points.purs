@@ -1,4 +1,6 @@
-module Scenes.BoxOfPoints where
+module Scenes.BoxOfPoints 
+  (scene)
+where
 
 -- Todo Plane & Plane interpolation from 4 points (only 3 really needed)
 -- Interpolate looks like an abstraction over n points
@@ -14,7 +16,7 @@ import Scene
 steps = 25
 size = 50.0
 center = -size*0.5
-
+ 
 interpolateLine a b = L.interpolateLine steps (L.create a b)
 interpolatedPlane l0 l1 = concat $ zipWith interpolateLine l0 l1
 
@@ -48,16 +50,20 @@ planeYZ2 = translateX size <$> planeYZ
 planeYX2 = translateZ size <$> planeYX
 planeZX2 = translateY size <$> planeZX
 
+flipme = flip ($)
+infixl 1 flipme as &
+
 -- Binding notes
 -- x >>= f = do y <- x
 --              f y
 -- cube = do geo  <- planeYZ <> planeYX <> planeZX <> planeYZ2 <> planeYX2 <> planeZX2
---           translate center center center <$> pure geo
+--           pure $ translate center center center geo
 
--- Why do I need to use pure here? is it because bind uses the monadic context? 
+-- Why do I need to use pure here? is it becausebind uses the monadic context? 
 -- is there something similar to bind without that?
 
-cube =  planeYZ <> planeYX <> planeZX <> planeYZ2 <> planeYX2 <> planeZX2 
-        >>= (<$>) (translate center center center) <<< pure
+cube =  (planeYZ <> planeYX <> planeZX <> planeYZ2 <> planeYX2 <> planeZX2) &
+  map (translate center center center)
+  
 
 scene = Scene (toUnfoldable cube)

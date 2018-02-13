@@ -38,5 +38,12 @@ interpolateLine s (Line {a:P.Point a, b:P.Point b}) =
       -- because ZipList only works on lazy lists and List Point is from Strict
       -- Then we use the applicative instance of ZipLlist to apply a 3ary function to 3 lists
       -- effectively using zipWith with 3 elements
-      ri = P.create <$> ZipList (LazyList.fromFoldable ai) <*> ZipList (LazyList.fromFoldable bi) <*> ZipList (LazyList.fromFoldable ci)
+      -- Applicative on lists is a cartesian product, applicative on Ziplist is an "ordered" function application 
+      
+      -- How does this work?
+      -- P.create is a pure function
+      ri = P.create 
+          <$> ZipList (LazyList.fromFoldable ai) 
+          <*> ZipList (LazyList.fromFoldable bi) 
+          <*> ZipList (LazyList.fromFoldable ci)
     in StrictList.fromFoldable ri

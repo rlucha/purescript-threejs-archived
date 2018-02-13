@@ -16,11 +16,16 @@ import Point
 import Line (interpolateLine)
 import Scene (Scene(..))
 
-import Scenes.BoxOfPoints (scene) as BoxOfPoints
+-- Scenes
 import Scenes.SimpleLine (scene) as SimpleLine
+import Scenes.BoxOfPoints (scene) as BoxOfPoints
+import Scenes.SceneAsFunction (scene) as SceneAsFunction
 
 -- import Control.Monad.Eff (Eff)
 -- import Control.Monad.Eff.Console (CONSOLE, log)
 
 -- Prepare encoding
 sceneJSON = genericEncodeJSON (defaultOptions { unwrapSingleConstructors = true }) BoxOfPoints.scene
+
+
+makeScene a b c steps = genericEncodeJSON (defaultOptions { unwrapSingleConstructors = true }) $ SceneAsFunction.scene a b c steps
