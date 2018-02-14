@@ -4,6 +4,8 @@ module Main where
 -- get input from the JS side, scene would be a function with config params that returns an array of points
 -- Connect datGUI to those params to get some interactivity
 -- Think about other UI for inputs
+-- Can we keep a reference to all created points so that only the positions change?
+-- That way we could make the scene animated without perf decrease
 
 import Prelude
 
@@ -14,18 +16,19 @@ import Data.Foreign.Generic (defaultOptions, genericEncodeJSON)
 
 import Point
 import Line (interpolateLine)
-import Scene (Scene(..))
 
 -- Scenes
 import Scenes.SimpleLine (scene) as SimpleLine
 import Scenes.BoxOfPoints (scene) as BoxOfPoints
+import Scenes.BoxToBox (scene) as BoxToBox
 import Scenes.SceneAsFunction (scene) as SceneAsFunction
 
 -- import Control.Monad.Eff (Eff)
 -- import Control.Monad.Eff.Console (CONSOLE, log)
 
 -- Prepare encoding
-sceneJSON = genericEncodeJSON (defaultOptions { unwrapSingleConstructors = true }) BoxOfPoints.scene
+-- sceneJSON :: String
+-- sceneJSON = genericEncodeJSON (defaultOptions { unwrapSingleConstructors = true }) BoxToBox.scene
 
-
-makeScene a b c steps = genericEncodeJSON (defaultOptions { unwrapSingleConstructors = true }) $ SceneAsFunction.scene a b c steps
+makeScene :: Number -> String
+makeScene t = genericEncodeJSON (defaultOptions { unwrapSingleConstructors = true }) $ BoxToBox.scene t

@@ -18,6 +18,8 @@ size = 50.0
 center = -size*0.5
  
 interpolateLine a b = L.interpolateLine steps (L.create a b)
+
+interpolatedPlane :: List P.Point -> List P.Point -> List P.Point
 interpolatedPlane l0 l1 = concat $ zipWith interpolateLine l0 l1
 
 -- MOVE to translate module

@@ -20,6 +20,12 @@ module.exports = {
     contentBase: "./dist",
     port: 8080,
   },
+  watch: true,
+  watchOptions: {
+    aggregateTimeout: 300,
+    poll: 1000,
+    ignored: /node_modules/
+  },  
   plugins: [
     new webpack.HotModuleReplacementPlugin()
   ],

@@ -6,8 +6,6 @@ var OrbitControls = require('three-orbit-controls')(THREE)
 
 import { sceneJSON, makeScene } from '../output/Main';  
 
-
-window.makeScene = makeScene;
 // Setup scene
 const scene = new THREE.Scene();
 
@@ -45,7 +43,7 @@ controls.enableZoom = true;
 document.body.appendChild( renderer.domElement );
 
 // Scene data prep
-const sceneData = JSON.parse(sceneJSON);
+// const sceneData = JSON.parse(sceneJSON);
 
 
 // "Pixels"
@@ -95,41 +93,45 @@ function animate() {
 }
 
 animate();
+window.doPoints = doPoints
+window.makeScene = makeScene
+
+doPoints(JSON.parse(makeScene(100)))
+
+
 // doPoints(sceneData);
-window.doPoints = doPoints;
+// window.doPoints = doPoints;
 
 // Someway to clear the scene and redo it
 // Get clicks on canvas
-renderer.domElement.addEventListener('mousedown', function(event){
+// renderer.domElement.addEventListener('mousemove', function(event){
   
-  // calculate Z as interpolation of camera + x y coords
-  var vector = new THREE.Vector3();
+//   // calculate Z as interpolation of camera + x y coords
+//   var vector = new THREE.Vector3();
 
-  vector.set(
-      ( event.clientX / window.innerWidth ) * 2 - 1,
-      - ( event.clientY / window.innerHeight ) * 2 + 1,
-      0.5 );
+//   vector.set(
+//       ( event.clientX / window.innerWidth ) * 2 - 1,
+//       - ( event.clientY / window.innerHeight ) * 2 + 1,
+//       0.5 );
   
-  vector.unproject( camera );
+//   vector.unproject( camera );
 
-  var targetZ = 0;
+//   var targetZ = 0;
   
-  var dir = vector.sub( camera.position ).normalize();
+//   var dir = vector.sub( camera.position ).normalize();
   
-  var distance = (targetZ - camera.position.z) / dir.z
+//   var distance = (targetZ - camera.position.z) / dir.z
   
-  var pos = camera.position.clone().add( dir.multiplyScalar( distance ) );
+//   var pos = camera.position.clone().add( dir.multiplyScalar( distance ) );
 
-  console.log(pos);
+//   doPoints(JSON.parse(makeScene(pos.x)))
   
-  doPoints(JSON.parse(makeScene(pos.x)(pos.y)(pos.z)(50)))
-  
-}, false);
+// }, false);
 
 
 // Webpack HMR
-if (module.hot) {
-  module.hot.accept('../dist/main.js', function() {
-    doPoints(sceneData);
-  })
-}
+// if (module.hot) {
+//   module.hot.accept('../dist/main.js', function() {
+//     doPoints(sceneData);
+//   })
+// }
