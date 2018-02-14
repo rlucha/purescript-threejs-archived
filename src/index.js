@@ -38,7 +38,7 @@ camera.lookAt(0, 0, 0)
 // Controls
 const controls = new OrbitControls(camera)
 controls.enableZoom = true;
-controls.autoRotate = true;
+// controls.autoRotate = true;
 
 
 // Attach canvas canvas
@@ -99,8 +99,10 @@ animate();
 window.doPoints = doPoints;
 
 // Someway to clear the scene and redo it
-
-renderer.domElement.addEventListener('mousedown', function(ev){
+// Get clicks on canvas
+renderer.domElement.addEventListener('mousedown', function(event){
+  
+  // calculate Z as interpolation of camera + x y coords
   var vector = new THREE.Vector3();
 
   vector.set(
@@ -109,14 +111,16 @@ renderer.domElement.addEventListener('mousedown', function(ev){
       0.5 );
   
   vector.unproject( camera );
+
+  var targetZ = 0;
   
   var dir = vector.sub( camera.position ).normalize();
   
-  var distance = - camera.position.z / dir.z;
+  var distance = (targetZ - camera.position.z) / dir.z
   
   var pos = camera.position.clone().add( dir.multiplyScalar( distance ) );
 
-  // console.log(makeScene(pos.x)(pos.y)(pos.z));
+  console.log(pos);
   
   doPoints(JSON.parse(makeScene(pos.x)(pos.y)(pos.z)(50)))
   
