@@ -24,13 +24,13 @@ spotLight.castShadow = true;
 scene.add(spotLight);
 
 // Axis helper
-const axesHelper = new THREE.AxesHelper( 100 );
-scene.add( axesHelper );
+// const axesHelper = new THREE.AxesHelper( 100 );
+// scene.add( axesHelper );
 
 // Camera
 const camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
-camera.position.set(250, 250, 250)
-camera.lookAt(0, 0, 0) 
+camera.position.set(0, 0, 150)
+camera.lookAt(0, 0, 100) 
 // camera.up.set(0,0,1)
 
 // Controls
@@ -70,14 +70,19 @@ scene.add(dot);
 
 // Make pixels & position them
 export const doPoints = points => points.forEach(({x,y,z}) => {
-  console.log("foo");
   var dotGeometry = new THREE.Geometry();
   dotGeometry.vertices.push(new THREE.Vector3(x, y, z));
   var dotMaterial = new THREE.PointsMaterial( { size: 1, sizeAttenuation: false } );
   var dot = new THREE.Points(dotGeometry, dotMaterial);
+  pointsCol.push(dot);
   scene.add(dot);
-  
 });
+
+
+const updatePointsPos = points => points.forEach(({x,y,z}, i) => {
+  pointsCol[i].position.set(x,y,z)
+})
+
 // export const doPoints = points => points.forEach(({x,y,z}) => {
 //   var pixel = new THREE.Mesh( geometry, material);
 //   pixel.castShadow = true;
@@ -89,14 +94,20 @@ export const doPoints = points => points.forEach(({x,y,z}) => {
 function animate() {
   requestAnimationFrame( animate );
   controls.update();
+  
+  updatePointsPos(JSON.parse(makeScene(i++)));
 	renderer.render( scene, camera );
 }
 
-animate();
-window.doPoints = doPoints
+let i = 0;
+let pointsCol = [];
+window.pointsO = JSON.parse(makeScene(100))
 window.makeScene = makeScene
+doPoints(pointsO);
 
-doPoints(JSON.parse(makeScene(100)))
+animate();
+
+
 
 
 // doPoints(sceneData);

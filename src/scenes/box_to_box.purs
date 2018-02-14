@@ -15,8 +15,9 @@ data Square = Square
   }
 
 steps = 20
-size = 100.0 
+size = 20.0 
 alt = size*0.5
+center = -size*0.5
 
 -- Move to Square module
 create :: P.Point -> P.Point -> P.Point -> P.Point -> Square
@@ -54,7 +55,7 @@ translateZ z g = translate 0.0 0.0 z g
 
 
 scene :: Number -> S.Scene
-scene t = (S.Scene (toUnfoldable zipSquareLines))
+scene t = (S.Scene (toUnfoldable $ translate center center center <$> zipSquareLines))
   where 
     square = interpolateSquare $ create a b c d
     square' = interpolateSquare $ create e f g h
