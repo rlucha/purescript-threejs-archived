@@ -6,7 +6,7 @@ module.exports = {
   output: {
     filename: 'three.js',
     path: path.resolve(__dirname,'..', './src/ffi/'),
-    library: 'FII',
+    library: 'fii',
     libraryTarget: 'commonjs'
   },
   module: {

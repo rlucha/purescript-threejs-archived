@@ -15,7 +15,7 @@ import Data.Generic.Rep.Show (genericShow)
 import Data.Foreign.Class (class Encode, encode)
 import Data.Foreign.Generic (defaultOptions, genericEncodeJSON)
 
-import Three as Three
+import Ffi as Ffi
 import Point
 import Line (interpolateLine)
 
@@ -36,4 +36,4 @@ makeScene :: Number -> String
 makeScene t = genericEncodeJSON (defaultOptions { unwrapSingleConstructors = true }) $ BoxToBox.scene t
 
 
-main = Three.createScene 5.0
+main = Ffi.createScene 5.0
