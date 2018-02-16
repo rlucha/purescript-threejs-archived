@@ -6,6 +6,7 @@ module Main where
 -- Think about other UI for inputs
 -- Can we keep a reference to all created points so that only the positions change?
 -- That way we could make the scene animated without perf decrease
+-- Next steps: Try to reproduce hierarchy2 example from threejs 
 
 import Prelude
 
@@ -14,6 +15,7 @@ import Data.Generic.Rep.Show (genericShow)
 import Data.Foreign.Class (class Encode, encode)
 import Data.Foreign.Generic (defaultOptions, genericEncodeJSON)
 
+import Three as Three
 import Point
 import Line (interpolateLine)
 
@@ -32,3 +34,6 @@ import Scenes.SceneAsFunction (scene) as SceneAsFunction
 
 makeScene :: Number -> String
 makeScene t = genericEncodeJSON (defaultOptions { unwrapSingleConstructors = true }) $ BoxToBox.scene t
+
+
+main = Three.createScene 5.0

@@ -29,7 +29,7 @@ scene.add(spotLight);
 
 // Camera
 const camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
-camera.position.set(0, 0, 150)
+camera.position.set(0, 0, 450)
 camera.lookAt(0, 0, 100) 
 // camera.up.set(0,0,1)
 
@@ -95,7 +95,7 @@ function animate() {
   requestAnimationFrame( animate );
   controls.update();
   
-  updatePointsPos(JSON.parse(makeScene(i++)));
+  updatePointsPos(JSON.parse(makeScene(i+=4)));
 	renderer.render( scene, camera );
 }
 
