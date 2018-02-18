@@ -18,6 +18,7 @@ import Data.Foreign.Generic (defaultOptions, genericEncodeJSON)
 import Three as Three
 import Point
 import Line (interpolateLine)
+import Scene as S
 
 -- Scenes
 import Scenes.SimpleLine (scene) as SimpleLine
@@ -32,8 +33,7 @@ import Scenes.SceneAsFunction (scene) as SceneAsFunction
 -- sceneJSON :: String
 -- sceneJSON = genericEncodeJSON (defaultOptions { unwrapSingleConstructors = true }) BoxToBox.scene
 
-makeScene :: Number -> String
-makeScene t = genericEncodeJSON (defaultOptions { unwrapSingleConstructors = true }) $ BoxToBox.scene t
+-- makeScene :: Number -> String
+-- makeScene t = genericEncodeJSON (defaultOptions { unwrapSingleConstructors = true }) $ BoxToBox.scene t
 
-
-main = Three.createScene 5.0
+main = Three.createScene $ S.unfoldScene $ BoxToBox.scene 5.0

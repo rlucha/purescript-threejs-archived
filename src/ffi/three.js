@@ -3,8 +3,6 @@
 
 // It seems there is a limitation with foreign modules and node require..
 // Maybe we can createa bundle previously and expose the rollup build to purescript?
-// import { Scene, WebGLRenderer, AmbientLight, SpotLight, AxesHelper, PerspectiveCamera } from "three";
-// var OrbitControls = require('three-orbit-controls')(THREE)
 
 var Scene = require("three").Scene
 var WebGLRenderer = require("three").WebGLRenderer
@@ -12,10 +10,19 @@ var AmbientLight = require("three").AmbientLight
 var SpotLight = require("three").SpotLight
 var AxesHelper = require("three").AxesHelper
 var PerspectiveCamera = require("three").PerspectiveCamera
+var Mesh = require("three").Mesh
+var Geometry = require("three").Geometry
+var PointsMaterial = require("three").PointsMaterial
+var Vector3 = require("three").Vector3
+var Points = require("three").Points
 
-const createScene = function() { 
+var OrbitControls = require('three-orbit-controls')(require("three"))
 
-  // Setup scene
+var _ = require("lodash")
+// var THREE = require("Three");
+// Setup scene  
+
+const createScene = function(points) { 
   var scene = new Scene();
 
   // Renderer
@@ -42,9 +49,9 @@ const createScene = function() {
   camera.lookAt(0, 0, 100) 
 
   // Controls
-  // var controls = new OrbitControls(camera)
-  // controls.enableZoom = true;
-  // controls.autoRotate = true;
+  var controls = new OrbitControls(camera)
+  controls.enableZoom = true;
+  controls.autoRotate = true;
 
   // Attach canvas canvas
   document.body.appendChild( renderer.domElement );
@@ -66,22 +73,22 @@ const createScene = function() {
   //   scene.add(dot);
   // });
 
+  // var pixel = Mesh(geometry, material);
+  // pixel.castShadow = true;
+  // pixel.position.set(posX,posY,posZ)
 
   // var updatePointsPos = points => points.forEach(({x,y,z}, i) => {
   //   pointsCol[i].position.set(x,y,z)
   // })
 
-  // const doPoints = points => points.forEach(({x,y,z}) => {
-  //   var pixel = new THREE.Mesh( geometry, material);
-  //   pixel.castShadow = true;
-  //   pixel.position.set(x,y,z)
-  //   scene.add( pixel );
-  // });
- 
+  const dots = renderPoints(points);
+  // console.log(dots)
+  dots.forEach(function(dot) {scene.add(dot) });
+
   // Start LOOP
   function animate() {
     requestAnimationFrame( animate );
-    // controls.update();
+    controls.update();
     
     // updatePointsPos(JSON.parse(makeScene(i+=4)));
     renderer.render( scene, camera );
@@ -92,13 +99,47 @@ const createScene = function() {
 // window.pointsO = JSON.parse(makeScene(100))
 // window.makeScene = makeScene
 // doPoints(pointsO);
-animate();
+  animate();
 
   // Can we change this to not return and use Unit or () in purescript?
   return true;
 
 }
 
-module.exports = {
-  createScene: createScene
+// Purescript point to simple object
+const unWrapPoint = function(ps_point) {
+  return ps_point.value0;
 }
+
+const renderPoints = function(points) {
+  var dotGeometry = new Geometry();
+  var dotMaterial = new PointsMaterial( { size: 1, sizeAttenuation: false } );    
+
+  return _.map(points, function(ps_point) {
+    var point = unWrapPoint(ps_point)
+    var x = point.x;
+    var y = point.y;
+    var z = point.z;
+
+    dotGeometry.vertices.push(new Vector3(x, y, z));
+    var dot = new Points(dotGeometry, dotMaterial);
+    return dot;
+    // pointsCol.push(dot);
+  })
+};
+
+
+
+module.exports = {
+  createScene: createScene,
+  renderPoints: renderPoints
+}
+
+// export const doPoints = points => points.forEach(({x,y,z}) => {
+//   var dotGeometry = new THREE.Geometry();
+//   dotGeometry.vertices.push(new THREE.Vector3(x, y, z));
+//   var dotMaterial = new THREE.PointsMaterial( { size: 1, sizeAttenuation: false } );
+//   var dot = new THREE.Points(dotGeometry, dotMaterial);
+//   pointsCol.push(dot);
+//   scene.add(dot);
+// });

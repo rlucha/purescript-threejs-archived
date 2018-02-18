@@ -30,6 +30,7 @@
     "webpack-dev-server": "^2.11.1"
   },
   "dependencies": {
+    "lodash": "^4.17.5",
     "three": "^0.89.0",
     "three-orbit-controls": "^82.1.0"
   }

@@ -8,3 +8,6 @@ import Data.Generic.Rep.Show (genericShow)
 data Scene = Scene (Array Point)
 derive instance genScene :: Generic Scene _
 instance showScene :: Show Scene where show = genericShow
+
+unfoldScene :: Scene -> Array Point
+unfoldScene (Scene s) = s
