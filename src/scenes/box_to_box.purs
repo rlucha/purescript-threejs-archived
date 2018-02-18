@@ -14,8 +14,8 @@ data Square = Square
     d :: P.Point
   }
 
-steps = 20
-size = 20.0 
+steps = 15
+size = 100.0 
 alt = size*0.5
 center = -size*0.5
 
@@ -32,13 +32,13 @@ interpolateSquare (Square s) =
   where squareInterpolation a b = L.interpolateLine steps $ L.create a b
 
 a = P.create 0.0 0.0 0.0
-b = P.create 0.0 size 0.0
-c = P.create size size 0.0
+b = P.create 0.0 0.0 size
+c = P.create size 0.0 size
 d = P.create size 0.0 0.0
 
-e = P.create 0.0 alt 0.0
-f = P.create alt size 0.0
-g = P.create size alt 0.0
+e = P.create 0.0 0.0 alt
+f = P.create alt 0.0 size
+g = P.create size 0.0 alt
 h = P.create alt 0.0 0.0
 
 
@@ -59,6 +59,6 @@ scene t = (S.Scene (toUnfoldable $ translate center center center <$> zipSquareL
   where 
     square = interpolateSquare $ create a b c d
     square' = interpolateSquare $ create e f g h
-    square2 = translateZ t <$> square'
+    square2 = translateY t <$> square'
     tempInterpolation = (\a b -> L.interpolateLine steps $ L.create a b)
     zipSquareLines = concat $ zipWith tempInterpolation square square2

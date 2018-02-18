@@ -36,4 +36,4 @@ import Scenes.SceneAsFunction (scene) as SceneAsFunction
 -- makeScene :: Number -> String
 -- makeScene t = genericEncodeJSON (defaultOptions { unwrapSingleConstructors = true }) $ BoxToBox.scene t
 
-main = Three.createScene $ S.unfoldScene $ BoxToBox.scene 5.0
+main = Three.createScene $ S.unfoldScene $ BoxToBox.scene 100.0

@@ -16,13 +16,13 @@ var PointsMaterial = require("three").PointsMaterial
 var Vector3 = require("three").Vector3
 var Points = require("three").Points
 
-var OrbitControls = require('three-orbit-controls')(require("three"))
+// var OrbitControls = require('three-orbit-controls')(require("three"))
 
 var _ = require("lodash")
 // var THREE = require("Three");
 // Setup scene  
 
-const createScene = function(points) { 
+const createScene = function(points, animationCB) { 
   var scene = new Scene();
 
   // Renderer
@@ -43,62 +43,45 @@ const createScene = function(points) {
   var axesHelper = new AxesHelper( 100 );
   scene.add( axesHelper );
 
+  
   // Camera
   var camera = new PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
-  camera.position.set(0, 0, 450)
-  camera.lookAt(0, 0, 100) 
+  camera.position.set(0, 0, 100)
+  camera.lookAt(0, 0, 0) 
 
+  window.camera = camera;
   // Controls
-  var controls = new OrbitControls(camera)
-  controls.enableZoom = true;
-  controls.autoRotate = true;
+  // var controls = new OrbitControls(camera)
+  // controls.enableZoom = true;
+  // controls.enabled = false;
+  // controls.autoRotate = true;
 
   // Attach canvas canvas
   document.body.appendChild( renderer.domElement );
 
-  // "Pixels"
-  // var dotGeometry = new THREE.Geometry();
-  // dotGeometry.vertices.push(new THREE.Vector3(0, 0, 0));
-  // var dotMaterial = new THREE.PointsMaterial( { size: 1, sizeAttenuation: false } );
-  // var dot = new THREE.Points(dotGeometry, dotMaterial);
-  // scene.add(dot);
-
-  // Make pixels & position them
-  // export var doPoints = points => points.forEach(({x,y,z}) => {
-  //   var dotGeometry = new THREE.Geometry();
-  //   dotGeometry.vertices.push(new THREE.Vector3(x, y, z));
-  //   var dotMaterial = new THREE.PointsMaterial( { size: 1, sizeAttenuation: false } );
-  //   var dot = new THREE.Points(dotGeometry, dotMaterial);
-  //   pointsCol.push(dot);
-  //   scene.add(dot);
-  // });
-
-  // var pixel = Mesh(geometry, material);
-  // pixel.castShadow = true;
-  // pixel.position.set(posX,posY,posZ)
-
-  // var updatePointsPos = points => points.forEach(({x,y,z}, i) => {
-  //   pointsCol[i].position.set(x,y,z)
-  // })
+  // var updatePointsPos = function(points) {
+  //   points.forEach(({x,y,z}, i) => {
+  //     pointsCol[i].position.set(x,y,z)
+  //   })
+  // }
 
   const dots = renderPoints(points);
   // console.log(dots)
   dots.forEach(function(dot) {scene.add(dot) });
 
+  var i = 0
   // Start LOOP
   function animate() {
     requestAnimationFrame( animate );
-    controls.update();
-    
+    // controls.update();
+    i += 0.01; 
+    camera.position.z = i * Math.PI
     // updatePointsPos(JSON.parse(makeScene(i+=4)));
     renderer.render( scene, camera );
   }
   
-// let i = 0;
-// let pointsCol = [];
-// window.pointsO = JSON.parse(makeScene(100))
-// window.makeScene = makeScene
-// doPoints(pointsO);
+  // let i = 0;
+  // let pointsCol = [];
   animate();
 
   // Can we change this to not return and use Unit or () in purescript?
