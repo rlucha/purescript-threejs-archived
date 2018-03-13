@@ -21,10 +21,22 @@ instance semiringPoint :: Semiring Point where
   one = Point { x:1.0, y:1.0, z:1.0}
 
 create :: Number -> Number -> Number -> Point
-create x y z = Point {x: x, y: y, z: z}
+create x y z = Point 
+  { x: x
+  , y: y
+  , z: z
+  }
 
 sumPoint :: Point -> Point -> Point
-sumPoint (Point a) (Point b) = Point { x: a.x + b.x , y: a.y + b.y, z: a.z + b.z}
+sumPoint (Point a) (Point b) = Point 
+  { x: a.x + b.x 
+  , y: a.y + b.y
+  , z: a.z + b.z
+  }
 
 mulPoint :: Point -> Point -> Point
-mulPoint (Point a) (Point b) = Point { x: a.x * b.x , y: a.y * b.y, z: a.z * b.z}
+mulPoint (Point a) (Point b) = Point
+ { x: a.x * b.x 
+ , y: a.y * b.y
+ , z: a.z * b.z
+ }

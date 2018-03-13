@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "webpack --config config/webpack.config.js --mode development",
     "build": "webpack --config config/webpack.config.js --mode production",
-    "start:dev": "webpack-dev-server --config ./config/webpack.config.js"
+    "start:dev:js": "webpack-dev-server --config ./config/webpack.config.js",
+    "start:dev:ps": "pulp --watch build "
   },
   "repository": {
     "type": "git",
