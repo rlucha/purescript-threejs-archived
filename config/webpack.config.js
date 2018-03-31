@@ -19,6 +19,7 @@ module.exports = {
   devServer: {
     contentBase: "./dist",
     port: 8080,
+    stats: 'errors-only',
   },
   watch: true,
   watchOptions: {

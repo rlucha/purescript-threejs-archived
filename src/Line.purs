@@ -20,6 +20,7 @@ instance showLine :: Show Line where
 create :: P.Point -> P.Point -> Line
 create a b = Line { a: a, b: b}
 
+-- This interpolation is to points
 interpolate :: Number -> Number -> Steps -> StrictList.List Number
 interpolate a b s = 
   let inc = (b - a) / toNumber s

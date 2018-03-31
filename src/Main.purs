@@ -11,14 +11,14 @@ module Main where
 import Prelude
 import Control.Monad.Eff (Eff)
 import Three (Three, createScene)  as T
-import Scene as S
 
 -- Scenes
 -- import Scenes.SimpleLine (scene) as SimpleLine
 -- import Scenes.BoxOfPoints (scene) as BoxOfPoints
 -- import Scenes.SceneAsFunction (scene) as SceneAsFunction
 
-import Scenes.BoxToBox (scene) as BoxToBox
+-- import Scenes.BoxToBox (scene) as BoxToBox
+import Scenes.SquaresSurface (scene) as SquaresSurface
 
 main :: forall e. Eff (three :: T.Three | e)  Unit
-main = T.createScene $ S.unfoldScene $ BoxToBox.scene 100.0
+main = T.createScene $ SquaresSurface.scene

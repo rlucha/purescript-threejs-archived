@@ -1,13 +1,19 @@
 module Scene where
 
-import Prelude
-import Point
+import Prelude (class Show)
+import Point (Point)
+import Line (Line)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 
-data Scene = Scene (Array Point)
+data Scene = Scene 
+  { points :: Array Point
+   ,lines ::  Array Line
+}
+
 derive instance genScene :: Generic Scene _
 instance showScene :: Show Scene where show = genericShow
 
-unfoldScene :: Scene -> Array Point
-unfoldScene (Scene s) = s
+-- This is not needed anymore...
+-- unfoldScene :: Scene -> { points :: Array Point, lines :: Array Line }
+-- unfoldScene (Scene s) = s

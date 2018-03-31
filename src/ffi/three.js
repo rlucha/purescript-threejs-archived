@@ -13,16 +13,22 @@ var PerspectiveCamera = require("three").PerspectiveCamera
 var Mesh = require("three").Mesh
 var Geometry = require("three").Geometry
 var PointsMaterial = require("three").PointsMaterial
+var LineBasicMaterial = require("three").LineBasicMaterial
 var Vector3 = require("three").Vector3
 var Points = require("three").Points
+var Line = require("three").Line
 
-// var OrbitControls = require('three-orbit-controls')(require("three"))
+var OrbitControls = require('three-orbit-controls')(require("three"))
 
 var _ = require("lodash")
-// var THREE = require("Three");
 // Setup scene  
 
-const createScene = function(points, animationCB) { 
+const createScene = function(ps_scene, animationCB) { 
+
+  const uwrap_scene = unwrapScene(ps_scene)
+  const ps_points = uwrap_scene.points
+  const ps_lines = uwrap_scene.lines
+
   var scene = new Scene();
 
   // Renderer
@@ -46,52 +52,64 @@ const createScene = function(points, animationCB) {
   
   // Camera
   var camera = new PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
-  camera.position.set(0, 0, 100)
+  camera.position.set(-100, 50, 200)
   camera.lookAt(0, 0, 0) 
 
   window.camera = camera;
   // Controls
-  // var controls = new OrbitControls(camera)
-  // controls.enableZoom = true;
-  // controls.enabled = false;
+  var controls = new OrbitControls(camera)
+  controls.enableZoom = true;
+  controls.enabled = true;
   // controls.autoRotate = true;
 
   // Attach canvas canvas
   document.body.appendChild( renderer.domElement );
 
-  // var updatePointsPos = function(points) {
-  //   points.forEach(({x,y,z}, i) => {
-  //     pointsCol[i].position.set(x,y,z)
-  //   })
-  // }
-
-  const dots = renderPoints(points);
-  // console.log(dots)
+  const dots = renderPoints(ps_points);
+  
+  // TODO add lines
+  const lines = renderLines(ps_lines);
+  
+  lines.forEach(function(line) {scene.add(line) });
   dots.forEach(function(dot) {scene.add(dot) });
 
-  var i = 0
   // Start LOOP
   function animate() {
     requestAnimationFrame( animate );
-    // controls.update();
-    i += 0.01; 
-    camera.position.z = i * Math.PI
-    // updatePointsPos(JSON.parse(makeScene(i+=4)));
+    controls.update();
     renderer.render( scene, camera );
   }
   
-  // let i = 0;
-  // let pointsCol = [];
   animate();
-
-  // Can we change this to not return and use Unit or () in purescript?
-  return true;
 
 }
 
+const unwrapScene = function(ps_scene) {
+  const points = ps_scene.value0.points
+  const lines = ps_scene.value0.lines
+
+  return {points:points , lines:lines}
+}
+
 // Purescript point to simple object
-const unWrapPoint = function(ps_point) {
+const unWrapPSField = function(ps_point) {
   return ps_point.value0;
+}
+
+const renderLines = function(ps_lines) {
+  const lineMaterial = new LineBasicMaterial( { color: 0x00ffff } );
+  const lineGeometry = new Geometry();
+
+  return _.map(ps_lines, function(ps_line) { 
+    // automate unwrapLine / recursive ?
+    const line = unWrapPSField(ps_line)
+    const la = unWrapPSField(line.a)
+    const lb = unWrapPSField(line.b)
+    lineGeometry.vertices.push(new Vector3( la.x, la.y, la.z) );
+    lineGeometry.vertices.push(new Vector3( lb.x, lb.y, lb.z) );
+    var three_line = new Line( lineGeometry, lineMaterial );
+    return three_line;
+  })
 }
 
 const renderPoints = function(points) {
@@ -99,7 +117,7 @@ const renderPoints = function(points) {
   var dotMaterial = new PointsMaterial( { size: 1, sizeAttenuation: false } );    
 
   return _.map(points, function(ps_point) {
-    var point = unWrapPoint(ps_point)
+    var point = unWrapPSField(ps_point)
     var x = point.x;
     var y = point.y;
     var z = point.z;
