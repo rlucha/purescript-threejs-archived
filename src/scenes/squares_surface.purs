@@ -10,8 +10,8 @@ import Prelude
 -- import Data.List (List(..), (:), toUnfoldable, zipWith, concat)
 
 import Point as P
-import Line as L
 import Square as SQ
+import Transform as T
 import Scene as Scene
 
 size :: Number
@@ -29,11 +29,18 @@ c = P.create 0.0 size 0.0
 d :: P.Point
 d = P.create 0.0 size size
 
+transP = P.create 10.0 0.0 0.0
+scaleF = T.scaleSquare 0.75
+
 sq1 = SQ.create a b c d
+sq2 =  scaleF $ T.translateSquare sq1 transP
+sq3 =  scaleF $ T.translateSquare sq2 transP
+sq4 =  scaleF $ T.translateSquare sq3 transP
+sq5 =  scaleF $ T.translateSquare sq4 transP
 
 -- Make Scene not require empty lines to be created
 scene = Scene.create
   { points: [a, b, c, d]
   , lines: []
-  , squares: [sq1]
+  , squares: [sq1, sq2, sq3, sq4, sq5]
   }
