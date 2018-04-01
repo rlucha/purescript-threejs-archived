@@ -1,18 +1,50 @@
 module Scene where
 
-import Prelude (class Show)
-import Point (Point)
-import Line (Line)
+import Prelude
+import Point as P
+import Line  as L
+import Square (Square(..)) as S
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
+import Data.Array (concat)
 
 data Scene = Scene 
-  { points :: Array Point
-   ,lines ::  Array Line
+  { points :: Array P.Point
+  , lines ::  Array L.Line
+  , squares ::  Array S.Square
 }
 
 derive instance genScene :: Generic Scene _
 instance showScene :: Show Scene where show = genericShow
+
+-- Transforms an scene to a list of points and lines...
+-- Reduces squares to lines
+-- In the future shapes could carry representation information to
+-- decide which interpolation/transform function to use
+-- so we could represent an square as a list of lines or as a list of points
+-- maybe even both?
+
+-- for now we will represent an square as a list of 4 lines
+-- so we need to create lines from the points of an square
+
+squareToLines :: S.Square -> Array L.Line
+squareToLines (S.Square {a,b,c,d}) = 
+  let lab = L.create a b
+      lbd = L.create b d
+      ldc = L.create d c
+      lca = L.create c a
+  in [lab, lbd, ldc, lca]
+
+-- create parses the squares to lines, this should be a row type I think
+create :: { points :: Array P.Point, lines :: Array L.Line, squares :: Array S.Square } -> Scene
+create scene = 
+  let squares' = map squareToLines scene.squares
+  in 
+    Scene 
+    { points: scene.points
+    , lines: scene.lines <> concat squares'
+    , squares: []
+    }
 
 -- This is not needed anymore...
 -- unfoldScene :: Scene -> { points :: Array Point, lines :: Array Line }

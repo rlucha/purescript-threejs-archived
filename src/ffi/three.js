@@ -1,5 +1,7 @@
 // MODULE Three
 
+// TODO
+// Annotate everything this file is doing and move it to purescript eventually
 
 // It seems there is a limitation with foreign modules and node require..
 // Maybe we can createa bundle previously and expose the rollup build to purescript?
@@ -50,7 +52,6 @@ const createScene = function(ps_scene, animationCB) {
   // Axis helper
   var axesHelper = new AxesHelper( 100 );
   scene.add( axesHelper );
-
   
   // Camera
   var camera = new PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );

@@ -6,12 +6,13 @@ where
 -- Interpolate looks like an abstraction over n points
 -- given 2 points, gives you a line, given 3+ gives you a surface
 
--- import Prelude
+import Prelude
 -- import Data.List (List(..), (:), toUnfoldable, zipWith, concat)
 
 import Point as P
 import Line as L
-import Scene
+import Square as SQ
+import Scene as Scene
 
 size :: Number
 size = 50.0
@@ -28,21 +29,11 @@ c = P.create 0.0 size 0.0
 d :: P.Point
 d = P.create 0.0 size size
 
-lab :: L.Line
-lab = L.create a b
+sq1 = SQ.create a b c d
 
-lbd :: L.Line
-lbd = L.create b d
-
-ldc :: L.Line
-ldc = L.create d c
-
-lca :: L.Line
-lca = L.create c a
-
-
-scene :: Scene
-scene = Scene
+-- Make Scene not require empty lines to be created
+scene = Scene.create
   { points: [a, b, c, d]
-  , lines: [lab, lbd, ldc, lca]
+  , lines: []
+  , squares: [sq1]
   }
