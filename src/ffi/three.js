@@ -17,6 +17,7 @@ var LineBasicMaterial = require("three").LineBasicMaterial
 var Vector3 = require("three").Vector3
 var Points = require("three").Points
 var Line = require("three").Line
+var Color = require("three").Color
 
 var OrbitControls = require('three-orbit-controls')(require("three"))
 
@@ -30,6 +31,7 @@ const createScene = function(ps_scene, animationCB) {
   const ps_lines = uwrap_scene.lines
 
   var scene = new Scene();
+  scene.background = new Color( 0x212741 );
 
   // Renderer
   var renderer = new WebGLRenderer();
@@ -97,7 +99,8 @@ const unWrapPSField = function(ps_point) {
 }
 
 const renderLines = function(ps_lines) {
-  const lineMaterial = new LineBasicMaterial( { color: 0x00ffff } );
+  const lineMaterial = new LineBasicMaterial( { color: 0x00ffff, transparent:true } );
+  lineMaterial.opacity=0.25;  
   const lineGeometry = new Geometry();
 
   return _.map(ps_lines, function(ps_line) { 
