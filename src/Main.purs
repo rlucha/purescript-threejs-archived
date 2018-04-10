@@ -18,7 +18,7 @@ import Three (Three, createScene)  as T
 -- import Scenes.SceneAsFunction (scene) as SceneAsFunction
 
 -- import Scenes.BoxToBox (scene) as BoxToBox
-import Scenes.SquaresSurface (scene) as SquaresSurface
+import Scenes.DotMatrix (scene) as DotMatrix
 
 main :: forall e. Eff (three :: T.Three | e)  Unit
-main = T.createScene $ SquaresSurface.scene
+main = T.createScene $ DotMatrix.scene

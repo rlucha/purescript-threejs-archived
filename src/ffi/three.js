@@ -29,6 +29,7 @@ var _ = require("lodash")
 const createScene = function(ps_scene, animationCB) { 
 
   const uwrap_scene = unwrapScene(ps_scene)
+  window.uwrap_scene = uwrap_scene
   const ps_points = uwrap_scene.points
   const ps_lines = uwrap_scene.lines
 
