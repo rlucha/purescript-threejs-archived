@@ -16,8 +16,8 @@ import Interpolate as Interpolate
 import Data.Array (fromFoldable)
 import Scene as Scene
 
-size :: Number
-size = 100.0
+size = 400.0
+steps = 10
 
 center = P.create (-size * 0.25) 0.0 (-size * 0.25)
 
@@ -39,7 +39,7 @@ sq1 = SQ.create a b c d
 sq1c = T.translateSquare sq1 center
 
 sq1Points :: Array P.Point
-sq1Points = fromFoldable $ Interpolate.interpolate sq1c 10
+sq1Points = fromFoldable $ Interpolate.interpolate sq1c steps
 
 -- Make Scene not require empty lines to be created
 scene = Scene.create

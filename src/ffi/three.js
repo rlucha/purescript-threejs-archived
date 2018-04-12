@@ -141,8 +141,9 @@ const makeCylinders = function(points) {
 }
 
 const makeCylinder = function(point) {
-  const h = Math.random()*100;
-  var geometry = new CylinderGeometry(2,2,h,8);
+  const h = Math.random()*20;
+  const sz = 8.2;
+  var geometry = new CylinderGeometry(sz,sz,h,6);
   var material = new MeshNormalMaterial({side: DoubleSide})
   var cylinder = new Mesh( geometry, material );
 
