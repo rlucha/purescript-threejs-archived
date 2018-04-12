@@ -16,10 +16,16 @@ var Mesh = require("three").Mesh
 var Geometry = require("three").Geometry
 var PointsMaterial = require("three").PointsMaterial
 var LineBasicMaterial = require("three").LineBasicMaterial
+var MeshNormalMaterial = require("three").MeshNormalMaterial
 var Vector3 = require("three").Vector3
+var Face3 = require("three").Face3
 var Points = require("three").Points
 var Line = require("three").Line
 var Color = require("three").Color
+var Mesh = require("three").Mesh
+var DoubleSide = require("three").DoubleSide
+var ShapeUtils = require("three").ShapeUtils
+var CylinderGeometry = require("three").CylinderGeometry
 
 var OrbitControls = require('three-orbit-controls')(require("three"))
 
@@ -32,9 +38,14 @@ const createScene = function(ps_scene, animationCB) {
   window.uwrap_scene = uwrap_scene
   const ps_points = uwrap_scene.points
   const ps_lines = uwrap_scene.lines
+  const ps_meshes = uwrap_scene.meshes
 
   var scene = new Scene();
   scene.background = new Color( 0x212741 );
+  
+  // DEBUG
+  window.THREE = require("three")
+  window.scene = scene;
 
   // Renderer
   var renderer = new WebGLRenderer();
@@ -56,15 +67,15 @@ const createScene = function(ps_scene, animationCB) {
   
   // Camera
   var camera = new PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
-  camera.position.set(-100, 50, 200)
-  camera.lookAt(0, 0, 0) 
+  camera.position.set(0, 50, 80)
+  camera.lookAt(0, 250, 0) 
 
   window.camera = camera;
   // Controls
   var controls = new OrbitControls(camera)
   controls.enableZoom = true;
   controls.enabled = true;
-  // controls.autoRotate = true;
+  controls.autoRotate = true;
 
   // Attach canvas canvas
   document.body.appendChild( renderer.domElement );
@@ -73,9 +84,14 @@ const createScene = function(ps_scene, animationCB) {
   
   // TODO add lines
   const lines = renderLines(ps_lines);
+
+  const meshes = renderMeshes(ps_meshes);
   
   lines.forEach(function(line) {scene.add(line) });
   dots.forEach(function(dot) {scene.add(dot) });
+  meshes.forEach(function(mesh) {scene.add(mesh) });
+
+  makeCylinders(ps_points)
 
   // Start LOOP
   function animate() {
@@ -91,8 +107,9 @@ const createScene = function(ps_scene, animationCB) {
 const unwrapScene = function(ps_scene) {
   const points = ps_scene.value0.points
   const lines = ps_scene.value0.lines
+  const meshes = ps_scene.value0.meshes
 
-  return {points:points , lines:lines}
+  return { points:points , lines:lines, meshes:meshes }
 }
 
 // Purescript point to simple object
@@ -115,6 +132,62 @@ const renderLines = function(ps_lines) {
     var three_line = new Line( lineGeometry, lineMaterial );
     return three_line;
   })
+}
+
+const makeCylinders = function(points) {
+  _.forEach(points, function(p) {    
+    makeCylinder(unWrapPSField(p))
+  })
+}
+
+const makeCylinder = function(point) {
+  const h = Math.random()*100;
+  var geometry = new CylinderGeometry(2,2,h,8);
+  var material = new MeshNormalMaterial({side: DoubleSide})
+  var cylinder = new Mesh( geometry, material );
+
+  cylinder.position.set(point.x,h*.5,point.z)
+  scene.add( cylinder );
+}
+
+const renderMeshes = function(meshes) {
+  var geometry = new Geometry();
+
+  const mesh01 = meshes[0]
+  _.forEach(mesh01, function(mesh_point) {
+    var point = unWrapPSField(mesh_point)
+    var x = point.x;
+    var y = point.y;
+    var z = point.z;
+
+    geometry.vertices.push(new Vector3(x, y, z));
+  })
+
+  geometry.vertices.push(new Vector3(100, 0, 0))
+
+  console.log(geometry.vertices)
+  var triangles = ShapeUtils.triangulateShape(geometry.vertices, [])
+
+  _.forEach(triangles, function(t) {
+    geometry.faces.push(new Face3(t[0], t[1], t[2]))
+  })
+
+
+  // console.log(geometry.vertices[0], geometry.vertices[1], geometry.vertices[2])
+  // geometry.faces.push( new Face3( 
+  //   geometry.vertices[0],
+  //   geometry.vertices[1],
+  //   geometry.vertices[2]
+  // ) );
+
+  // needs faces too
+  
+  geometry.computeVertexNormals()
+
+  var material = new MeshNormalMaterial({side: DoubleSide})
+  var mesh = new Mesh( geometry, material );
+
+  return [mesh]
 }
 
 const renderPoints = function(points) {

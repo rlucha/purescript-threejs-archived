@@ -13,11 +13,6 @@ import Control.Monad.Eff (Eff)
 import Three (Three, createScene)  as T
 
 -- Scenes
--- import Scenes.SimpleLine (scene) as SimpleLine
--- import Scenes.BoxOfPoints (scene) as BoxOfPoints
--- import Scenes.SceneAsFunction (scene) as SceneAsFunction
-
--- import Scenes.BoxToBox (scene) as BoxToBox
 import Scenes.DotMatrix (scene) as DotMatrix
 
 main :: forall e. Eff (three :: T.Three | e)  Unit

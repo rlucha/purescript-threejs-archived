@@ -19,6 +19,7 @@ interpolate a b s =
   in map (\x -> a + inc * toNumber x) $ StrictList.range 0 s -- \[x_n = x_i + \frac{x_f - x_i}{s} n\]
 
 -- Reduce this to operate with better abstractions
+-- use bimap
 multiplyTuple (Tuple p1 p2) = p1 * p2
 sumTuple (Tuple p1 p2) = p1 + p2
 
@@ -30,11 +31,17 @@ interpolateSquare s sq =
   in StrictList.fromFoldable $ sumTuple <$> cartesianProductOfPoints lab lac
 
 cartesianProductOfPoints :: StrictList.List P.Point -> StrictList.List P.Point -> StrictList.List (Tuple P.Point P.Point)
+-- unwrap this magic to understand what it does
 cartesianProductOfPoints l1 l2 = do
   p1 <- l1
   p2 <- l2
   pure $ Tuple p1 p2
 
+cartesianProductOfPoints' :: StrictList.List P.Point -> StrictList.List P.Point -> StrictList.List (Tuple P.Point P.Point)
+-- unwrap this magic to understand what it does
+cartesianProductOfPoints' l1 l2 = Tuple <$> l1 <*> l2 -- l1  a ver \p -> l2 >>= \p2 -> pure (Tuple p p2)
+
+-- f t g = Function.uncurry g t 
 -- EOC educe this to operate with better abstractions  
 
   -- for each l1 elements

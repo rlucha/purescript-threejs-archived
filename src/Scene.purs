@@ -8,10 +8,14 @@ import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.Array (concat)
 
+
+type Mesh = Array P.Point
+
 data Scene = Scene 
   { points :: Array P.Point
   , lines ::  Array L.Line
-  , squares ::  Array S.Square
+  , squares :: Array S.Square
+  , meshes :: Array Mesh
 }
 
 derive instance genScene :: Generic Scene _
@@ -36,14 +40,20 @@ squareToLines (S.Square {a,b,c,d}) =
   in [lab, lbd, ldc, lca]
 
 -- create parses the squares to lines, this should be a row type I think
-create :: { points :: Array P.Point, lines :: Array L.Line, squares :: Array S.Square } -> Scene
+create :: 
+  { points :: Array P.Point
+  , lines :: Array L.Line
+  , squares :: Array S.Square
+  , meshes ::  Array Mesh } -> Scene
+
 create scene = 
-  let squares' = map squareToLines scene.squares
+  let squares' = map squareToLines scene.squares 
   in 
     Scene 
     { points: scene.points
     , lines: scene.lines <> concat squares'
     , squares: []
+    , meshes: scene.meshes
     }
 
 -- This is not needed anymore...
