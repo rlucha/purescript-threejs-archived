@@ -39,7 +39,7 @@ sq1 = SQ.create a b c d
 sq1c = T.translateSquare sq1 center
 
 sq1Points :: Array P.Point
-sq1Points = fromFoldable $ Interpolate.interpolateSquare 10 sq1c
+sq1Points = fromFoldable $ Interpolate.interpolate sq1c 10
 
 -- Make Scene not require empty lines to be created
 scene = Scene.create

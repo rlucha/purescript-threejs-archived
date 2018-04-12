@@ -27,3 +27,4 @@ translateSquare (Square {a, b, c, d}) g =
   , c: c + g
   , d: d + g
   }
+
