@@ -80,7 +80,7 @@ const createScene = function(ps_scene, animationCB) {
   var controls = new OrbitControls(camera)
   controls.enableZoom = true;
   controls.enabled = true;
-  controls.autoRotate = true;
+  // controls.autoRotate = true;
 
   // Attach canvas canvas
   document.body.appendChild( renderer.domElement );
@@ -98,11 +98,14 @@ const createScene = function(ps_scene, animationCB) {
 
   const cylinders = makeCylinders(ps_points)
 
+  const timeStamp = Date.now()
   // Start LOOP
   function animate() {
+    const t = Date.now() - timeStamp
     requestAnimationFrame( animate );
     controls.update();
     renderer.render( scene, camera );
+    moveCylinders(cylinders, t)
   }
   
   animate();
@@ -141,17 +144,13 @@ const renderLines = function(ps_lines) {
 
 const makeCylinders = function(points) {
   return _.map(points, function(p) {
-    makeCylinder(unWrapPSField(p))
+    return makeCylinder(unWrapPSField(p))
   })
 }
 
 const makeCylinder = function(point) {
-  const delta = (point.x + point.z) * 0.2
-  console.log(delta);
-  
-  const h = Math.abs(Math.cos((point.x + point.y) *0.1) * 80);
   const sz = 8.2;
-  var geometry = new CylinderGeometry(sz,sz,delta,6);
+  var geometry = new CylinderGeometry(sz,sz,10,6);
   var material = new MeshNormalMaterial({side: DoubleSide})
   var cylinder = new Mesh( geometry, material );
 
@@ -160,6 +159,16 @@ const makeCylinder = function(point) {
   return cylinder
 }
 
+const moveCylinders = function(cylinders, offset) {  
+  
+  cylinders.forEach(function(c) {
+    const posX = c.position.x
+    const posZ = c.position.z
+    const delta = (posX + posZ) * 0.2
+    const h = Math.abs(Math.cos((posX + posZ) * offset * 0.000001) * 80);  
+    c.position.set(posX, h , posZ)
+  })
+}
 
 const renderMeshes = function(meshes) {
   var geometry = new Geometry();
