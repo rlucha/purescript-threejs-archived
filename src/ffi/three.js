@@ -26,6 +26,7 @@ var Mesh = require("three").Mesh
 var DoubleSide = require("three").DoubleSide
 var ShapeUtils = require("three").ShapeUtils
 var CylinderGeometry = require("three").CylinderGeometry
+var HemisphereLight = require("three").HemisphereLight
 
 var OrbitControls = require('three-orbit-controls')(require("three"))
 
@@ -70,6 +71,10 @@ const createScene = function(ps_scene, animationCB) {
   camera.position.set(0, 50, 80)
   camera.lookAt(0, 250, 0) 
 
+  // Global lights
+  var light = new HemisphereLight( 0xffffff, 0x080820, 1 );
+  scene.add( light );
+
   window.camera = camera;
   // Controls
   var controls = new OrbitControls(camera)
@@ -91,7 +96,7 @@ const createScene = function(ps_scene, animationCB) {
   dots.forEach(function(dot) {scene.add(dot) });
   meshes.forEach(function(mesh) {scene.add(mesh) });
 
-  makeCylinders(ps_points)
+  const cylinders = makeCylinders(ps_points)
 
   // Start LOOP
   function animate() {
@@ -135,21 +140,26 @@ const renderLines = function(ps_lines) {
 }
 
 const makeCylinders = function(points) {
-  _.forEach(points, function(p) {    
+  return _.map(points, function(p) {
     makeCylinder(unWrapPSField(p))
   })
 }
 
 const makeCylinder = function(point) {
-  const h = Math.random()*20;
+  const delta = (point.x + point.z) * 0.2
+  console.log(delta);
+  
+  const h = Math.abs(Math.cos((point.x + point.y) *0.1) * 80);
   const sz = 8.2;
-  var geometry = new CylinderGeometry(sz,sz,h,6);
+  var geometry = new CylinderGeometry(sz,sz,delta,6);
   var material = new MeshNormalMaterial({side: DoubleSide})
   var cylinder = new Mesh( geometry, material );
 
-  cylinder.position.set(point.x,h*.5,point.z)
+  cylinder.position.set(point.x, 0 ,point.z)
   scene.add( cylinder );
+  return cylinder
 }
+
 
 const renderMeshes = function(meshes) {
   var geometry = new Geometry();
