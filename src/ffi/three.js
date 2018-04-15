@@ -159,13 +159,15 @@ const makeCylinder = function(point) {
   return cylinder
 }
 
-const moveCylinders = function(cylinders, offset) {  
-  
+const moveCylinders = function(cylinders, t) {  
+  const speed = t * 0.0025;
+  const amplitude = 30;
   cylinders.forEach(function(c) {
     const posX = c.position.x
     const posZ = c.position.z
-    const delta = (posX + posZ) * 0.2
-    const h = Math.abs(Math.cos((posX + posZ) * offset * 0.000001) * 80);  
+    const delta = (posX + posZ) * 0.01
+    // const h = Math.abs(Math.cos((posX + posZ) * t * 0.00001) * 80);  
+    const h = Math.cos(speed + delta) * amplitude
     c.position.set(posX, h , posZ)
   })
 }
