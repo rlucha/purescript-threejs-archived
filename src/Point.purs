@@ -17,8 +17,14 @@ instance encodePoint :: Encode Point where
 instance semiringPoint :: Semiring Point where
   add = sumPoint
   mul = mulPoint
-  zero = Point { x:0.0, y:0.0, z:0.0}
+  zero = zeroPoint
   one = Point { x:1.0, y:1.0, z:1.0}
+
+instance ringPoint :: Ring Point where
+  sub = subPoint
+
+zeroPoint :: Point
+zeroPoint = Point { x:0.0, y:0.0, z:0.0}
 
 create :: Number -> Number -> Number -> Point
 create x y z = Point 
@@ -34,9 +40,19 @@ sumPoint (Point a) (Point b) = Point
   , z: a.z + b.z
   }
 
+subPoint :: Point -> Point -> Point
+subPoint (Point a) (Point b) = Point 
+  { x: a.x - b.x 
+  , y: a.y - b.y
+  , z: a.z - b.z
+  }
+
 mulPoint :: Point -> Point -> Point
 mulPoint (Point a) (Point b) = Point
- { x: a.x * b.x 
- , y: a.y * b.y
- , z: a.z * b.z
- }
+  { x: a.x * b.x 
+  , y: a.y * b.y
+  , z: a.z * b.z
+  }
+
+negatePoint :: Point -> Point 
+negatePoint (Point a) = create (negate a.x) (negate a.y) (negate a.z)

@@ -2,13 +2,16 @@ module Interpolate where
 
 import Prelude
 import Data.List.Lazy as LazyList
-import Data.List (List, range, fromFoldable)  as StrictList
+import Data.List (List(..), fromFoldable, range, take, head) as StrictList
+import Data.List (List(Nil), (:), foldr)
 import Data.Int (toNumber)
 import Data.List.ZipList (ZipList(..))
 import Control.Apply (lift2)
+import Data.Maybe
 import Point as P
 import Line as L
 import Square as SQ
+import Transform
 
 type Steps = Int
 
@@ -57,3 +60,25 @@ instance il :: Interpolatable L.Line where
             <*> ZipList (LazyList.fromFoldable bi) 
             <*> ZipList (LazyList.fromFoldable ci)
     in StrictList.fromFoldable ri
+
+-- This should be a combination of basic interpolation and a ziggy line?
+-- That would need to create a square from two lines nad not only from four points
+
+-- getDistanceFromLine :: Line -> Point
+-- getDistanceFromLine Nil = P.create 0.0 0.0 0.0
+-- getDistanceFromLine (Line l) = StrictList.take 2 lab 
+
+interpolateStarSquare :: SQ.Square -> Int -> StrictList.List P.Point
+interpolateStarSquare sq s = 
+  let points = SQ.getPoints sq
+      lab = interpolate (L.create points.a points.b) s
+      distancePoint = (*) (P.create 0.25 1.0 1.0) $ foldr (-) P.zeroPoint $ StrictList.take 2 lab
+      -- zigPoint = 
+      --   case distance of
+      --     Nil -> f
+      --     (distance:Nil) -> distance
+      -- lac = interpolate (L.create points.a points.c) s
+      lac = zigPoints distancePoint (P.negatePoint distancePoint) $ interpolate (L.create points.a points.c) s
+  --  uncurry is gonna take a binary function and make it a unary function over Tuples
+  -- cartesianProductOfPoints :: (*) <$> lab <*> lac
+  in StrictList.fromFoldable $ lift2 (+) lab lac -- (*) <$> lab <*> lac

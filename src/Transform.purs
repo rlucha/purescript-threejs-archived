@@ -2,6 +2,9 @@ module Transform where
 
 import Prelude
 import Point as P
+import Line as L
+import Utils
+import Data.List
 import Square(Square(..))
 
 -- Make a typeclass for this...
@@ -28,3 +31,13 @@ translateSquare (Square {a, b, c, d}) g =
   , d: d + g
   }
 
+-- zigLine :: L.Line -> L.Line
+-- zigLine l = 
+--   let points = L.getPoints l
+--   in points
+
+zigPoints :: forall a. Semiring a => a -> a -> List a -> List a
+zigPoints p p2 lp = 
+  let evenP = (+) p <$> evens lp
+      oddsP = (+) p2 <$> odds lp
+    in evenP <> oddsP

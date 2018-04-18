@@ -17,6 +17,7 @@ var Geometry = require("three").Geometry
 var PointsMaterial = require("three").PointsMaterial
 var LineBasicMaterial = require("three").LineBasicMaterial
 var MeshNormalMaterial = require("three").MeshNormalMaterial
+var MeshPhongMaterial = require("three").MeshPhongMaterial
 var Vector3 = require("three").Vector3
 var Face3 = require("three").Face3
 var Points = require("three").Points
@@ -27,11 +28,27 @@ var DoubleSide = require("three").DoubleSide
 var ShapeUtils = require("three").ShapeUtils
 var CylinderGeometry = require("three").CylinderGeometry
 var HemisphereLight = require("three").HemisphereLight
+var OrthographicCamera = require("three").OrthographicCamera
+var Fog = require("three").Fog
 
 var OrbitControls = require('three-orbit-controls')(require("three"))
 
 var _ = require("lodash")
 // Setup scene  
+
+const sceneConfig = {
+  cylinderSize: 25,
+  waveAmplitude: 10,
+  waveSpeed: 0.0015,
+  waveFrequency: 0.005,
+  colors: {
+    background: new Color(0x211E2B),
+    color1: new Color(0x9C4368),
+    color2: new Color(0xE36D60),
+    color3: new Color(0xED8F5B),
+    color4: new Color(0x33223B),  
+  }
+}
 
 const createScene = function(ps_scene, animationCB) { 
 
@@ -41,8 +58,12 @@ const createScene = function(ps_scene, animationCB) {
   const ps_lines = uwrap_scene.lines
   const ps_meshes = uwrap_scene.meshes
 
+  // :scene
   var scene = new Scene();
-  scene.background = new Color( 0x212741 );
+  scene.background = sceneConfig.colors.background
+  // How to make fog appear?
+  // :fog
+  scene.fog = new Fog(sceneConfig.colors.background, 0.015, 600);
   
   // DEBUG
   window.THREE = require("three")
@@ -66,16 +87,17 @@ const createScene = function(ps_scene, animationCB) {
   var axesHelper = new AxesHelper( 100 );
   scene.add( axesHelper );
   
-  // Camera
-  var camera = new PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
-  camera.position.set(0, 50, 80)
-  camera.lookAt(0, 250, 0) 
+  // :camera
+  var camera = new PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 1000 );
+  // var camera = new OrthographicCamera( 1000 / - 2, 1000 / 2, 800 / 2, 800 / - 2, 1, 1000 );
+  
+  camera.position.set(-112, 170, 60)
+  camera.lookAt(0, 0, 0) 
 
   // Global lights
   var light = new HemisphereLight( 0xffffff, 0x080820, 1 );
   scene.add( light );
 
-  window.camera = camera;
   // Controls
   var controls = new OrbitControls(camera)
   controls.enableZoom = true;
@@ -104,6 +126,7 @@ const createScene = function(ps_scene, animationCB) {
     const t = Date.now() - timeStamp
     requestAnimationFrame( animate );
     controls.update();
+    console.log(camera.position)
     renderer.render( scene, camera );
     moveCylinders(cylinders, t)
   }
@@ -149,9 +172,14 @@ const makeCylinders = function(points) {
 }
 
 const makeCylinder = function(point) {
-  const sz = 8.2;
+  const sz = sceneConfig.cylinderSize;
   var geometry = new CylinderGeometry(sz,sz,10,6);
-  var material = new MeshNormalMaterial({side: DoubleSide})
+  // var material = new MeshNormalMaterial({side: DoubleSide})
+  var material = new MeshPhongMaterial({
+    color: sceneConfig.colors.color1,
+    opacity: 1.0,
+    transparent: true
+  })
   var cylinder = new Mesh( geometry, material );
 
   cylinder.position.set(point.x, 0 ,point.z)
@@ -160,12 +188,14 @@ const makeCylinder = function(point) {
 }
 
 const moveCylinders = function(cylinders, t) {  
-  const speed = t * 0.0025;
-  const amplitude = 30;
+  const speed = t * sceneConfig.waveSpeed;
+  const amplitude = sceneConfig.waveAmplitude;
+  const freq = sceneConfig.waveFrequency
+
   cylinders.forEach(function(c) {
     const posX = c.position.x
     const posZ = c.position.z
-    const delta = (posX + posZ) * 0.01
+    const delta = (posX + posZ) * freq
     // const h = Math.abs(Math.cos((posX + posZ) * t * 0.00001) * 80);  
     const h = Math.cos(speed + delta) * amplitude
     c.position.set(posX, h , posZ)

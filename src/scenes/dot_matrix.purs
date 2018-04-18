@@ -10,14 +10,17 @@ import Prelude
 -- import Data.List (List(..), (:), toUnfoldable, zipWith, concat)
 
 import Point as P
+import Line as L
 import Square as SQ
 import Transform as T
 import Interpolate as Interpolate
-import Data.Array (fromFoldable)
 import Scene as Scene
 
-size = 400.0
-steps = 10
+import Data.Array (fromFoldable)
+
+
+size = 1200.0
+steps = 20
 
 center = P.create (-size * 0.25) 0.0 (-size * 0.25)
 
@@ -34,7 +37,7 @@ d :: P.Point
 d = P.create size 0.0 size
 
 sq1 :: SQ.Square
-sq1 = SQ.create a b c d
+sq1 = SQ.createFromLines (L.create a b) (L.create c d)
 
 sq1c = T.translateSquare sq1 center
 
