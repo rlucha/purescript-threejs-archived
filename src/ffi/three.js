@@ -84,7 +84,7 @@ const createScene = function(ps_scene, animationCB) {
   scene.add(spotLight);
 
   // Axis helper
-  var axesHelper = new AxesHelper( 100 );
+  // var axesHelper = new AxesHelper( 100 );
   // scene.add( axesHelper );
   
   // :camera
