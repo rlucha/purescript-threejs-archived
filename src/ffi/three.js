@@ -85,7 +85,7 @@ const createScene = function(ps_scene, animationCB) {
 
   // Axis helper
   var axesHelper = new AxesHelper( 100 );
-  scene.add( axesHelper );
+  // scene.add( axesHelper );
   
   // :camera
   var camera = new PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 1000 );
