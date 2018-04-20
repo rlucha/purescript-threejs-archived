@@ -21,7 +21,6 @@ module.exports = {
     port: 8080,
     stats: 'errors-only',
   },
-  watch: true,
   watchOptions: {
     aggregateTimeout: 300,
     poll: 1000,

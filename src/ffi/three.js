@@ -259,8 +259,6 @@ const renderPoints = function(points) {
   })
 };
 
-
-
 module.exports = {
   createScene: createScene,
   renderPoints: renderPoints
