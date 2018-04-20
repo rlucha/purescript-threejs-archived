@@ -7,4 +7,6 @@
 /.psc*
 /.purs*
 /.psa*
-/dist
+
+/dist/*
+!/dist/main.js
