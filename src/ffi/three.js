@@ -126,7 +126,6 @@ const createScene = function(ps_scene, animationCB) {
     const t = Date.now() - timeStamp
     requestAnimationFrame( animate );
     controls.update();
-    console.log(camera.position)
     renderer.render( scene, camera );
     moveCylinders(cylinders, t)
   }
@@ -217,23 +216,12 @@ const renderMeshes = function(meshes) {
 
   geometry.vertices.push(new Vector3(100, 0, 0))
 
-  console.log(geometry.vertices)
   var triangles = ShapeUtils.triangulateShape(geometry.vertices, [])
 
   _.forEach(triangles, function(t) {
     geometry.faces.push(new Face3(t[0], t[1], t[2]))
   })
 
-
-  // console.log(geometry.vertices[0], geometry.vertices[1], geometry.vertices[2])
-  // geometry.faces.push( new Face3( 
-  //   geometry.vertices[0],
-  //   geometry.vertices[1],
-  //   geometry.vertices[2]
-  // ) );
-
-  // needs faces too
-  
   geometry.computeVertexNormals()
 
   var material = new MeshNormalMaterial({side: DoubleSide})
