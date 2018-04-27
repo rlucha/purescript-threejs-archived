@@ -50,88 +50,88 @@ const sceneConfig = {
   }
 }
 
-const createScene = function(ps_scene, animationCB) { 
-
-  const uwrap_scene = unwrapScene(ps_scene)
-  window.uwrap_scene = uwrap_scene
-  const ps_points = uwrap_scene.points
-  const ps_lines = uwrap_scene.lines
-  const ps_meshes = uwrap_scene.meshes
-
-  // :scene
-  var scene = new Scene();
-  scene.background = sceneConfig.colors.background
-  // How to make fog appear?
-  // :fog
-  scene.fog = new Fog(sceneConfig.colors.background, 0.015, 600);
+const createScene = function(ps_scene) { 
+  return function() {
+    const uwrap_scene = unwrapScene(ps_scene)
+    window.uwrap_scene = uwrap_scene
+    const ps_points = uwrap_scene.points
+    const ps_lines = uwrap_scene.lines
+    const ps_meshes = uwrap_scene.meshes
   
-  // DEBUG
-  window.THREE = require("three")
-  window.scene = scene;
-
-  // Renderer
-  var renderer = new WebGLRenderer();
-  renderer.setPixelRatio( window.devicePixelRatio );
-  renderer.setSize( window.innerWidth, window.innerHeight );
-
-  var ambientLight = new AmbientLight(0x404040);
-  scene.add(ambientLight);
-
-  var spotLight = new SpotLight();
-  spotLight.position.set(500, 1000, 1000);
-  spotLight.power = 3;
-  spotLight.castShadow = true;
-  scene.add(spotLight);
-
-  // Axis helper
-  // var axesHelper = new AxesHelper( 100 );
-  // scene.add( axesHelper );
+    // :scene
+    var scene = new Scene();
+    scene.background = sceneConfig.colors.background
+    // How to make fog appear?
+    // :fog
+    scene.fog = new Fog(sceneConfig.colors.background, 0.015, 600);
+    
+    // DEBUG
+    window.THREE = require("three")
+    window.scene = scene;
   
-  // :camera
-  var camera = new PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 1000 );
-  // var camera = new OrthographicCamera( 1000 / - 2, 1000 / 2, 800 / 2, 800 / - 2, 1, 1000 );
+    // Renderer
+    var renderer = new WebGLRenderer();
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( window.innerWidth, window.innerHeight );
   
-  camera.position.set(-112, 170, 60)
-  camera.lookAt(0, 0, 0) 
-
-  // Global lights
-  var light = new HemisphereLight( 0xffffff, 0x080820, 1 );
-  scene.add( light );
-
-  // Controls
-  var controls = new OrbitControls(camera)
-  controls.enableZoom = true;
-  controls.enabled = true;
-  // controls.autoRotate = true;
-
-  // Attach canvas canvas
-  document.body.appendChild( renderer.domElement );
-
-  const dots = renderPoints(ps_points);
+    var ambientLight = new AmbientLight(0x404040);
+    scene.add(ambientLight);
   
-  // TODO add lines
-  const lines = renderLines(ps_lines);
-
-  const meshes = renderMeshes(ps_meshes);
+    var spotLight = new SpotLight();
+    spotLight.position.set(500, 1000, 1000);
+    spotLight.power = 3;
+    spotLight.castShadow = true;
+    scene.add(spotLight);
   
-  lines.forEach(function(line) {scene.add(line) });
-  dots.forEach(function(dot) {scene.add(dot) });
-  meshes.forEach(function(mesh) {scene.add(mesh) });
-
-  const cylinders = makeCylinders(ps_points)
-
-  const timeStamp = Date.now()
-  // Start LOOP
-  function animate() {
-    const t = Date.now() - timeStamp
-    requestAnimationFrame( animate );
-    controls.update();
-    renderer.render( scene, camera );
-    moveCylinders(cylinders, t)
+    // Axis helper
+    // var axesHelper = new AxesHelper( 100 );
+    // scene.add( axesHelper );
+    
+    // :camera
+    var camera = new PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 1000 );
+    // var camera = new OrthographicCamera( 1000 / - 2, 1000 / 2, 800 / 2, 800 / - 2, 1, 1000 );
+    
+    camera.position.set(-112, 170, 60)
+    camera.lookAt(0, 0, 0) 
+  
+    // Global lights
+    var light = new HemisphereLight( 0xffffff, 0x080820, 1 );
+    scene.add( light );
+  
+    // Controls
+    var controls = new OrbitControls(camera)
+    controls.enableZoom = true;
+    controls.enabled = true;
+    // controls.autoRotate = true;
+  
+    // Attach canvas canvas
+    document.body.appendChild( renderer.domElement );
+  
+    const dots = renderPoints(ps_points);
+    
+    // TODO add lines
+    const lines = renderLines(ps_lines);
+  
+    const meshes = renderMeshes(ps_meshes);
+    
+    lines.forEach(function(line) {scene.add(line) });
+    dots.forEach(function(dot) {scene.add(dot) });
+    meshes.forEach(function(mesh) {scene.add(mesh) });
+  
+    const cylinders = makeCylinders(ps_points)
+  
+    const timeStamp = Date.now()
+    // Start LOOP
+    function animate() {
+      const t = Date.now() - timeStamp
+      requestAnimationFrame( animate );
+      controls.update();
+      renderer.render( scene, camera );
+      moveCylinders(cylinders, t)
+    }
+    
+    animate();
   }
-  
-  animate();
-
 }
 
 const unwrapScene = function(ps_scene) {

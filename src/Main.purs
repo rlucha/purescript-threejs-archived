@@ -12,14 +12,13 @@ import Prelude
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
 import Three (Three, createScene)  as T
-import Time.Loop (initLoop, showFoo, showNumber)
+import Time.Loop (initLoop)
 
 -- Scenes
 import Scenes.DotMatrix (scene) as DotMatrix
 
--- This is not working, because do notation is sequential?
 main :: forall e. Eff (three :: T.Three, console :: CONSOLE | e)  Unit
 main = do
-  initLoop [showNumber, showFoo]
   T.createScene $ DotMatrix.scene
+  initLoop
   

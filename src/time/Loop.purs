@@ -4,29 +4,25 @@ import Prelude
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
 
-type Time = Number
+foreign import setAnimationFrameBehaviour 
+  :: forall eff. (Eff eff) Unit -> (Eff eff) Unit
 
--- requestAnimationFrame returns an Effectfull computation of type and return a Unit
-foreign import setAnimationFrameBehaviour :: forall eff b c. (b -> c) -> (Eff eff) Unit
+showInt :: forall e. Int -> Int
+showInt n = n + 1
 
-showNumber :: forall e. Time -> Eff (console :: CONSOLE | e) Unit
-showNumber n = log (show n)
+showIntMil :: forall e. Int -> Int
+showIntMil n = n + 1000
 
-showFoo :: forall e. Time -> Eff (console :: CONSOLE | e) Unit
-showFoo n = log "Foo"
+showTimesTwo :: Int -> Int
+showTimesTwo n = n * 2
 
-negateTime :: Time -> Time
-negateTime t = t * 0.0
+makeLoop :: forall e b c. Array (Int -> Int) -> Int -> (Eff (console :: CONSOLE | e)) Unit
+makeLoop fns n = do
+  c <- pure $ fns <*> [n]
+  _ <- log $ show c
+  setAnimationFrameBehaviour $ makeLoop fns (n+1)
 
-mainLoop :: forall eff. Array (Time -> Eff eff Unit) -> Time -> Array ((Eff eff) Unit)
-mainLoop flist n = map (\f -> f n) flist
+-- Parallel, non dependant executions and <<< dependant composition
+initLoop :: forall e. Eff (console :: CONSOLE | e) Unit
+initLoop = makeLoop [showInt, showTimesTwo <<< showIntMil] 0
 
-initLoop :: forall eff. Array (Time -> (Eff eff) Unit) -> Eff eff Unit
-initLoop flist = setAnimationFrameBehaviour $ mainLoop flist
-
-
--- main :: forall a. Eff a Unit
--- main = setAnimationFrameBehaviour $ mainLoop flist
---   where flist = [showNumber <<< negateTime, showFoo] 
-
--- TODO use it as a library (needs some kind of mutable reference to hold all returned values ... maybe?)
