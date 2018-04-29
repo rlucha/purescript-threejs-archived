@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.5",
+    "lodash.curry": "^4.1.1",
     "three": "^0.89.0",
     "three-orbit-controls": "^82.1.0"
   }
