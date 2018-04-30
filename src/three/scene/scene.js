@@ -14,7 +14,25 @@ var setSceneBackground = function(scene) {
   }
 }
 
+var addToScene = function(object) {
+  return function(scene) {
+    return function() {
+      scene.add(object)
+      return scene
+    }
+  }
+}
+
+var debugScene = function(scene) {
+  return function() {
+    window.scene = scene
+    return scene
+  }
+}
+
 module.exports = {
   createScene: createScene,
-  setSceneBackground: setSceneBackground
+  setSceneBackground: setSceneBackground,
+  addToScene: addToScene,
+  debugScene: debugScene
 }

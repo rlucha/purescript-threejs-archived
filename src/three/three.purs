@@ -6,3 +6,5 @@ import Three.Types (ThreeT, Color)
 import Control.Monad.Eff (Eff, kind Effect)
 
 foreign import createColor :: String -> ThreeT Color
+foreign import createAxesHelper 
+  :: Number -> ThreeT Unit

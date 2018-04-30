@@ -1,6 +1,25 @@
 // // MODULE Three
 
 var Color = require("three").Color
+var AxesHelper = require("three").AxesHelper
+
+// Simple string implementation for color, no checks...
+var createColor = function(color) {
+  return function() {
+    return new Color(color)
+  }
+}
+
+var createAxesHelper = function(size) {
+  return function() {
+    return new AxesHelper(size);
+  }
+}
+
+module.exports = {
+  createColor: createColor,
+  createAxesHelper: createAxesHelper
+}
 
 // // TODO
 // // Annotate everything this file is doing and move it to purescript eventually
@@ -16,7 +35,7 @@ var Color = require("three").Color
 // var WebGLRenderer = require("three").WebGLRenderer
 // var AmbientLight = require("three").AmbientLight
 // var SpotLight = require("three").SpotLight
-// var AxesHelper = require("three").AxesHelper
+// 
 // var PerspectiveCamera = require("three").PerspectiveCamera
 // var Mesh = require("three").Mesh
 // var Geometry = require("three").Geometry
@@ -268,13 +287,3 @@ var Color = require("three").Color
 // // });
 
 
-// Simple string implementation for color, no checks...
-var createColor = function(color) {
-  return function() {
-    return new Color(color)
-  }
-}
-
-module.exports = {
-  createColor: createColor
-}
