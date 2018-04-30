@@ -9,10 +9,12 @@ module Main where
 -- Next steps: Try to reproduce hierarchy2 example from threejs 
 
 import Prelude
+import Control.Extend ((<<=))
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
-import Three.Types (Three, Renderer)
-import Three.Scene (createScene)
+import Three.Types (Three, Renderer, Scene, Color)
+import Three (createColor)
+import Three.Scene (createScene, setSceneBackground)
 import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRenderer)
 import Time.Loop (makeLoop)
 -- Scenes
@@ -29,11 +31,17 @@ showTimesTwo :: Int -> Int
 showTimesTwo n = n * 2
 
 createRenderer :: forall e. Eff (three :: Three | e) Unit
-createRenderer = do 
-  r0 <- createWebGLRenderer
-  r1 <- setPixelRatio r0
-  r2 <- setSize r1 100.0 100.0
-  mountRenderer r1
+createRenderer = 
+  createWebGLRenderer 
+    >>= setPixelRatio 
+    >>= setSize 100.0 100.0 
+    >>= mountRenderer
+
+initScene :: forall e. Eff (three :: Three | e) Scene
+initScene = do
+  scene <- createScene
+  color <- createColor "0xfff"
+  setSceneBackground scene color
 
 main :: forall e. Eff (three :: Three, console :: CONSOLE | e)  Unit
 main = do

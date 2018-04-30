@@ -1,6 +1,9 @@
 module Three.Scene where
 
-import Three.Types (Three, Scene)
+import Three.Types (Three, ThreeT, Scene, Color)
 import Control.Monad.Eff (Eff)
 
-foreign import createScene :: forall e. Eff (three :: Three | e) Scene
+type SceneEff = ThreeT Scene
+
+foreign import createScene :: SceneEff
+foreign import setSceneBackground :: Color -> Scene -> SceneEff

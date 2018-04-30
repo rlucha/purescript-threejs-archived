@@ -13,12 +13,24 @@ var setPixelRatio = function(renderer) {
     return renderer
   }
 }
-// Check if the currying here affects anything outside
+
+// TODO: Use something like Ramda curry fn to make this easy
 // window.innerWidth, window.innerHeight
-var setSize = curry(function(renderer, width, height, _) {
-  renderer.setSize( width, height)
-  return renderer  
-})
+var setSize = function(width) {
+  return function(height) {
+    return function(renderer) {
+      return function() {
+        renderer.setSize( width, height)
+        return renderer  
+      }
+    }
+  }
+}
+
+var setSize2 = curry(setSize)
+
+window.setSize = setSize
+window.setSize2 = setSize2
 
 var mountRenderer = function(renderer) {
   return function() {

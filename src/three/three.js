@@ -1,5 +1,7 @@
 // // MODULE Three
 
+var Color = require("three").Color
+
 // // TODO
 // // Annotate everything this file is doing and move it to purescript eventually
 
@@ -266,6 +268,13 @@
 // // });
 
 
-module.exports = {
+// Simple string implementation for color, no checks...
+var createColor = function(color) {
+  return function() {
+    return new Color(color)
+  }
+}
 
+module.exports = {
+  createColor: createColor
 }
