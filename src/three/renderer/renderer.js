@@ -27,10 +27,15 @@ var setSize = function(width) {
   }
 }
 
-var setSize2 = curry(setSize)
-
-window.setSize = setSize
-window.setSize2 = setSize2
+var render = function(scene) {
+  return function (camera) {
+    return function(renderer) {
+      return function() {
+        renderer.render(scene)
+      }
+    }  
+  }
+}
 
 var mountRenderer = function(renderer) {
   return function() {
@@ -43,5 +48,6 @@ module.exports = {
   createWebGLRenderer: createWebGLRenderer,
   setPixelRatio: setPixelRatio,
   setSize: setSize,
-  mountRenderer: mountRenderer
+  mountRenderer: mountRenderer,
+  render: render
 }

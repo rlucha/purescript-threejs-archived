@@ -7,7 +7,9 @@ var createScene = function() {
 // Color has to be a Three.Color
 var setSceneBackground = function(color) {
   return function(scene) {
-    scene.background = color
+    return function() {
+      scene.background = color
+    }
   }
 }
 

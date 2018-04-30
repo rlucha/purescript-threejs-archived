@@ -15,7 +15,7 @@ import Control.Monad.Eff.Console (CONSOLE, log)
 import Three.Types (Three, Renderer, Scene, Color)
 import Three (createColor)
 import Three.Scene (createScene, setSceneBackground)
-import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRenderer)
+import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRenderer, render)
 import Time.Loop (makeLoop)
 -- Scenes
 import Scenes.DotMatrix (scene) as DotMatrix
@@ -30,22 +30,29 @@ showIntMil n = n + 1000
 showTimesTwo :: Int -> Int
 showTimesTwo n = n * 2
 
-createRenderer :: forall e. Eff (three :: Three | e) Unit
+createRenderer :: forall e. Eff (three :: Three | e) Renderer
 createRenderer = 
   createWebGLRenderer 
     >>= setPixelRatio 
     >>= setSize 100.0 100.0 
-    >>= mountRenderer
 
 initScene :: forall e. Eff (three :: Three | e) Scene
 initScene = do
   scene <- createScene
-  color <- createColor "0xfff"
+  color <- createColor "0xfffff"
   setSceneBackground scene color
 
 main :: forall e. Eff (three :: Three, console :: CONSOLE | e)  Unit
 main = do
   -- T.createScene $ DotMatrix.scene
-  createRenderer
+  scene <- initScene 
+  renderer <- createRenderer
+  -- Can we make this implicit into a renderer lifecycle?
+  -- I don't like the idea that mountRenderer has to come before render... 
+  -- this implies state on the DOM before calling render...
+  -- it is a mess
+  mountRenderer renderer
+  -- TODO: create this camera
+  _ <- render scene camera renderer
   makeLoop [showInt, showTimesTwo <<< showIntMil] 0
   

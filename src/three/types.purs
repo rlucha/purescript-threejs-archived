@@ -8,6 +8,8 @@ foreign import data Scene :: Type
 
 foreign import data Renderer :: Type
 
+foreign import data Camera :: Type
+
 foreign import data Color :: Type
 
 -- Three Effect Constructor? bad naming maybe?
