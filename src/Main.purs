@@ -16,6 +16,7 @@ import Three.Types (Three, Renderer, Scene, Color)
 import Three (createColor)
 import Three.Scene (createScene, setSceneBackground)
 import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRenderer, render)
+import Three.Camera (createPerspectiveCamera)
 import Time.Loop (makeLoop)
 -- Scenes
 import Scenes.DotMatrix (scene) as DotMatrix
@@ -39,20 +40,20 @@ createRenderer =
 initScene :: forall e. Eff (three :: Three | e) Scene
 initScene = do
   scene <- createScene
-  color <- createColor "0xfffff"
-  setSceneBackground scene color
+  color <- createColor "#FFFFFF"
+  setSceneBackground scene color 
 
 main :: forall e. Eff (three :: Three, console :: CONSOLE | e)  Unit
 main = do
   -- T.createScene $ DotMatrix.scene
   scene <- initScene 
   renderer <- createRenderer
+  camera <- createPerspectiveCamera 100.0 1.8 1.0 100.0
   -- Can we make this implicit into a renderer lifecycle?
   -- I don't like the idea that mountRenderer has to come before render... 
   -- this implies state on the DOM before calling render...
   -- it is a mess
   mountRenderer renderer
-  -- TODO: create this camera
   _ <- render scene camera renderer
   makeLoop [showInt, showTimesTwo <<< showIntMil] 0
   

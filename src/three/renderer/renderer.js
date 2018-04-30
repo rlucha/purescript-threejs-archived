@@ -31,7 +31,7 @@ var render = function(scene) {
   return function (camera) {
     return function(renderer) {
       return function() {
-        renderer.render(scene)
+        renderer.render(scene, camera)
       }
     }  
   }
