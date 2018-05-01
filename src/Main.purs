@@ -10,7 +10,7 @@ module Main where
 
 import Prelude
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE)
+import Control.Monad.Eff.Console (CONSOLE, log)
 import Three.Types (Three, ThreeT, Renderer, Scene, AxesHelper, Camera)
 import Three (createColor, createAxesHelper)
 import Three.Scene (debugScene, createScene, setSceneBackground, addToScene)
@@ -36,27 +36,26 @@ createRenderer =
     >>= setSize 600.0 600.0 
 
 initScene :: ThreeT Scene
-initScene = do
+initScene = do 
   scene <- createScene
   color <- createColor "#000000"
-  setSceneBackground scene color 
+  setSceneBackground color scene
 
-attachAxesHelper :: Scene -> Number -> ThreeT Scene
+attachAxesHelper :: Scene -> Number -> ∀ e. Eff (three :: Three | e) Scene
 attachAxesHelper scene size = do
   axesHelper <- createAxesHelper size
   addToScene axesHelper scene
 
 -- how to constrain ThreeT to OrbitControls Specifically?
 -- Now it is fully polymorphic...
-createControls :: Camera -> Scene -> ThreeT OrbitControls  
+createControls :: Camera -> Scene -> ∀ e. Eff (three :: Three | e) OrbitControls  
 createControls camera scene = do 
   controls <- createOrbitControls camera
-  enableControls controls
+  enableControls controls 
 
-main :: ∀ e. Eff (three :: Three, console :: CONSOLE | e)  Unit
+main :: ∀ e. Eff (three :: Three, console :: CONSOLE | e) Unit
 main = do
-  -- T.createScene $ DotMatrix.scene
-  scene <- initScene 
+  scene <- initScene
   camera <- createPerspectiveCamera 100.0 1.8 1.0 1000.0
   renderer <- createRenderer
   controls <- createControls camera scene
@@ -65,13 +64,16 @@ main = do
   _ <- debugScene scene 
   -- Render
   _ <- render scene camera renderer
-  mountRenderer renderer
-  makeLoop [ 
-      (\_ -> updateControls controls),
-      (\_ -> render scene camera renderer)
+  _ <- mountRenderer renderer
+  -- Main Loop
+  makeLoop 
+      -- we are forced to have a function for Int to Eff
+      -- that makes updateControls feel unnatural...
+    -- updateControls controls
+      $ render scene camera renderer 
     -- time loop
-    -- showInt, 
+    -- showInt,
     -- showTimesTwo <<< showIntMil
-    ] 0
-
+    
+-- T.createScene $ DotMatrix.scene
 -- makeLoop needs to handle Eff...

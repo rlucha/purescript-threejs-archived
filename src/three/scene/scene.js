@@ -5,8 +5,8 @@ var createScene = function() {
 }
 
 // Color has to be a Three.Color
-var setSceneBackground = function(scene) {
-  return function(color) {
+var setSceneBackground = function(color) {
+  return function(scene) {
     return function() {
       scene.background = color
       return scene

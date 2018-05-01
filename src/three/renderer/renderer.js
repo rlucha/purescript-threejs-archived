@@ -27,10 +27,13 @@ var setSize = function(width) {
   }
 }
 
+// Had to force this to take a number that doesn't need
 var render = function(scene) {
   return function (camera) {
     return function(renderer) {
       return function() {
+        console.log('render');
+        
         renderer.render(scene, camera)
       }
     }  
