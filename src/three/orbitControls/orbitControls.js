@@ -18,7 +18,6 @@ var enableControls = function(controls) {
 // Had to force this to take a number that doesn't use
 var updateControls = function(controls) {
   return function() {
-    console.log('updated controls')
     controls.update()
   }
 }

@@ -33,7 +33,7 @@ createRenderer :: ∀ e. Eff (three :: Three | e) Renderer
 createRenderer = 
   createWebGLRenderer 
     >>= setPixelRatio -- Defaults to device ratio right now
-    >>= setSize 600.0 600.0 
+    >>= setSize 1200.0 600.0 
 
 initScene :: ThreeT Scene
 initScene = do 
@@ -56,7 +56,7 @@ createControls camera scene = do
 main :: ∀ e. Eff (three :: Three, console :: CONSOLE | e) Unit
 main = do
   scene <- initScene
-  camera <- createPerspectiveCamera 100.0 1.8 1.0 1000.0
+  camera <- createPerspectiveCamera 100.0 2.0 1.0 1000.0
   renderer <- createRenderer
   controls <- createControls camera scene
   -- Utils
@@ -69,7 +69,7 @@ main = do
   makeLoop [
       -- we are forced to have a function for Int to Eff
       -- that makes updateControls feel unnatural...
-    -- updateControls controls
+      updateControls controls,
       render scene camera renderer 
     -- time loop
     -- showInt,
@@ -77,3 +77,11 @@ main = do
   ]
 -- T.createScene $ DotMatrix.scene
 -- makeLoop needs to handle Eff...
+
+-- TODO: Investigate, what is the relation between given a & b :: Eff e Unit
+-- foo a b = do 
+--   _ <- a
+--   _ <- b
+--   ....
+
+-- foo a b = a *> b

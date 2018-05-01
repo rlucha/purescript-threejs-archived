@@ -32,8 +32,6 @@ var render = function(scene) {
   return function (camera) {
     return function(renderer) {
       return function() {
-        console.log('render');
-        
         renderer.render(scene, camera)
       }
     }  
@@ -45,7 +43,6 @@ var mountRenderer = function(renderer) {
     document.body.appendChild( renderer.domElement);
   }
 }
-
 
 module.exports = {
   createWebGLRenderer: createWebGLRenderer,
