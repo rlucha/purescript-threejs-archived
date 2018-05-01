@@ -66,14 +66,14 @@ main = do
   _ <- render scene camera renderer
   _ <- mountRenderer renderer
   -- Main Loop
-  makeLoop 
+  makeLoop [
       -- we are forced to have a function for Int to Eff
       -- that makes updateControls feel unnatural...
     -- updateControls controls
-      $ render scene camera renderer 
+      render scene camera renderer 
     -- time loop
     -- showInt,
     -- showTimesTwo <<< showIntMil
-    
+  ]
 -- T.createScene $ DotMatrix.scene
 -- makeLoop needs to handle Eff...

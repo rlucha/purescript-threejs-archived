@@ -3,6 +3,7 @@ module Time.Loop where
 import Prelude
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
+import Data.Foldable (sequence_)
 
 foreign import setAnimationFrameBehaviour 
   :: forall eff. (Eff eff) Unit -> (Eff eff) Unit
@@ -17,13 +18,8 @@ foreign import setAnimationFrameBehaviour
 --   -- _ <- log $ show c
 --   setAnimationFrameBehaviour (makeLoop fns (n+1))
 
-
-makeLoop 
-  :: forall e b c. (Eff e Unit)
-  -> Eff e Unit
-makeLoop eff = do
-  -- This gets passes fns from Int to Eff but it won't execute those functions in JS!
-  -- How to execute these effects?
-  _ <- eff
-  -- _ <- log $ show c
-  setAnimationFrameBehaviour $ makeLoop eff
+-- How to transform the function above to...
+makeLoop :: forall e. Array (Eff e Unit) -> Eff e Unit
+makeLoop effs = do
+  _ <- sequence_ effs
+  setAnimationFrameBehaviour $ makeLoop effs
