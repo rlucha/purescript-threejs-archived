@@ -74,7 +74,7 @@ main = do
     -- time loop
     -- showInt,
     -- showTimesTwo <<< showIntMil
-  ]
+  ] 0
 -- T.createScene $ DotMatrix.scene
 -- makeLoop needs to handle Eff...
 

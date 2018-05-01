@@ -18,8 +18,13 @@ foreign import setAnimationFrameBehaviour
 --   -- _ <- log $ show c
 --   setAnimationFrameBehaviour (makeLoop fns (n+1))
 
--- How to transform the function above to...
-makeLoop :: forall e. Array (Eff e Unit) -> Eff e Unit
-makeLoop effs = do
+-- How to make makeLoop to accept functions from Int to Eff
+-- and just Effs...
+-- Make a sum type of both cases and pattern match?
+
+-- Why makeLoop cannot use log?
+makeLoop :: forall e. Array (Eff e Unit) -> Int -> Eff e Unit
+makeLoop effs t = do
   _ <- sequence_ effs
-  setAnimationFrameBehaviour $ makeLoop effs
+  -- _ <- log (show t)
+  setAnimationFrameBehaviour $ makeLoop effs (t+1)
