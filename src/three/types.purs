@@ -15,4 +15,4 @@ foreign import data Color :: Type
 foreign import data AxesHelper :: Type
 
 -- Three Effect Constructor? bad naming maybe?
-type ThreeT t = forall e t. Eff (three :: Three | e) t
+type ThreeT t = forall e. Eff (three :: Three | e) t

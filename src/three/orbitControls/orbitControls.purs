@@ -8,4 +8,4 @@ foreign import data OrbitControls :: Type
 
 foreign import createOrbitControls :: Camera -> ThreeT OrbitControls
 foreign import enableControls :: OrbitControls -> ThreeT OrbitControls
-foreign import updateControls :: OrbitControls -> forall e. Eff (three :: Three | e) Unit
+foreign import updateControls :: OrbitControls -> ThreeT Unit

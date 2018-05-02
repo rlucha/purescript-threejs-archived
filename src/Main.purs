@@ -16,7 +16,7 @@ import Three (createColor, createAxesHelper)
 import Three.Scene (debugScene, createScene, setSceneBackground, addToScene)
 import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRenderer, render)
 import Three.Camera (createPerspectiveCamera)
-import Time.Loop (makeLoop)
+import Time.Loop (makeLoop, LoopEff(..))
 import Three.OrbitControls (OrbitControls, createOrbitControls, enableControls, updateControls)
 
 showInt :: Int -> Int
@@ -69,10 +69,10 @@ main = do
   makeLoop [
       -- we are forced to have a function for Int to Eff
       -- that makes updateControls feel unnatural...
-      updateControls controls,
-      render scene camera renderer 
+      LoopA (updateControls controls),
+      LoopA $ render scene camera renderer,
     -- time loop
-    -- showInt,
+      LoopB showInt 
     -- showTimesTwo <<< showIntMil
   ] 0
 -- T.createScene $ DotMatrix.scene

@@ -8,6 +8,10 @@ import Data.Foldable (sequence_)
 foreign import setAnimationFrameBehaviour 
   :: forall eff. (Eff eff) Unit -> (Eff eff) Unit
 
+
+data LoopEff e = LoopA (Eff e Unit)
+              | LoopB (Int -> Int)
+
 -- makeLoop 
 --   :: forall e b c. Array (Int -> (Eff e Unit))
 --   -> Int 
@@ -23,8 +27,12 @@ foreign import setAnimationFrameBehaviour
 -- Make a sum type of both cases and pattern match?
 
 -- Why makeLoop cannot use log?
-makeLoop :: forall e. Array (Eff e Unit) -> Int -> Eff e Unit
+makeLoop :: forall e. Array (LoopEff e) -> Int -> Eff e Unit
 makeLoop effs t = do
-  _ <- sequence_ effs
+-- map over the effects and patter match
+  -- sequence_ effs
+  -- st <- traverse (\f -> f t) effs
   -- _ <- log (show t)
   setAnimationFrameBehaviour $ makeLoop effs (t+1)
+
+-- makeLoop will take eventually another param which is the results of traversing all the computations
