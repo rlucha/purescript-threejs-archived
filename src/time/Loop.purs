@@ -2,37 +2,40 @@ module Time.Loop where
 
 import Prelude
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, log)
 import Data.Foldable (sequence_)
+import Data.Traversable (traverse)
 
 foreign import setAnimationFrameBehaviour 
   :: forall eff. (Eff eff) Unit -> (Eff eff) Unit
 
+type Time = Int
 
-data LoopEff e = LoopA (Eff e Unit)
-              | LoopB (Int -> Int)
+data State = State { x :: Number }
 
--- makeLoop 
---   :: forall e b c. Array (Int -> (Eff e Unit))
---   -> Int 
---   -> Eff e Unit
--- makeLoop fns n = do
---   -- This gets passes fns from Int to Eff but it won't execute those functions in JS!
---   _ <- pure $ fns <*> [n]
---   -- _ <- log $ show c
---   setAnimationFrameBehaviour (makeLoop fns (n+1))
+type LoopCalculation = Time -> Number
+type LoopBehaviour e = Time -> Eff e Unit
+type LoopEffect e = Eff e Unit
 
--- How to make makeLoop to accept functions from Int to Eff
--- and just Effs...
--- Make a sum type of both cases and pattern match?
+makeLoop 
+  :: forall e. 
+  Array LoopCalculation ->
+  Array (LoopBehaviour e) ->
+  Array (LoopEffect e) ->
+  -- State ->
+  Time ->
+  Eff e Unit
 
--- Why makeLoop cannot use log?
-makeLoop :: forall e. Array (LoopEff e) -> Int -> Eff e Unit
-makeLoop effs t = do
--- map over the effects and patter match
-  -- sequence_ effs
-  -- st <- traverse (\f -> f t) effs
-  -- _ <- log (show t)
-  setAnimationFrameBehaviour $ makeLoop effs (t+1)
+-- makeLoop calcs behs effs st t = do
+makeLoop calcs behs effs t = do
+  let results = calcs <*> [t] -- run calculations over time
+  _ <- traverse (\f -> f t) behs  -- execute time bound effects
+  sequence_ effs                  -- execute time free effects
+  setAnimationFrameBehaviour $ makeLoop calcs behs effs (t+1) -- recurse
 
 -- makeLoop will take eventually another param which is the results of traversing all the computations
+
+-- comment from cvlad
+-- Looks a lot like you're writing an interpreter, but in a quite explicit way. 
+-- If you're not familiar with Free Monads, 
+-- maybe it's worth watching @natefaubion’s excellent presentation (https://www.youtube.com/watch?v=eKkxmVFcd74) and playing with the idea. 
+-- Perhaps even a look into `purescript-run` is worth it. (edited)

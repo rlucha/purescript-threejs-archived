@@ -11,16 +11,17 @@ module Main where
 import Prelude
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
+import Data.Int (toNumber)
 import Three.Types (Three, ThreeT, Renderer, Scene, AxesHelper, Camera)
 import Three (createColor, createAxesHelper)
 import Three.Scene (debugScene, createScene, setSceneBackground, addToScene)
 import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRenderer, render)
 import Three.Camera (createPerspectiveCamera)
-import Time.Loop (makeLoop, LoopEff(..))
+import Time.Loop (makeLoop, Time)
 import Three.OrbitControls (OrbitControls, createOrbitControls, enableControls, updateControls)
 
-showInt :: Int -> Int
-showInt n = n + 1
+incT :: Time -> Number
+incT n = toNumber(n + 1) 
 
 showIntMil :: Int -> Int
 showIntMil n = n + 1000
@@ -64,17 +65,28 @@ main = do
   _ <- debugScene scene 
   -- Render
   _ <- render scene camera renderer
-  _ <- mountRenderer renderer
+  mountRenderer renderer
   -- Main Loop
-  makeLoop [
+  makeLoop
+  -- Caculations
+    [ incT ]
+  -- Time bound effects
+    [ log <<< show]
+  -- Time free effects
+    [ updateControls controls, 
+      render scene camera renderer]
+    0
+    -- [incT]
+    -- 
+    -- 
       -- we are forced to have a function for Int to Eff
       -- that makes updateControls feel unnatural...
-      LoopA (updateControls controls),
-      LoopA $ render scene camera renderer,
+      -- LoopA (updateControls controls),
+      -- LoopA $ render scene camera renderer,
     -- time loop
-      LoopB showInt 
+      -- LoopB showInt 
     -- showTimesTwo <<< showIntMil
-  ] 0
+    -- 0
 -- T.createScene $ DotMatrix.scene
 -- makeLoop needs to handle Eff...
 
