@@ -59,13 +59,14 @@ scene = do
   vs <- traverse Scene.createVectorFromPoint sq1Points
   -- here we are mutating g in JS... then using the reference in createPoints g
   -- should we express that effect somehow?
-  _ <- traverse (pushVertices g) vs
-  -- _ <- pure $ (pushVertices g) <$> vs
-  p <- createPoints g m
+  g2 <- traverse (pushVertices g) vs
+  p <- createPoints g2 m
   pure p
 
 -- Explain why traverse works and pure fmap does not
--- traerse actually executes the effects , pure fmap does not...
+-- traverse actually executes the effects , pure fmap does not...
+-- traverese evaluates m b becase it needs to lift the value our of m to create t of m
+-- fmap just needs to put b into f, without actually extracting the value
   -- _ <- traverse (pushVertices g) vs
   -- _ <- pure $ (pushVertices g) <$> vs
 

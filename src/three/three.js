@@ -32,10 +32,12 @@ var createVector3 = function (x) {
   }
 }
 
+// how to make this actually inmutable, manage this ref handling from PS instead of JS
 var pushVertices = function(geometry) {
   return function(vector3) {
     return function() {
       geometry.vertices.push(vector3)
+      return geometry
     }
   }
 } 

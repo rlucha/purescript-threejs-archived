@@ -9,4 +9,4 @@ foreign import createAxesHelper :: Number -> ThreeT Unit
 foreign import createGeometry :: ThreeT Geometry
 
 foreign import createVector3 :: Number -> Number -> Number -> ThreeT Vector3
-foreign import pushVertices :: Geometry -> Vector3 -> ThreeT Unit
+foreign import pushVertices :: Geometry -> Vector3 -> ThreeT Geometry
