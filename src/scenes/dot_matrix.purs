@@ -23,6 +23,8 @@ import Three.Scene (addToScene)
 import Three.Objects.Points (createPoints)
 import Three.PointsMaterial (createPointsMaterial)
 
+import Data.Traversable (traverse)
+
 size = 1200.0
 steps = 20
 
@@ -52,8 +54,12 @@ scene :: forall e. ThreeT Point
 scene = do 
   g <- createGeometry
   m <- createPointsMaterial
-  v <- createVector3 10.0 10.0 10.0
-  _ <- pushVertices g v
+  -- this scene 'unparsing' will be done at the scene graph parsing level
+  -- eventually
+  vs <- traverse Scene.createVectorFromPoint sq1Points
+  -- here we are mutating g in JS... then using the reference in createPoints g
+  -- should we express that effect somehow?
+  _ <- traverse (pushVertices g) vs
   p <- createPoints g m
   pure p
 

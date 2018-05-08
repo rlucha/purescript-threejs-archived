@@ -8,6 +8,8 @@ import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.Array (concat)
 
+import Three (createVector3)
+import Three.Types (ThreeT, Vector3)
 
 type Mesh = Array P.Point
 
@@ -30,6 +32,9 @@ instance showScene :: Show Scene where show = genericShow
 
 -- for now we will represent an square as a list of 4 lines
 -- so we need to create lines from the points of an square
+
+createVectorFromPoint :: P.Point -> ThreeT Vector3
+createVectorFromPoint (P.Point {x, y, z}) = createVector3 x y z
 
 squareToLines :: S.Square -> Array L.Line
 squareToLines (S.Square {a,b,c,d}) = 

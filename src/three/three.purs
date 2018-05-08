@@ -1,7 +1,6 @@
 module Three where
 
 import Prelude
-import Scene
 import Three.Types (ThreeT, Color, Geometry, Vector3)
 import Control.Monad.Eff (Eff, kind Effect)
 
