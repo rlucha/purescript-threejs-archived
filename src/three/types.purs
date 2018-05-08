@@ -12,6 +12,16 @@ foreign import data Camera :: Type
 
 foreign import data Color :: Type
 
+foreign import data Vector3 :: Type
+
+foreign import data Geometry :: Type
+ 
+-- Materials
+foreign import data Material :: Type
+
+-- Objects
+foreign import data Point :: Type
+
 foreign import data AxesHelper :: Type
 
 -- Three Effect Constructor? bad naming maybe?

@@ -2,6 +2,8 @@
 
 var Color = require("three").Color
 var AxesHelper = require("three").AxesHelper
+var Geometry = require("three").Geometry
+var Vector3 = require("three").Vector3
 
 // Simple string implementation for color, no checks...
 var createColor = function(color) {
@@ -12,13 +14,38 @@ var createColor = function(color) {
 
 var createAxesHelper = function(size) {
   return function() {
-    return new AxesHelper(size);
+    return new AxesHelper(size)
   }
 }
 
+var createGeometry = function() {
+  return new Geometry()
+} 
+
+var createVector3 = function (x) {
+  return function(y) {
+    return function(z) {
+      return function() {
+        return new Vector3(x, y, z)
+      }
+    }
+  }
+}
+
+var pushVertices = function(geometry) {
+  return function(vector3) {
+    return function() {
+      geometry.vertices.push(vector3)
+    }
+  }
+} 
+
 module.exports = {
   createColor: createColor,
-  createAxesHelper: createAxesHelper
+  createAxesHelper: createAxesHelper,
+  createGeometry: createGeometry,
+  createVector3: createVector3,
+  pushVertices: pushVertices
 }
 
 // // TODO

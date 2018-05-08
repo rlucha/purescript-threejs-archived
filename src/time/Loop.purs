@@ -8,12 +8,17 @@ import Data.Traversable (traverse)
 foreign import setAnimationFrameBehaviour 
   :: forall eff. (Eff eff) Unit -> (Eff eff) Unit
 
-type Time = Int
+type Time = Int 
 
 data State = State { x :: Number }
 
+-- recommendation to use newtype
+-- newtype LoopCalculation = LoopCalculation (Time -> Number)
 type LoopCalculation = Time -> Number
-type LoopBehaviour e = Time -> Eff e Unit
+-- behaviours are not from time to behaviour but from calculation to Eff
+-- one calculation can just be identity
+-- Array of Number is just a very simple State temporariyl
+type LoopBehaviour e = Array Number -> Eff e Unit
 type LoopEffect e = Eff e Unit
 
 makeLoop 
@@ -28,7 +33,7 @@ makeLoop
 -- makeLoop calcs behs effs st t = do
 makeLoop calcs behs effs t = do
   let results = calcs <*> [t] -- run calculations over time
-  _ <- traverse (\f -> f t) behs  -- execute time bound effects
+  _ <- traverse (\f -> f results) behs  -- execute time bound effects
   sequence_ effs                  -- execute time free effects
   setAnimationFrameBehaviour $ makeLoop calcs behs effs (t+1) -- recurse
 

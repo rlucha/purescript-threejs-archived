@@ -12,13 +12,17 @@ import Prelude
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
 import Data.Int (toNumber)
+
+import Time.Loop (makeLoop, Time)
+
 import Three.Types (Three, ThreeT, Renderer, Scene, AxesHelper, Camera)
 import Three (createColor, createAxesHelper)
 import Three.Scene (debugScene, createScene, setSceneBackground, addToScene)
 import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRenderer, render)
 import Three.Camera (createPerspectiveCamera)
-import Time.Loop (makeLoop, Time)
 import Three.OrbitControls (OrbitControls, createOrbitControls, enableControls, updateControls)
+
+import Scenes.DotMatrix as DotMatrix
 
 incT :: Time -> Number
 incT n = toNumber(n + 1) 
@@ -40,19 +44,33 @@ initScene :: ThreeT Scene
 initScene = do 
   scene <- createScene
   color <- createColor "#000000"
-  setSceneBackground color scene
+  -- Compose this 3 fns below
+  points <- DotMatrix.scene
+  populatedScene <- addToScene points scene
+  setSceneBackground color populatedScene
 
 attachAxesHelper :: Scene -> Number -> ∀ e. Eff (three :: Three | e) Scene
 attachAxesHelper scene size = do
   axesHelper <- createAxesHelper size
   addToScene axesHelper scene
 
--- how to constrain ThreeT to OrbitControls Specifically?
--- Now it is fully polymorphic...
 createControls :: Camera -> Scene -> ∀ e. Eff (three :: Three | e) OrbitControls  
 createControls camera scene = do 
   controls <- createOrbitControls camera
   enableControls controls 
+
+doLoop :: ∀ e. OrbitControls -> Scene -> Camera -> Renderer -> Eff (three :: Three, console :: CONSOLE | e) Unit
+doLoop controls scene camera renderer = makeLoop
+  -- Caculations
+    [ id <<< toNumber
+    , incT ]
+  -- Time bound effects
+    [] --log <<< show
+  -- Time free effects
+    [ updateControls controls
+    , render scene camera renderer]
+    0
+-- T.createScene $ DotMatrix.scene
 
 main :: ∀ e. Eff (three :: Three, console :: CONSOLE | e) Unit
 main = do
@@ -66,34 +84,4 @@ main = do
   -- Render
   _ <- render scene camera renderer
   mountRenderer renderer
-  -- Main Loop
-  makeLoop
-  -- Caculations
-    [ incT ]
-  -- Time bound effects
-    [ log <<< show]
-  -- Time free effects
-    [ updateControls controls, 
-      render scene camera renderer]
-    0
-    -- [incT]
-    -- 
-    -- 
-      -- we are forced to have a function for Int to Eff
-      -- that makes updateControls feel unnatural...
-      -- LoopA (updateControls controls),
-      -- LoopA $ render scene camera renderer,
-    -- time loop
-      -- LoopB showInt 
-    -- showTimesTwo <<< showIntMil
-    -- 0
--- T.createScene $ DotMatrix.scene
--- makeLoop needs to handle Eff...
-
--- TODO: Investigate, what is the relation between given a & b :: Eff e Unit
--- foo a b = do 
---   _ <- a
---   _ <- b
---   ....
-
--- foo a b = a *> b
+  doLoop controls scene camera renderer
