@@ -60,8 +60,15 @@ scene = do
   -- here we are mutating g in JS... then using the reference in createPoints g
   -- should we express that effect somehow?
   _ <- traverse (pushVertices g) vs
+  -- _ <- pure $ (pushVertices g) <$> vs
   p <- createPoints g m
   pure p
+
+-- Explain why traverse works and pure fmap does not
+-- traerse actually executes the effects , pure fmap does not...
+  -- _ <- traverse (pushVertices g) vs
+  -- _ <- pure $ (pushVertices g) <$> vs
+
 
 -- Scene now will use ThreeJS directly instead of just coordinate manipulation
 
