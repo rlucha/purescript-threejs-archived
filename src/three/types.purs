@@ -20,7 +20,7 @@ foreign import data Geometry :: Type
 foreign import data Material :: Type
 
 -- Objects
-foreign import data Point :: Type
+foreign import data Points :: Type
 
 foreign import data AxesHelper :: Type
 

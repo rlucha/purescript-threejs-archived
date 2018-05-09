@@ -1,5 +1,5 @@
 module Scenes.DotMatrix 
-  (scene)
+  (create)
 where
 
 -- Todo Plane & Plane interpolation from 4 points (only 3 really needed)
@@ -18,7 +18,7 @@ import Interpolate as Interpolate
 import Scene as Scene
 
 import Three (createGeometry, createVector3, pushVertices)
-import Three.Types (ThreeT, Point)
+import Three.Types (ThreeT, Points)
 import Three.Scene (addToScene)
 import Three.Objects.Points (createPoints)
 import Three.PointsMaterial (createPointsMaterial)
@@ -50,8 +50,26 @@ sq1c = T.translateSquare sq1 center
 sq1Points :: Array P.Point
 sq1Points = fromFoldable $ Interpolate.interpolate sq1c steps
 
-scene :: forall e. ThreeT Point
-scene = do 
+-- Things that can be created on init
+-- geometry
+-- materials
+-- vector3s
+-- points
+
+-- update shoud take all those and update positions only
+-- Should a scene have State?, that way we can easily mutate a
+-- scene state in a performant way.
+
+-- update :: Time -> Scene -> ThreeT Scene
+-- update t s = do
+  -- a means of parsing a scene into runnable elements
+  -- a way to apply values to elements
+  -- a way to use calculations and apply those to positions
+
+
+-- TODO scene type should be ThreeT Scene
+create :: forall e. ThreeT Points
+create = do
   g <- createGeometry
   m <- createPointsMaterial
   -- this scene 'unparsing' will be done at the scene graph parsing level
@@ -59,8 +77,8 @@ scene = do
   vs <- traverse Scene.createVectorFromPoint sq1Points
   -- here we are mutating g in JS... then using the reference in createPoints g
   -- should we express that effect somehow?
-  g2 <- traverse (pushVertices g) vs
-  p <- createPoints g2 m
+  _ <- traverse (pushVertices g) vs
+  p <- createPoints g m
   pure p
 
 -- Explain why traverse works and pure fmap does not

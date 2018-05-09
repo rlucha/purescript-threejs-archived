@@ -12,6 +12,8 @@ import Prelude
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
 import Data.Int (toNumber)
+-- import Math (cos, abs) as Math
+
 
 import Time.Loop (makeLoop, Time)
 
@@ -33,6 +35,10 @@ showIntMil n = n + 1000
 showTimesTwo :: Int -> Int
 showTimesTwo n = n * 2
 
+-- cosCalc :: Time -> Number
+-- cosCalc t = Math.abs (Math.cos)
+-- Math.abs(Math.cos((posX + posZ) * t * 0.00001) * 80)
+
 -- Why can't I use here ThreeT Renderer?
 createRenderer :: ∀ e. Eff (three :: Three | e) Renderer
 createRenderer = 
@@ -45,7 +51,7 @@ initScene = do
   scene <- createScene
   color <- createColor "#000000"
   -- Compose this 3 fns below
-  points <- DotMatrix.scene
+  points <- DotMatrix.create 
   populatedScene <- addToScene points scene
   setSceneBackground color populatedScene
 
@@ -59,13 +65,24 @@ createControls camera scene = do
   controls <- createOrbitControls camera
   enableControls controls 
 
+renderScene :: forall e. Time -> Scene -> Camera -> Renderer -> Eff (three :: Three | e) Unit
+renderScene t s c r = do
+  -- scene <- s.update t
+  render s c r
+-- the whole doLoop function should be doing a lot of stuff by default
+-- without us having to pass render or updatecontrol stuff
+-- basically we should declare module effects and doloop should pick those up
+-- and merge them with the default ones...
+-- TODO Provide an interface to run loop with just the custom things
 doLoop :: ∀ e. OrbitControls -> Scene -> Camera -> Renderer -> Eff (three :: Three, console :: CONSOLE | e) Unit
 doLoop controls scene camera renderer = makeLoop
-  -- Caculations
+  -- Caculations (should be partially applied to be useful to the scene!)
     [ id <<< toNumber
     , incT ]
   -- Time bound effects
-    [] --log <<< show
+    [log <<< show
+    -- , updateScene scene
+    ]
   -- Time free effects
     [ updateControls controls
     , render scene camera renderer]
@@ -75,13 +92,12 @@ doLoop controls scene camera renderer = makeLoop
 main :: ∀ e. Eff (three :: Three, console :: CONSOLE | e) Unit
 main = do
   scene <- initScene
-  camera <- createPerspectiveCamera 100.0 2.0 1.0 1000.0
+  camera <- createPerspectiveCamera 100.0 2.0 1.0 10000.0
   renderer <- createRenderer
   controls <- createControls camera scene
   -- Utils
   _ <- attachAxesHelper scene 100.0
   _ <- debugScene scene 
-  -- Render
-  _ <- render scene camera renderer
   mountRenderer renderer
+  -- Main loop
   doLoop controls scene camera renderer
