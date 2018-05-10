@@ -32,6 +32,14 @@ var createVector3 = function (x) {
   }
 }
 
+var updateVector3Position = function(n) {
+  return function(v3) {
+    return function() {
+      v3.y += n * (v3.x / 250) * (v3.z / 250)
+    }
+  }
+}
+
 // how to make this actually inmutable, manage this ref handling from PS instead of JS
 var pushVertices = function(geometry) {
   return function(vector3) {
@@ -42,12 +50,22 @@ var pushVertices = function(geometry) {
   }
 } 
 
+// TODO change for a generic Object3D
+var forcePointsUpdate = function(g) {
+  return function() {
+    // remove .geometry and make access direct from PS
+    g.geometry.verticesNeedUpdate = true
+  }
+}
+
 module.exports = {
   createColor: createColor,
   createAxesHelper: createAxesHelper,
   createGeometry: createGeometry,
   createVector3: createVector3,
-  pushVertices: pushVertices
+  pushVertices: pushVertices,
+  updateVector3Position: updateVector3Position,
+  forcePointsUpdate: forcePointsUpdate
 }
 
 // // TODO

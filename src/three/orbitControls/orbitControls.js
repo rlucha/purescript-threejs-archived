@@ -9,7 +9,7 @@ var createOrbitControls = function(camera) {
 var enableControls = function(controls) {
   return function() {
     controls.enabled = true
-    controls.autoRotate = true //remove
+    // controls.autoRotate = true //remove
     controls.enableZoom = true //remove
     return controls
   }

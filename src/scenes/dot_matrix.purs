@@ -1,5 +1,5 @@
 module Scenes.DotMatrix 
-  (create)
+  (create, update, AnimatedScene, getSceneObjects)
 where
 
 -- Todo Plane & Plane interpolation from 4 points (only 3 really needed)
@@ -8,8 +8,9 @@ where
 
 import Prelude
 import Data.Array (fromFoldable)
--- import Data.List (List(..), (:), toUnfoldable, zipWith, concat)
-
+import Data.Traversable (traverse, traverse_)
+import Data.Int
+-- Custom Algebra
 import Point as P
 import Line as L
 import Square as SQ
@@ -17,13 +18,16 @@ import Transform as T
 import Interpolate as Interpolate
 import Scene as Scene
 
-import Three (createGeometry, createVector3, pushVertices)
-import Three.Types (ThreeT, Points)
+-- ThreePS bindings
+import Three (createGeometry, createVector3, pushVertices, updateVector3Position, forcePointsUpdate)
+import Three.Types (ThreeT, Points, Scene, Vector3)
 import Three.Scene (addToScene)
 import Three.Objects.Points (createPoints)
 import Three.PointsMaterial (createPointsMaterial)
 
-import Data.Traversable (traverse)
+-- Time
+import Time.Loop (Time)
+
 
 size = 1200.0
 steps = 20
@@ -50,6 +54,19 @@ sq1c = T.translateSquare sq1 center
 sq1Points :: Array P.Point
 sq1Points = fromFoldable $ Interpolate.interpolate sq1c steps
 
+
+-- Reader Scene (updatable scene, time bound)
+
+newtype AnimatedScene = AnimatedScene
+  { objects :: Points
+  , vectors :: Array Vector3 }
+
+getSceneObjects :: AnimatedScene -> Points
+getSceneObjects (AnimatedScene r) = r.objects
+
+getSceneVectors :: AnimatedScene -> Array Vector3
+getSceneVectors (AnimatedScene r) = r.vectors
+
 -- Things that can be created on init
 -- geometry
 -- materials
@@ -66,9 +83,15 @@ sq1Points = fromFoldable $ Interpolate.interpolate sq1c steps
   -- a way to apply values to elements
   -- a way to use calculations and apply those to positions
 
+update :: AnimatedScene -> Number -> ThreeT Unit
+update as t = 
+  let vs = getSceneVectors as
+      g = getSceneObjects as
+      pos = t
+  in traverse_ (updateVector3Position pos) vs *> forcePointsUpdate g
 
 -- TODO scene type should be ThreeT Scene
-create :: forall e. ThreeT Points
+create :: forall e. ThreeT AnimatedScene
 create = do
   g <- createGeometry
   m <- createPointsMaterial
@@ -77,9 +100,9 @@ create = do
   vs <- traverse Scene.createVectorFromPoint sq1Points
   -- here we are mutating g in JS... then using the reference in createPoints g
   -- should we express that effect somehow?
-  _ <- traverse (pushVertices g) vs
+  _ <- traverse_ (pushVertices g) vs
   p <- createPoints g m
-  pure p
+  pure $ AnimatedScene { objects: p, vectors: vs }
 
 -- Explain why traverse works and pure fmap does not
 -- traverse actually executes the effects , pure fmap does not...
