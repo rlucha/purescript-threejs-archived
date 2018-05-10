@@ -1,13 +1,5 @@
 module Main where
 
--- TODO 
--- get input from the JS side, scene would be a function with config params that returns an array of points
--- Connect datGUI to those params to get some interactivity
--- Think about other UI for inputs
--- Can we keep a reference to all created points so that only the positions change?
--- That way we could make the scene animated without perf decrease
--- Next steps: Try to reproduce hierarchy2 example from threejs 
-
 import Prelude
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
@@ -15,12 +7,11 @@ import Data.Int (toNumber)
 import Data.Tuple (Tuple(..), fst)
 import Data.Array (unsafeIndex)
 import Partial.Unsafe (unsafePartial)
-import Math (cos, abs) as Math
-
+import Math (cos) as Math
 
 import Time.Loop (makeLoop, Time)
 
-import Three.Types (Three, ThreeT, Renderer, Scene, AxesHelper, Camera)
+import Three.Types (Camera, Renderer, Scene, Three, ThreeT)
 import Three (createColor, createAxesHelper)
 import Three.Scene (debugScene, createScene, setSceneBackground, addToScene)
 import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRenderer, render)
@@ -35,22 +26,11 @@ incT n = toNumber(n + 1) / 100.0
 cosT :: Time -> Number
 cosT n = Math.cos(toNumber(n) * 0.01)
 
-showIntMil :: Int -> Int
-showIntMil n = n + 1000
-
-showTimesTwo :: Int -> Int
-showTimesTwo n = n * 2
-
--- cosCalc :: Time -> Number
--- cosCalc t = Math.abs (Math.cos)
--- Math.abs(Math.cos((posX + posZ) * t * 0.00001) * 80)
-
--- Why can't I use here ThreeT Renderer?
 createRenderer :: ∀ e. Eff (three :: Three | e) Renderer
 createRenderer = 
   createWebGLRenderer 
     >>= setPixelRatio -- Defaults to device ratio right now
-    >>= setSize 1200.0 600.0 
+    >>= setSize 1200.0 600.0
 
 initScene :: ThreeT (Tuple Scene DotMatrix.AnimatedScene)
 initScene = do 
@@ -98,7 +78,6 @@ doLoop controls (Tuple s as) camera renderer = makeLoop
     [ updateControls controls
     , render s camera renderer]
     0
--- T.createScene $ DotMatrix.scene
 
 main :: ∀ e. Eff (three :: Three, console :: CONSOLE | e) Unit
 main = do
@@ -113,12 +92,28 @@ main = do
   -- Main loop
   doLoop controls scene camera renderer
 
-
 -- TODO:
 -- Change name of animatedScene to something that makes it apart por threejs scene
 -- Make animatedScene a graph and provide a way to traverse it
 -- Make results a record and provide a way to hook propery results animtedScene Update functions
 -- Remove all partial unsafe functions
--- 
+-- Make doLoop actually beautiful
+-- Connect datGUI to those params to get some interactivity
+-- Think about other UI for inputs
+-- Next steps: Try to reproduce hierarchy2 example from threejs 
+-- Create a set of JS utils to make IFF less painful
+-- Get canvas size from window size
+-- Change it on resize, updateMatrices
+-- Remove Tuple Scene DotMatrix.AnimatedScene everywhere and treat them separatedly
+-- Add Camera position set and camera lookAt fns
+-- Create a draft of a type structure for threeJS (Object3D, Material, etc.)
+-- Orbitcontrol rotate, autoupdate fns, enable zoom, etc.
+-- Decide if effectful functions should return the object modified or just Unit...
+-- Move updateVector3Position to PS, (make it change x y z?)
+-- Make Time a newtype
+-- Write a bit of documentation about the type decisions on Time.Loop and Main mostly
+-- Remove most comments and create function names for those
+
+
 
 
