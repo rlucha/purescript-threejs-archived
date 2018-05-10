@@ -112,3 +112,13 @@ main = do
   mountRenderer renderer
   -- Main loop
   doLoop controls scene camera renderer
+
+
+-- TODO:
+-- Change name of animatedScene to something that makes it apart por threejs scene
+-- Make animatedScene a graph and provide a way to traverse it
+-- Make results a record and provide a way to hook propery results animtedScene Update functions
+-- Remove all partial unsafe functions
+-- 
+
+
