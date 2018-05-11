@@ -5,6 +5,8 @@ import Control.Monad.Eff (Eff)
 import Data.Foldable (sequence_)
 import Data.Traversable (traverse_)
 
+import Data.Record.Builder
+
 foreign import setAnimationFrameBehaviour :: forall eff. (Eff eff) Unit -> (Eff eff) Unit
 
 -- behaviours are not from time to behaviour but from calculation to Eff
@@ -14,7 +16,23 @@ foreign import setAnimationFrameBehaviour :: forall eff. (Eff eff) Unit -> (Eff 
 -- Array Number here should be CalculationsState or something
 -- type LoopBehaviour e = Array Number -> Eff e Unit
 
--- newtype Results = Results { | Number }
+-- newtype Results = Results {}
+
+-- putResult :: {r :: Number} -> Results -> Results
+-- putResult r rs = rs { r = r }
+
+-- calculation :: Time -> Symbol e -> Record { e :: Number }
+-- calculation = _
+
+-- Description of the problem
+-- I need a function that takes Time and returns a record of one label :: Number
+-- So I need the type of all the functions that take Time and return a Record of
+-- any label and a value of type number
+-- How to express "label"?
+-- After that I need to modify a "collector Record" that will merge all the results
+-- in itself to be passes around 
+
+
 
 newtype Time = Time Int
 
