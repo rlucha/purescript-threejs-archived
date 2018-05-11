@@ -58,7 +58,7 @@ createControls camera scene = do
 updateScene :: forall e. DotMatrix.Project -> Camera -> Renderer -> Array Number -> Eff (three :: Three | e) Unit
 updateScene s c r t = do
 -- Just while developing!! dangerous!
-  DotMatrix.update s (unsafePartial $ unsafeIndex t 2)
+  DotMatrix.update s (unsafePartial $ unsafeIndex t 1)
 -- the whole doLoop function should be doing a lot of stuff by default
 -- without us having to pass render or updatecontrol stuff
 -- basically we should declare module effects and doloop should pick those up
