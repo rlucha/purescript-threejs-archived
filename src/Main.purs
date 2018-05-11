@@ -18,7 +18,7 @@ import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRendere
 import Three.Camera (createPerspectiveCamera)
 import Three.OrbitControls (OrbitControls, createOrbitControls, enableControls, updateControls)
 
-import Scenes.DotMatrix  as DotMatrix
+import Projects.DotMatrix  as DotMatrix
 
 incT :: Time -> Number
 incT n = toNumber(n + 1) / 100.0
@@ -32,18 +32,18 @@ createRenderer =
     >>= setPixelRatio -- Defaults to device ratio right now
     >>= setSize 1200.0 600.0
 
-initScene :: ThreeT (Tuple Scene DotMatrix.AnimatedScene)
+initScene :: ThreeT (Tuple Scene DotMatrix.Project)
 initScene = do 
   -- this createScene is the ThreeJS new Scene fn, not our actual scene representation
   -- find better naming to make them apart
   scene <- createScene
   color <- createColor "#000000"
   -- Compose this 3 fns below
-  animatedScene <- DotMatrix.create
-  let objects = DotMatrix.getSceneObjects animatedScene
+  project <- DotMatrix.create
+  let objects = DotMatrix.getProjectObjects project
   _ <- addToScene objects scene
   setSceneBackground color scene
-  pure $ Tuple scene animatedScene
+  pure $ Tuple scene project
 
 attachAxesHelper :: Scene -> Number -> ∀ e. Eff (three :: Three | e) Unit
 attachAxesHelper scene size = do
@@ -55,7 +55,7 @@ createControls camera scene = do
   controls <- createOrbitControls camera
   enableControls controls 
 
-updateScene :: forall e. DotMatrix.AnimatedScene -> Camera -> Renderer -> Array Number -> Eff (three :: Three | e) Unit
+updateScene :: forall e. DotMatrix.Project -> Camera -> Renderer -> Array Number -> Eff (three :: Three | e) Unit
 updateScene s c r t = do
 -- Just while developing!! dangerous!
   DotMatrix.update s (unsafePartial $ unsafeIndex t 2)
@@ -64,15 +64,15 @@ updateScene s c r t = do
 -- basically we should declare module effects and doloop should pick those up
 -- and merge them with the default ones...
 -- TODO Provide an interface to run loop with just the custom things
-doLoop :: ∀ e. OrbitControls -> Tuple Scene DotMatrix.AnimatedScene -> Camera -> Renderer -> Eff (three :: Three, console :: CONSOLE | e) Unit
+doLoop :: ∀ e. OrbitControls -> Tuple Scene DotMatrix.Project -> Camera -> Renderer -> Eff (three :: Three, console :: CONSOLE | e) Unit
 doLoop controls (Tuple s as) camera renderer = makeLoop
   -- Caculations (should be partially applied to be useful to the scene!)
     [ id <<< toNumber
     , incT
     , cosT ]
   -- Time bound effects
-    [log <<< show
-    , updateScene as camera renderer
+    [ --log <<< show
+      updateScene as camera renderer
     ]
   -- Time free effects
     [ updateControls controls
@@ -93,8 +93,7 @@ main = do
   doLoop controls scene camera renderer
 
 -- TODO:
--- Change name of animatedScene to something that makes it apart por threejs scene
--- Make animatedScene a graph and provide a way to traverse it
+-- Make Project a graph and provide a way to traverse it
 -- Make results a record and provide a way to hook propery results animtedScene Update functions
 -- Remove all partial unsafe functions
 -- Make doLoop actually beautiful
@@ -104,7 +103,7 @@ main = do
 -- Create a set of JS utils to make IFF less painful
 -- Get canvas size from window size
 -- Change it on resize, updateMatrices
--- Remove Tuple Scene DotMatrix.AnimatedScene everywhere and treat them separatedly
+-- Remove Tuple Scene DotMatrix.Project everywhere and treat them separatedly
 -- Add Camera position set and camera lookAt fns
 -- Create a draft of a type structure for threeJS (Object3D, Material, etc.)
 -- Orbitcontrol rotate, autoupdate fns, enable zoom, etc.
