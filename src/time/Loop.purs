@@ -7,13 +7,19 @@ import Data.Traversable (traverse_)
 
 foreign import setAnimationFrameBehaviour :: forall eff. (Eff eff) Unit -> (Eff eff) Unit
 
-newtype Time = Time Int
--- recommendation to use newtype
--- newtype LoopCalculation = LoopCalculation (Time -> Number)
-type LoopCalculation = Time -> Number
 -- behaviours are not from time to behaviour but from calculation to Eff
 -- one calculation can just be identity
 -- Array of Number is just a very simple State temporariyl
+
+-- Array Number here should be CalculationsState or something
+-- type LoopBehaviour e = Array Number -> Eff e Unit
+
+-- newtype Results = Results { | Number }
+
+newtype Time = Time Int
+
+-- Should I make all this newtypes?
+type LoopCalculation = Time -> Number
 type LoopBehaviour e = Array Number -> Eff e Unit
 type LoopEffect e = Eff e Unit
 
@@ -29,13 +35,7 @@ runEffects effs = sequence_ effs
 increaseTime :: Time -> Int -> Time
 increaseTime (Time t) i = Time (t + i)
 
-makeLoop 
-  :: forall e. 
-  Array LoopCalculation ->
-  Array (LoopBehaviour e) ->
-  Array (LoopEffect e) ->
-  Time ->
-  Eff e Unit
+makeLoop :: forall e. Array LoopCalculation -> Array (LoopBehaviour e) -> Array (LoopEffect e) -> Time -> Eff e Unit
 makeLoop cs bs effs t = do
   runBehaviours results bs
   runEffects effs

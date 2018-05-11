@@ -9,7 +9,7 @@ import Data.Array (unsafeIndex)
 import Partial.Unsafe (unsafePartial)
 import Math (cos) as Math
 
-import Time.Loop (makeLoop, Time)
+import Time.Loop (makeLoop, Time(..))
 
 import Three.Types (Camera, Renderer, Scene, Three, ThreeT)
 import Three (createColor, createAxesHelper)
@@ -21,10 +21,10 @@ import Three.OrbitControls (OrbitControls, createOrbitControls, enableControls, 
 import Projects.DotMatrix  as DotMatrix
 
 incT :: Time -> Number
-incT n = toNumber(n + 1) / 100.0
+incT (Time n) = toNumber(n + 1) / 100.0
 
 cosT :: Time -> Number
-cosT n = Math.cos(toNumber(n) * 0.01)
+cosT (Time n) = Math.cos(toNumber(n) * 0.01)
 
 createRenderer :: ∀ e. Eff (three :: Three | e) Renderer
 createRenderer = 
@@ -67,8 +67,7 @@ updateScene s c r t = do
 doLoop :: ∀ e. OrbitControls -> Tuple Scene DotMatrix.Project -> Camera -> Renderer -> Eff (three :: Three, console :: CONSOLE | e) Unit
 doLoop controls (Tuple s as) camera renderer = makeLoop
   -- Caculations (should be partially applied to be useful to the scene!)
-    [ id <<< toNumber
-    , incT
+    [ incT
     , cosT ]
   -- Time bound effects
     [ --log <<< show
@@ -77,7 +76,7 @@ doLoop controls (Tuple s as) camera renderer = makeLoop
   -- Time free effects
     [ updateControls controls
     , render s camera renderer]
-    0
+    (Time 0)
 
 main :: ∀ e. Eff (three :: Three, console :: CONSOLE | e) Unit
 main = do
