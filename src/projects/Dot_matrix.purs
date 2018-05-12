@@ -6,7 +6,7 @@ where
 -- Interpolate looks like an abstraction over n points
 -- given 2 points, gives you a line, given 3+ gives you a surface
 
-import Prelude (Unit, bind, negate, pure, ($), (*), (*>))
+import Prelude
 import Data.Array (fromFoldable)
 import Data.Traversable (traverse, traverse_)
 
