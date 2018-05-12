@@ -11,6 +11,7 @@
     "build": "webpack --config ./config/webpack.config.js --mode production",
     "start:dev:js": "webpack-dev-server --config ./config/webpack.config.js",
     "start:dev:ps": "pulp --watch build -I src:lib",
+    "repl": "pulp repl -I src:lib",
     "start": "./run-dev.sh"
   },
   "repository": {

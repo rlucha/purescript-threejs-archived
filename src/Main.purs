@@ -35,15 +35,10 @@ createRenderer = do
 
 initScene :: ThreeEff (Tuple Scene DotMatrix.Project)
 initScene = do 
-  -- this createScene is the ThreeJS new Scene fn, not our actual scene representation
-  -- find better naming to make them apart
   scene <- T3.Scene.createScene
-  color <- T3.createColor "#000000"
-  -- Compose this 3 fns below
   project <- DotMatrix.create
-  let objects = DotMatrix.getProjectObjects project
-  _ <- T3.Scene.addToScene objects scene
-  T3.Scene.setSceneBackground color scene
+  T3.Scene.addToScene (DotMatrix.getProjectObjects project) scene
+  T3.createColor "#000000" >>= \c -> T3.Scene.setSceneBackground c scene
   pure $ Tuple scene project
 
 attachAxesHelper :: Scene -> Number -> ThreeEff Unit
@@ -61,23 +56,22 @@ updateScene :: ∀ e. DotMatrix.Project -> Camera -> Renderer -> Array Number ->
 updateScene s c r t = do
 -- Just while developing!! dangerous!
   DotMatrix.update s (unsafePartial $ unsafeIndex t 1)
--- the whole doLoop function should be doing a lot of stuff by default
+-- the whole init function should be doing a lot of stuff by default
 -- without us having to pass render or updatecontrol stuff
--- basically we should declare module effects and doloop should pick those up
+-- basically we should declare module effects and init should pick those up
 -- and merge them with the default ones...
 -- TODO Provide an interface to run loop with just the custom things
-doLoop :: ∀ e. T3.Controls.OrbitControls -> Tuple Scene DotMatrix.Project -> Camera -> Renderer -> ThreeEff Unit
-doLoop controls (Tuple s as) camera renderer = Timeline.create
-    [ incT
-    , cosT ]
-  -- Timeline.Frame bound effects
-    [ --log <<< show
-      updateScene as camera renderer
-    ]
-  -- Timeline.Frame free effects
-    [ T3.Controls.updateControls controls
-    , T3.Renderer.render s camera renderer]
-    (Timeline.Frame 0)
+-- TODO remove this Tuple Tuple Scene DotMatrix.Project
+
+init :: ∀ e. T3.Controls.OrbitControls -> Tuple Scene DotMatrix.Project -> Camera -> Renderer -> ThreeEff Unit
+init controls (Tuple scene project) camera renderer = 
+  Timeline.create calculations behaviours effects (Timeline.Frame 0)
+    where 
+      calculations = [incT, cosT]
+      behaviours = [updateScene project camera renderer]
+      effects = 
+        [ T3.Controls.updateControls controls
+        , T3.Renderer.render scene camera renderer ]
 
 main :: ∀ e. Eff (three :: Three, console :: CONSOLE | e) Unit
 main = do
@@ -90,15 +84,12 @@ main = do
   _ <- T3.Scene.debugScene (fst scene) 
   T3.Renderer.mountRenderer renderer
   -- Main loop
-  doLoop controls scene camera renderer
-
--- Timeline.Frame.create
+  init controls scene camera renderer
 
 -- TODO:
 -- 01 Make Project a graph and provide a way to traverse it
 -- 02 Make results a record and provide a way to hook propery results -> Needs understading row types better
 -- 03 Remove all partial unsafe functions -> needs 02
--- Make doLoop actually beautiful
 -- Remove any dependency from the lib module to the three module
 -- Connect datGUI to those params to get some interactivity
 -- Think about other UI for inputs
