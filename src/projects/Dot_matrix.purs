@@ -9,22 +9,18 @@ where
 import Prelude (Unit, bind, negate, pure, ($), (*), (*>))
 import Data.Array (fromFoldable)
 import Data.Traversable (traverse, traverse_)
--- Custom Algebra
-import Point as P
-import Line as L
-import Square as SQ
-import Transform as T
-import Interpolate as Interpolate
-import Scene as Scene
 
--- ThreePS bindings
+import Pure3.Point as P
+import Pure3.Line as L
+import Pure3.Square as SQ
+import Pure3.Transform as T
+import Pure3.Interpolate as Interpolate
+import Pure3.Scene as Scene
+
 import Three (createGeometry, forcePointsUpdate, pushVertices, updateVector3Position)
 import Three.Types (Points, ThreeT, Vector3)
 import Three.Objects.Points (createPoints)
 import Three.Materials.PointsMaterial (createPointsMaterial)
-
--- Time
-
 
 size :: Number
 size = 1200.0
@@ -55,9 +51,6 @@ sq1c = T.translateSquare sq1 center
 sq1Points :: Array P.Point
 sq1Points = fromFoldable $ Interpolate.interpolate sq1c steps
 
-
--- Reader Scene (updatable scene, time bound)
-
 newtype Project = Project
   { objects :: Points
   , vectors :: Array Vector3 }
@@ -78,20 +71,13 @@ getProjectVectors (Project r) = r.vectors
 -- Should a scene have State?, that way we can easily mutate a
 -- scene state in a performant way.
 
--- update :: Time -> Scene -> ThreeT Scene
--- update t s = do
-  -- a means of parsing a scene into runnable elements
-  -- a way to apply values to elements
-  -- a way to use calculations and apply those to positions
-
 update :: Project -> Number -> ThreeT Unit
-update as t = 
-  let vs = getProjectVectors as
-      g = getProjectObjects as
+update p t = 
+  let vs = getProjectVectors p
+      g = getProjectObjects p
       pos = t
   in traverse_ (updateVector3Position pos) vs *> forcePointsUpdate g
 
--- TODO scene type should be ThreeT Scene
 create :: ThreeT Project
 create = do
   g <- createGeometry

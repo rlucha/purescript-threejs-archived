@@ -92,8 +92,6 @@ main = do
   doLoop controls scene camera renderer
 
 -- Timeline.Frame.create
--- 
-
 
 -- TODO:
 -- 01 Make Project a graph and provide a way to traverse it
