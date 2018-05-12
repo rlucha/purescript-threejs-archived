@@ -11,12 +11,12 @@ import Math (cos) as Math
 
 import Timeline (create, Frame(..)) as Timeline
 
-import Three.Types (Camera, Renderer, Scene, Three, ThreeT)
-import Three (createColor, createAxesHelper)
-import Three.Scene (debugScene, createScene, setSceneBackground, addToScene)
-import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRenderer, render)
-import Three.Camera (createPerspectiveCamera)
-import Three.OrbitControls (OrbitControls, createOrbitControls, enableControls, updateControls)
+import Three (createColor, createAxesHelper) as T3
+import Three.Types (Camera, Renderer, Scene, Three, ThreeEff)
+import Three.Scene (debugScene, createScene, setSceneBackground, addToScene) as T3.Scene
+import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRenderer, render) as T3.Renderer
+import Three.Camera (createPerspectiveCamera) as T3.Camera
+import Three.OrbitControls (OrbitControls, createOrbitControls, enableControls, updateControls) as T3.Controls
 
 import Projects.DotMatrix  as DotMatrix
 
@@ -26,36 +26,38 @@ incT (Timeline.Frame n) = toNumber(n + 1) / 100.0
 cosT :: Timeline.Frame -> Number
 cosT (Timeline.Frame n) = Math.cos(toNumber(n) * 0.01)
 
-createRenderer :: ∀ e. Eff (three :: Three | e) Renderer
-createRenderer = 
-  createWebGLRenderer 
-    >>= setPixelRatio -- Defaults to device ratio right now
-    >>= setSize 1200.0 600.0
+createRenderer :: ThreeEff Renderer
+createRenderer = do
+  r <- T3.Renderer.createWebGLRenderer 
+  T3.Renderer.setPixelRatio r -- Defaults to device ratio right now
+  T3.Renderer.setSize 1200.0 600.0 r
+  pure r
 
-initScene :: ThreeT (Tuple Scene DotMatrix.Project)
+initScene :: ThreeEff (Tuple Scene DotMatrix.Project)
 initScene = do 
   -- this createScene is the ThreeJS new Scene fn, not our actual scene representation
   -- find better naming to make them apart
-  scene <- createScene
-  color <- createColor "#000000"
+  scene <- T3.Scene.createScene
+  color <- T3.createColor "#000000"
   -- Compose this 3 fns below
   project <- DotMatrix.create
   let objects = DotMatrix.getProjectObjects project
-  _ <- addToScene objects scene
-  setSceneBackground color scene
+  _ <- T3.Scene.addToScene objects scene
+  T3.Scene.setSceneBackground color scene
   pure $ Tuple scene project
 
-attachAxesHelper :: Scene -> Number -> ∀ e. Eff (three :: Three | e) Unit
+attachAxesHelper :: Scene -> Number -> ThreeEff Unit
 attachAxesHelper scene size = do
-  axesHelper <- createAxesHelper size
-  addToScene axesHelper scene
+  axesHelper <- T3.createAxesHelper size
+  T3.Scene.addToScene axesHelper scene
 
-createControls :: Camera -> Scene -> ∀ e. Eff (three :: Three | e) OrbitControls  
+createControls :: Camera -> Scene -> ThreeEff T3.Controls.OrbitControls
 createControls camera scene = do 
-  controls <- createOrbitControls camera
-  enableControls controls 
+  controls <- T3.Controls.createOrbitControls camera
+  T3.Controls.enableControls controls
+  pure controls
 
-updateScene :: forall e. DotMatrix.Project -> Camera -> Renderer -> Array Number -> Eff (three :: Three | e) Unit
+updateScene :: ∀ e. DotMatrix.Project -> Camera -> Renderer -> Array Number -> Eff (three :: Three | e) Unit
 updateScene s c r t = do
 -- Just while developing!! dangerous!
   DotMatrix.update s (unsafePartial $ unsafeIndex t 1)
@@ -64,9 +66,8 @@ updateScene s c r t = do
 -- basically we should declare module effects and doloop should pick those up
 -- and merge them with the default ones...
 -- TODO Provide an interface to run loop with just the custom things
-doLoop :: ∀ e. OrbitControls -> Tuple Scene DotMatrix.Project -> Camera -> Renderer -> Eff (three :: Three, console :: CONSOLE | e) Unit
+doLoop :: ∀ e. T3.Controls.OrbitControls -> Tuple Scene DotMatrix.Project -> Camera -> Renderer -> ThreeEff Unit
 doLoop controls (Tuple s as) camera renderer = Timeline.create
-  -- Caculations (should be partially applied to be useful to the scene!)
     [ incT
     , cosT ]
   -- Timeline.Frame bound effects
@@ -74,20 +75,20 @@ doLoop controls (Tuple s as) camera renderer = Timeline.create
       updateScene as camera renderer
     ]
   -- Timeline.Frame free effects
-    [ updateControls controls
-    , render s camera renderer]
+    [ T3.Controls.updateControls controls
+    , T3.Renderer.render s camera renderer]
     (Timeline.Frame 0)
 
 main :: ∀ e. Eff (three :: Three, console :: CONSOLE | e) Unit
 main = do
   scene <- initScene
-  camera <- createPerspectiveCamera 100.0 2.0 1.0 10000.0
+  camera <- T3.Camera.createPerspectiveCamera 100.0 2.0 1.0 10000.0
   renderer <- createRenderer
   controls <- createControls camera (fst scene)
   -- Utils
   _ <- attachAxesHelper (fst scene) 100.0
-  _ <- debugScene (fst scene) 
-  mountRenderer renderer
+  _ <- T3.Scene.debugScene (fst scene) 
+  T3.Renderer.mountRenderer renderer
   -- Main loop
   doLoop controls scene camera renderer
 

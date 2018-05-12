@@ -18,7 +18,7 @@ import Pure3.Interpolate as Interpolate
 import Pure3.Scene as Scene
 
 import Three (createGeometry, forcePointsUpdate, pushVertices, updateVector3Position)
-import Three.Types (Points, ThreeT, Vector3)
+import Three.Types (Points, ThreeEff, Vector3)
 import Three.Objects.Points (createPoints)
 import Three.Materials.PointsMaterial (createPointsMaterial)
 
@@ -71,14 +71,14 @@ getProjectVectors (Project r) = r.vectors
 -- Should a scene have State?, that way we can easily mutate a
 -- scene state in a performant way.
 
-update :: Project -> Number -> ThreeT Unit
+update :: Project -> Number -> ThreeEff Unit
 update p t = 
   let vs = getProjectVectors p
       g = getProjectObjects p
       pos = t
   in traverse_ (updateVector3Position pos) vs *> forcePointsUpdate g
 
-create :: ThreeT Project
+create :: ThreeEff Project
 create = do
   g <- createGeometry
   m <- createPointsMaterial
