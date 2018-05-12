@@ -4,19 +4,18 @@ import Prelude
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE)
 import Data.Int (toNumber)
-import Data.Tuple (Tuple(..), fst)
 import Data.Array (unsafeIndex)
 import Partial.Unsafe (unsafePartial)
 import Math (cos) as Math
 
 import Timeline (create, Frame(..)) as Timeline
 
-import Three (createColor, createAxesHelper) as T3
+import Three (createColor, createAxesHelper) as Three
 import Three.Types (Camera, Renderer, Scene, Three, ThreeEff)
-import Three.Scene (debugScene, createScene, setSceneBackground, addToScene) as T3.Scene
-import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRenderer, render) as T3.Renderer
-import Three.Camera (createPerspectiveCamera) as T3.Camera
-import Three.OrbitControls (OrbitControls, createOrbitControls, enableControls, updateControls) as T3.Controls
+import Three.Scene (debugScene, createScene, setSceneBackground, addToScene) as Scene
+import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRenderer, render) as Renderer
+import Three.Camera (createPerspectiveCamera) as Camera
+import Three.OrbitControls (OrbitControls, createOrbitControls, enableControls, updateControls) as Controls
 
 import Projects.DotMatrix  as DotMatrix
 
@@ -28,30 +27,36 @@ cosT (Timeline.Frame n) = Math.cos(toNumber(n) * 0.01)
 
 createRenderer :: ThreeEff Renderer
 createRenderer = do
-  r <- T3.Renderer.createWebGLRenderer 
-  T3.Renderer.setPixelRatio r -- Defaults to device ratio right now
-  T3.Renderer.setSize 1200.0 600.0 r
+  r <- Renderer.createWebGLRenderer 
+  Renderer.setPixelRatio r -- Defaults to device ratio right now
+  Renderer.setSize 1200.0 600.0 r
   pure r
 
-initScene :: ThreeEff (Tuple Scene DotMatrix.Project)
+initScene :: ThreeEff Scene
 initScene = do 
-  scene <- T3.Scene.createScene
-  project <- DotMatrix.create
-  T3.Scene.addToScene (DotMatrix.getProjectObjects project) scene
-  T3.createColor "#000000" >>= \c -> T3.Scene.setSceneBackground c scene
-  pure $ Tuple scene project
+  scene <- Scene.createScene
+  bgColor <- Three.createColor "#000000"
+  Scene.setSceneBackground bgColor scene
+  pure scene
 
 attachAxesHelper :: Scene -> Number -> ThreeEff Unit
 attachAxesHelper scene size = do
-  axesHelper <- T3.createAxesHelper size
-  T3.Scene.addToScene axesHelper scene
+  axesHelper <- Three.createAxesHelper size
+  Scene.addToScene axesHelper scene
 
-createControls :: Camera -> Scene -> ThreeEff T3.Controls.OrbitControls
+createControls :: Camera -> Scene -> ThreeEff Controls.OrbitControls
 createControls camera scene = do 
-  controls <- T3.Controls.createOrbitControls camera
-  T3.Controls.enableControls controls
+  controls <- Controls.createOrbitControls camera
+  Controls.enableControls controls
   pure controls
 
+-- updateScene should pass the entire Array Number to the Project and let the project decide
+-- what to pick
+-- at the same time... it is a bit weird that the project picks some
+-- calculations from outside of itself instead of inside...
+-- It makes the project dependant on the Timeline payload `Array Number`
+-- I think the scene should be the one doing its own calculations, and behaviours should only pick t
+-- Then we can provide a common set of calculations from time in a module that can be shared between projects
 updateScene :: ∀ e. DotMatrix.Project -> Camera -> Renderer -> Array Number -> Eff (three :: Three | e) Unit
 updateScene s c r t = do
 -- Just while developing!! dangerous!
@@ -61,30 +66,33 @@ updateScene s c r t = do
 -- basically we should declare module effects and init should pick those up
 -- and merge them with the default ones...
 -- TODO Provide an interface to run loop with just the custom things
--- TODO remove this Tuple Tuple Scene DotMatrix.Project
 
-init :: ∀ e. T3.Controls.OrbitControls -> Tuple Scene DotMatrix.Project -> Camera -> Renderer -> ThreeEff Unit
-init controls (Tuple scene project) camera renderer = 
+init :: ∀ e. Controls.OrbitControls -> Scene -> DotMatrix.Project -> Camera -> Renderer -> ThreeEff Unit
+init controls scene project camera renderer = 
   Timeline.create calculations behaviours effects (Timeline.Frame 0)
     where 
       calculations = [incT, cosT]
       behaviours = [updateScene project camera renderer]
       effects = 
-        [ T3.Controls.updateControls controls
-        , T3.Renderer.render scene camera renderer ]
+        [ Controls.updateControls controls
+        , Renderer.render scene camera renderer ]
 
 main :: ∀ e. Eff (three :: Three, console :: CONSOLE | e) Unit
 main = do
-  scene <- initScene
-  camera <- T3.Camera.createPerspectiveCamera 100.0 2.0 1.0 10000.0
+  scene    <- initScene
+  project  <- DotMatrix.create
+  camera   <- Camera.createPerspectiveCamera 100.0 2.0 1.0 10000.0
   renderer <- createRenderer
-  controls <- createControls camera (fst scene)
+  controls <- createControls camera scene
   -- Utils
-  _ <- attachAxesHelper (fst scene) 100.0
-  _ <- T3.Scene.debugScene (fst scene) 
-  T3.Renderer.mountRenderer renderer
+  attachAxesHelper scene 100.0
+  Scene.debugScene scene
+  Scene.addToScene (DotMatrix.getProjectObjects project) scene
+  Renderer.mountRenderer renderer
   -- Main loop
-  init controls scene camera renderer
+  -- Maybe put all this elements, scene project, camera and 
+  -- renderer into a ctx that gets passed to init... or it will grow very big
+  init controls scene project camera renderer
 
 -- TODO:
 -- 01 Make Project a graph and provide a way to traverse it
@@ -97,16 +105,9 @@ main = do
 -- Create a set of JS utils to make IFF less painful
 -- Get canvas size from window size
 -- Change it on resize, updateMatrices
--- Remove Tuple Scene DotMatrix.Project everywhere and treat them separatedly
 -- Add Camera position set and camera lookAt fns
 -- Create a draft of a type structure for threeJS (Object3D, Material, etc.)
 -- Orbitcontrol rotate, autoupdate fns, enable zoom, etc.
--- Decide if effectful functions should return the object modified or just Unit...
 -- Move updateVector3Position to PS, (make it change x y z?)
--- Make Timeline.Frame a newtype
--- Write a bit of documentation about the type decisions on Timeline.Frame.Loop and Main mostly
+-- Write a bit of documentation about the type decisions on Timeline and Main mostly
 -- Remove most comments and create function names for those
-
-
-
-
