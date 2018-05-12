@@ -2,14 +2,14 @@ module Main where
 
 import Prelude
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, log)
+import Control.Monad.Eff.Console (CONSOLE)
 import Data.Int (toNumber)
 import Data.Tuple (Tuple(..), fst)
 import Data.Array (unsafeIndex)
 import Partial.Unsafe (unsafePartial)
 import Math (cos) as Math
 
-import Time.Loop (makeLoop, Time(..))
+import Timeline (create, Frame(..)) as Timeline
 
 import Three.Types (Camera, Renderer, Scene, Three, ThreeT)
 import Three (createColor, createAxesHelper)
@@ -20,11 +20,11 @@ import Three.OrbitControls (OrbitControls, createOrbitControls, enableControls, 
 
 import Projects.DotMatrix  as DotMatrix
 
-incT :: Time -> Number
-incT (Time n) = toNumber(n + 1) / 100.0
+incT :: Timeline.Frame -> Number
+incT (Timeline.Frame n) = toNumber(n + 1) / 100.0
 
-cosT :: Time -> Number
-cosT (Time n) = Math.cos(toNumber(n) * 0.01)
+cosT :: Timeline.Frame -> Number
+cosT (Timeline.Frame n) = Math.cos(toNumber(n) * 0.01)
 
 createRenderer :: ∀ e. Eff (three :: Three | e) Renderer
 createRenderer = 
@@ -65,18 +65,18 @@ updateScene s c r t = do
 -- and merge them with the default ones...
 -- TODO Provide an interface to run loop with just the custom things
 doLoop :: ∀ e. OrbitControls -> Tuple Scene DotMatrix.Project -> Camera -> Renderer -> Eff (three :: Three, console :: CONSOLE | e) Unit
-doLoop controls (Tuple s as) camera renderer = makeLoop
+doLoop controls (Tuple s as) camera renderer = Timeline.create
   -- Caculations (should be partially applied to be useful to the scene!)
     [ incT
     , cosT ]
-  -- Time bound effects
+  -- Timeline.Frame bound effects
     [ --log <<< show
       updateScene as camera renderer
     ]
-  -- Time free effects
+  -- Timeline.Frame free effects
     [ updateControls controls
     , render s camera renderer]
-    (Time 0)
+    (Timeline.Frame 0)
 
 main :: ∀ e. Eff (three :: Three, console :: CONSOLE | e) Unit
 main = do
@@ -91,11 +91,16 @@ main = do
   -- Main loop
   doLoop controls scene camera renderer
 
+-- Timeline.Frame.create
+-- 
+
+
 -- TODO:
--- Make Project a graph and provide a way to traverse it
--- Make results a record and provide a way to hook propery results animtedScene Update functions
--- Remove all partial unsafe functions
+-- 01 Make Project a graph and provide a way to traverse it
+-- 02 Make results a record and provide a way to hook propery results -> Needs understading row types better
+-- 03 Remove all partial unsafe functions -> needs 02
 -- Make doLoop actually beautiful
+-- Remove any dependency from the lib module to the three module
 -- Connect datGUI to those params to get some interactivity
 -- Think about other UI for inputs
 -- Next steps: Try to reproduce hierarchy2 example from threejs 
@@ -108,8 +113,8 @@ main = do
 -- Orbitcontrol rotate, autoupdate fns, enable zoom, etc.
 -- Decide if effectful functions should return the object modified or just Unit...
 -- Move updateVector3Position to PS, (make it change x y z?)
--- Make Time a newtype
--- Write a bit of documentation about the type decisions on Time.Loop and Main mostly
+-- Make Timeline.Frame a newtype
+-- Write a bit of documentation about the type decisions on Timeline.Frame.Loop and Main mostly
 -- Remove most comments and create function names for those
 
 

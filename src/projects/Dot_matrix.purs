@@ -6,10 +6,9 @@ where
 -- Interpolate looks like an abstraction over n points
 -- given 2 points, gives you a line, given 3+ gives you a surface
 
-import Prelude
+import Prelude (Unit, bind, negate, pure, ($), (*), (*>))
 import Data.Array (fromFoldable)
 import Data.Traversable (traverse, traverse_)
-import Data.Int
 -- Custom Algebra
 import Point as P
 import Line as L
@@ -19,19 +18,20 @@ import Interpolate as Interpolate
 import Scene as Scene
 
 -- ThreePS bindings
-import Three (createGeometry, createVector3, pushVertices, updateVector3Position, forcePointsUpdate)
-import Three.Types (ThreeT, Points, Scene, Vector3)
-import Three.Scene (addToScene)
+import Three (createGeometry, forcePointsUpdate, pushVertices, updateVector3Position)
+import Three.Types (Points, ThreeT, Vector3)
 import Three.Objects.Points (createPoints)
-import Three.PointsMaterial (createPointsMaterial)
+import Three.Materials.PointsMaterial (createPointsMaterial)
 
 -- Time
-import Time.Loop (Time)
 
 
+size :: Number
 size = 1200.0
+steps :: Int
 steps = 80
 
+center :: P.Point
 center = P.create (-size * 0.25) 0.0 (-size * 0.25)
 
 a :: P.Point
@@ -49,6 +49,7 @@ d = P.create size 0.0 size
 sq1 :: SQ.Square
 sq1 = SQ.createFromLines (L.create a b) (L.create c d)
 
+sq1c :: SQ.Square
 sq1c = T.translateSquare sq1 center
 
 sq1Points :: Array P.Point
@@ -91,7 +92,7 @@ update as t =
   in traverse_ (updateVector3Position pos) vs *> forcePointsUpdate g
 
 -- TODO scene type should be ThreeT Scene
-create :: forall e. ThreeT Project
+create :: ThreeT Project
 create = do
   g <- createGeometry
   m <- createPointsMaterial
