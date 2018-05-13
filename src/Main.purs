@@ -105,7 +105,7 @@ main = do
   controls <- createControls camera scene
   -- Utils
   -- attachAxesHelper scene 100.0
-  Camera.setCameraPosition 121.30 528.77 921.38 camera
+  Camera.setCameraPosition 110.0 652.0 1070.0 camera
   Scene.debugScene scene
   Camera.debugCamera camera
   Scene.addToScene (DotMatrix.getProjectObjects project) scene
@@ -124,12 +124,11 @@ main = do
 -- Think about other UI for inputs
 -- Next steps: Try to reproduce hierarchy2 example from threejs 
 -- Create a set of JS utils to make IFF less painful
--- Get canvas size from window size
 -- Change it on resize, updateMatrices
--- Add Camera position set and camera lookAt fns
+-- Add Camera lookAt fn
 -- Create a draft of a type structure for threeJS (Object3D, Material, etc.)
 -- Orbitcontrol rotate, autoupdate fns, enable zoom, etc.
--- Move updateVector3Position to PS, (make it change x y z?)
 -- Write a bit of documentation about the type decisions on Timeline and Main mostly
 -- Remove most comments and create function names for those
 -- Generalize the project file utils into a project object in Pure3
+-- TODO documentReady to begin all computation, that will get proper body height values

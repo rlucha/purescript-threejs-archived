@@ -26,7 +26,7 @@ import Three.Materials.PointsMaterial (createPointsMaterial)
 size :: Number
 size = 1200.0
 steps :: Int
-steps = 80
+steps = 50
 
 center :: P.Point
 center = P.create (-size * 0.25) 0.0 (-size * 0.25)
