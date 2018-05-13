@@ -67,7 +67,7 @@ updateScene s c r t = do
 -- and merge them with the default ones...
 -- TODO Provide an interface to run loop with just the custom things
 
-init :: ∀ e. Controls.OrbitControls -> Scene -> DotMatrix.Project -> Camera -> Renderer -> ThreeEff Unit
+init :: Controls.OrbitControls -> Scene -> DotMatrix.Project -> Camera -> Renderer -> ThreeEff Unit
 init controls scene project camera renderer = 
   Timeline.create calculations behaviours effects (Timeline.Frame 0)
     where 
@@ -111,3 +111,4 @@ main = do
 -- Move updateVector3Position to PS, (make it change x y z?)
 -- Write a bit of documentation about the type decisions on Timeline and Main mostly
 -- Remove most comments and create function names for those
+-- Generalize the project file utils into a project object in Pure3

@@ -9,6 +9,7 @@ where
 import Prelude
 import Data.Array (fromFoldable)
 import Data.Traversable (traverse, traverse_)
+import Math (cos) as Math
 
 import Pure3.Point as P
 import Pure3.Line as L
@@ -17,9 +18,9 @@ import Pure3.Transform as T
 import Pure3.Interpolate as Interpolate
 import Pure3.Scene as Scene
 
-import Three (createGeometry, forcePointsUpdate, pushVertices, updateVector3Position)
+import Three (createGeometry, forcePointsUpdate, pushVertices, updateVector3Position, getVector3Position)
 import Three.Types (Points, ThreeEff, Vector3)
-import Three.Objects.Points (createPoints)
+import Three.Objects.Points (createPoints) as Objects.Points
 import Three.Materials.PointsMaterial (createPointsMaterial)
 
 size :: Number
@@ -71,12 +72,18 @@ getProjectVectors (Project r) = r.vectors
 -- Should a scene have State?, that way we can easily mutate a
 -- scene state in a performant way.
 
+updateVector :: Number -> Vector3 -> ThreeEff Unit
+updateVector t v = do
+  vpos <- getVector3Position v
+  let wave = (Math.cos t * 100.0)
+  updateVector3Position wave vpos.y vpos.z v
+    
+
 update :: Project -> Number -> ThreeEff Unit
 update p t = 
-  let vs = getProjectVectors p
-      g = getProjectObjects p
-      pos = t
-  in traverse_ (updateVector3Position pos) vs *> forcePointsUpdate g
+  let vs  = getProjectVectors p
+      g   = getProjectObjects p
+  in traverse_ (updateVector t) vs *> forcePointsUpdate g
 
 create :: ThreeEff Project
 create = do
@@ -88,7 +95,7 @@ create = do
   -- here we are mutating g in JS... then using the reference in createPoints g
   -- should we express that effect somehow?
   _ <- traverse_ (pushVertices g) vs
-  p <- createPoints g m
+  p <- Objects.Points.createPoints g m
   pure $ Project { objects: p, vectors: vs }
 
 -- Explain why traverse works and pure fmap does not
