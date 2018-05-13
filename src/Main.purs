@@ -104,7 +104,7 @@ main = do
   renderer <- createRenderer
   controls <- createControls camera scene
   -- Utils
-  attachAxesHelper scene 100.0
+  -- attachAxesHelper scene 100.0
   Camera.setCameraPosition 121.30 528.77 921.38 camera
   Scene.debugScene scene
   Camera.debugCamera camera
