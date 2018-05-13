@@ -79,8 +79,8 @@ updateVector t v = do
       speed = t * 10.0
       amplitude = 100.0
       delta = (vpos.x + vpos.z) * freq
-      wave = (Math.cos (delta + speed)) * amplitude
-  updateVector3Position vpos.x wave vpos.z v
+      waveY = (Math.cos (delta + speed)) * amplitude
+  updateVector3Position vpos.x waveY vpos.z v
 
 update :: Project -> Number -> ThreeEff Unit
 update p t = 

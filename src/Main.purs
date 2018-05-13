@@ -6,7 +6,14 @@ import Control.Monad.Eff.Console (CONSOLE)
 import Data.Int (toNumber)
 import Data.Array (unsafeIndex)
 import Partial.Unsafe (unsafePartial)
+import Data.Maybe
 import Math (cos) as Math
+
+import DOM (DOM)
+import DOM.HTML (window)
+import DOM.HTML.Window (document)
+import DOM.HTML.Document (body)
+import DOM.HTML.HTMLElement (offsetWidth, offsetHeight)
 
 import Timeline (create, Frame(..)) as Timeline
 
@@ -14,7 +21,7 @@ import Three (createColor, createAxesHelper) as Three
 import Three.Types (Camera, Renderer, Scene, Three, ThreeEff)
 import Three.Scene (debugScene, createScene, setSceneBackground, addToScene) as Scene
 import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRenderer, render) as Renderer
-import Three.Camera (createPerspectiveCamera) as Camera
+import Three.Camera (createPerspectiveCamera, debugCamera, setCameraPosition) as Camera
 import Three.OrbitControls (OrbitControls, createOrbitControls, enableControls, updateControls) as Controls
 
 import Projects.DotMatrix  as DotMatrix
@@ -25,12 +32,24 @@ incT (Timeline.Frame n) = toNumber(n + 1) / 100.0
 cosT :: Timeline.Frame -> Number
 cosT (Timeline.Frame n) = Math.cos(toNumber(n) * 0.01)
 
-createRenderer :: ThreeEff Renderer
+createRenderer :: ∀ e. Eff (three :: Three, dom :: DOM | e) Renderer
 createRenderer = do
+  w <- window
+  d <- document w
+  b <- body d
   r <- Renderer.createWebGLRenderer 
-  Renderer.setPixelRatio r -- Defaults to device ratio right now
-  Renderer.setSize 1200.0 600.0 r
-  pure r
+  case b of
+    Just b' -> do
+      Renderer.setPixelRatio r -- Defaults to device ratio right now
+      -- TODO move this to proper helper function
+      bw <- offsetWidth b'
+      bh <- offsetHeight b'
+      Renderer.setSize bw bh r
+      pure r    
+    -- TODO: On Nothing, cause exception
+    Nothing -> do 
+      Renderer.setSize 1200.0 600.0 r
+      pure r
 
 initScene :: ThreeEff Scene
 initScene = do 
@@ -77,7 +96,7 @@ init controls scene project camera renderer =
         [ Controls.updateControls controls
         , Renderer.render scene camera renderer ]
 
-main :: ∀ e. Eff (three :: Three, console :: CONSOLE | e) Unit
+main :: ∀ e. Eff (three :: Three, dom :: DOM, console :: CONSOLE | e) Unit
 main = do
   scene    <- initScene
   project  <- DotMatrix.create
@@ -86,7 +105,9 @@ main = do
   controls <- createControls camera scene
   -- Utils
   attachAxesHelper scene 100.0
+  Camera.setCameraPosition 121.30 528.77 921.38 camera
   Scene.debugScene scene
+  Camera.debugCamera camera
   Scene.addToScene (DotMatrix.getProjectObjects project) scene
   Renderer.mountRenderer renderer
   -- Main loop
