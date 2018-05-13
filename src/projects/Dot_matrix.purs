@@ -75,9 +75,12 @@ getProjectVectors (Project r) = r.vectors
 updateVector :: Number -> Vector3 -> ThreeEff Unit
 updateVector t v = do
   vpos <- getVector3Position v
-  let wave = (Math.cos t * 100.0)
-  updateVector3Position wave vpos.y vpos.z v
-    
+  let freq = 0.005
+      speed = t * 10.0
+      amplitude = 100.0
+      delta = (vpos.x + vpos.z) * freq
+      wave = (Math.cos (delta + speed)) * amplitude
+  updateVector3Position vpos.x wave vpos.z v
 
 update :: Project -> Number -> ThreeEff Unit
 update p t = 
