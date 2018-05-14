@@ -14,10 +14,12 @@ import DOM.HTML (window)
 import DOM.HTML.Window (document)
 import DOM.HTML.Document (body)
 import DOM.HTML.HTMLElement (offsetWidth, offsetHeight)
+import DOM.Event.EventTarget
+import DOM.Event.Types (EventTarget, Event, EventType(..))
 
 import Timeline (create, Frame(..)) as Timeline
 
-import Three (createColor, createAxesHelper) as Three
+import Three (createColor, createAxesHelper, onDOMContentLoaded) as Three
 import Three.Types (Camera, Renderer, Scene, Three, ThreeEff)
 import Three.Scene (debugScene, createScene, setSceneBackground, addToScene) as Scene
 import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRenderer, render) as Renderer
@@ -96,8 +98,8 @@ init controls scene project camera renderer =
         [ Controls.updateControls controls
         , Renderer.render scene camera renderer ]
 
-main :: ∀ e. Eff (three :: Three, dom :: DOM, console :: CONSOLE | e) Unit
-main = do
+main' :: ∀ e. Eff (three :: Three, dom :: DOM, console :: CONSOLE | e) Unit
+main' = do
   scene    <- initScene
   project  <- DotMatrix.create
   camera   <- Camera.createPerspectiveCamera 100.0 2.0 1.0 10000.0
@@ -114,6 +116,10 @@ main = do
   -- Maybe put all this elements, scene project, camera and 
   -- renderer into a ctx that gets passed to init... or it will grow very big
   init controls scene project camera renderer
+
+-- Pretty unsafe addEventListener...
+main :: ThreeEff Unit
+main = Three.onDOMContentLoaded main'
 
 -- TODO:
 -- 01 Make Project a graph and provide a way to traverse it
@@ -132,3 +138,4 @@ main = do
 -- Remove most comments and create function names for those
 -- Generalize the project file utils into a project object in Pure3
 -- TODO documentReady to begin all computation, that will get proper body height values
+-- onDOMcontentloaded example purescript-browser-dom/src/Browser/DOM.purs
