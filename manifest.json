@@ -1,0 +1,8 @@
+{
+  "short_name": "rlucha_purescript_playground",
+  "name": "Roberto Lucha - Purescript Playground",
+  "start_url": "index.html",
+  "background_color": "#000",
+  "theme_color": "#FF5C60",
+  "display": "standalone"
+}
