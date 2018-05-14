@@ -23,10 +23,12 @@ import Three.Types (Points, ThreeEff, Vector3)
 import Three.Objects.Points (createPoints) as Objects.Points
 import Three.Materials.PointsMaterial (createPointsMaterial)
 
-size :: Number
-size = 1200.0
-steps :: Int
-steps = 50
+-- Project config, maybe move to Record
+size = 3000.0    
+steps = 50       
+freq = 0.003     
+speed = 2.0     
+amplitude = 40.0
 
 center :: P.Point
 center = P.create (-size * 0.25) 0.0 (-size * 0.25)
@@ -75,11 +77,8 @@ getProjectVectors (Project r) = r.vectors
 updateVector :: Number -> Vector3 -> ThreeEff Unit
 updateVector t v = do
   vpos <- getVector3Position v
-  let freq = 0.005
-      speed = t * 10.0
-      amplitude = 100.0
-      delta = (vpos.x + vpos.z) * freq
-      waveY = (Math.cos (delta + speed)) * amplitude
+  let delta = (vpos.x + vpos.z) * freq
+      waveY = (Math.cos (delta + speed * t)) * amplitude
   updateVector3Position vpos.x waveY vpos.z v
 
 update :: Project -> Number -> ThreeEff Unit

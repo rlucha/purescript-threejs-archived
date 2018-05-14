@@ -102,12 +102,12 @@ main' :: ∀ e. Eff (three :: Three, dom :: DOM, console :: CONSOLE | e) Unit
 main' = do
   scene    <- initScene
   project  <- DotMatrix.create
-  camera   <- Camera.createPerspectiveCamera 100.0 2.0 1.0 10000.0
+  camera   <- Camera.createPerspectiveCamera 30.0 2.0 1.0 10000.0
   renderer <- createRenderer
   controls <- createControls camera scene
   -- Utils
   -- attachAxesHelper scene 100.0
-  Camera.setCameraPosition 110.0 652.0 1070.0 camera
+  Camera.setCameraPosition (-175.86) 386.36 1184.0 camera
   Scene.debugScene scene
   Camera.debugCamera camera
   Scene.addToScene (DotMatrix.getProjectObjects project) scene
@@ -127,7 +127,6 @@ main = Three.onDOMContentLoaded main'
 -- 03 Remove all partial unsafe functions -> needs 02
 -- Remove any dependency from the lib module to the three module
 -- Connect datGUI to those params to get some interactivity
--- Think about other UI for inputs
 -- Next steps: Try to reproduce hierarchy2 example from threejs 
 -- Create a set of JS utils to make IFF less painful
 -- Change it on resize, updateMatrices
@@ -139,3 +138,4 @@ main = Three.onDOMContentLoaded main'
 -- Generalize the project file utils into a project object in Pure3
 -- TODO documentReady to begin all computation, that will get proper body height values
 -- onDOMcontentloaded example purescript-browser-dom/src/Browser/DOM.purs
+-- Add mousePositionValues to the project update fn input
