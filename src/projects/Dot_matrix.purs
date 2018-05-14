@@ -25,7 +25,7 @@ import Three.Materials.PointsMaterial (createPointsMaterial)
 
 -- Project config, maybe move to Record
 size = 3000.0    
-steps = 50       
+steps = 60       
 freq = 0.003     
 speed = 2.0     
 amplitude = 40.0

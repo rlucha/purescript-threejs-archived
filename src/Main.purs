@@ -68,7 +68,7 @@ attachAxesHelper scene size = do
 createControls :: Camera -> Scene -> ThreeEff Controls.OrbitControls
 createControls camera scene = do 
   controls <- Controls.createOrbitControls camera
-  Controls.enableControls controls
+  -- Controls.enableControls controls
   pure controls
 
 -- updateScene should pass the entire Array Number to the Project and let the project decide
@@ -107,7 +107,7 @@ main' = do
   controls <- createControls camera scene
   -- Utils
   -- attachAxesHelper scene 100.0
-  Camera.setCameraPosition (-175.86) 386.36 1184.0 camera
+  Camera.setCameraPosition (-25.0) 323.2 1215.3 camera
   Scene.debugScene scene
   Camera.debugCamera camera
   Scene.addToScene (DotMatrix.getProjectObjects project) scene
@@ -139,3 +139,4 @@ main = Three.onDOMContentLoaded main'
 -- TODO documentReady to begin all computation, that will get proper body height values
 -- onDOMcontentloaded example purescript-browser-dom/src/Browser/DOM.purs
 -- Add mousePositionValues to the project update fn input
+-- Move camera into project?
