@@ -24,7 +24,7 @@ import Three.Types (Camera, Renderer, Scene, Three, ThreeEff)
 import Three.Scene (debugScene, createScene, setSceneBackground, addToScene) as Scene
 import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRenderer, render) as Renderer
 import Three.Camera (createPerspectiveCamera, debugCamera, setCameraPosition) as Camera
-import Three.OrbitControls (OrbitControls, createOrbitControls, enableControls, updateControls) as Controls
+import Three.OrbitControls (OrbitControls, createOrbitControls, toggleControls, updateControls) as Controls
 
 import Projects.DotMatrix  as DotMatrix
 
@@ -68,7 +68,7 @@ attachAxesHelper scene size = do
 createControls :: Camera -> Scene -> ThreeEff Controls.OrbitControls
 createControls camera scene = do 
   controls <- Controls.createOrbitControls camera
-  -- Controls.enableControls controls
+  Controls.toggleControls false controls
   pure controls
 
 -- updateScene should pass the entire Array Number to the Project and let the project decide
