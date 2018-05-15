@@ -1,5 +1,7 @@
 Purescript simple scene model and geometric operations. 
 
+See it live at [Purescript ThreeJS](https://rlucha.github.io/purescript-threejs/)
+
 Renders using Three.js 
 
 ```
