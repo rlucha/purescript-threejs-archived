@@ -107,7 +107,7 @@ main' = do
   controls <- createControls camera scene
   -- Utils
   -- attachAxesHelper scene 100.0
-  Camera.setCameraPosition (-25.0) 323.2 1215.3 camera
+  Camera.setCameraPosition (-299.32) 337.92 1173.99 camera
   Scene.debugScene scene
   Camera.debugCamera camera
   Scene.addToScene (DotMatrix.getProjectObjects project) scene
@@ -140,3 +140,5 @@ main = Three.onDOMContentLoaded main'
 -- onDOMcontentloaded example purescript-browser-dom/src/Browser/DOM.purs
 -- Add mousePositionValues to the project update fn input
 -- Move camera into project?
+-- Add proper fog to scene instead of directly from js
+-- Transparent canvas color?
