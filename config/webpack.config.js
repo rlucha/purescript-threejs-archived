@@ -16,11 +16,6 @@ module.exports = {
     modules: ["node_modules", "output"],
     extensions: [".js", ".json", ".re", ".ml"]
   },  
-  devServer: {
-    contentBase: "./dist",
-    port: 8080,
-    stats: 'errors-only',
-  },
   watchOptions: {
     aggregateTimeout: 300,
     poll: 1000,

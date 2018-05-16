@@ -118,8 +118,8 @@ main' = do
   init controls scene project camera renderer
 
 -- Pretty unsafe addEventListener...
-main :: ThreeEff Unit
-main = Three.onDOMContentLoaded main'
+main :: ThreeEff Unit 
+main = Three.onDOMContentLoaded main' 
 
 -- TODO:
 -- 01 Make Project a graph and provide a way to traverse it
