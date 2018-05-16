@@ -26,7 +26,7 @@ import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRendere
 import Three.Camera (createPerspectiveCamera, debugCamera, setCameraPosition) as Camera
 import Three.OrbitControls (OrbitControls, createOrbitControls, toggleControls, updateControls) as Controls
 
-import Projects.DotMatrix  as DotMatrix
+import Projects.Sealike  as Sealike
 
 incT :: Timeline.Frame -> Number
 incT (Timeline.Frame n) = toNumber(n + 1) / 100.0
@@ -78,17 +78,17 @@ createControls camera scene = do
 -- It makes the project dependant on the Timeline payload `Array Number`
 -- I think the scene should be the one doing its own calculations, and behaviours should only pick t
 -- Then we can provide a common set of calculations from time in a module that can be shared between projects
-updateScene :: ∀ e. DotMatrix.Project -> Camera -> Renderer -> Array Number -> Eff (three :: Three | e) Unit
+updateScene :: ∀ e. Sealike.Project -> Camera -> Renderer -> Array Number -> Eff (three :: Three | e) Unit
 updateScene s c r t = do
 -- Just while developing!! dangerous!
-  DotMatrix.update s (unsafePartial $ unsafeIndex t 0)
+  Sealike.update s (unsafePartial $ unsafeIndex t 0)
 -- the whole init function should be doing a lot of stuff by default
 -- without us having to pass render or updatecontrol stuff
 -- basically we should declare module effects and init should pick those up
 -- and merge them with the default ones...
 -- TODO Provide an interface to run loop with just the custom things
 
-init :: Controls.OrbitControls -> Scene -> DotMatrix.Project -> Camera -> Renderer -> ThreeEff Unit
+init :: Controls.OrbitControls -> Scene -> Sealike.Project -> Camera -> Renderer -> ThreeEff Unit
 init controls scene project camera renderer = 
   Timeline.create calculations behaviours effects (Timeline.Frame 0)
     where 
@@ -101,7 +101,7 @@ init controls scene project camera renderer =
 main' :: ∀ e. Eff (three :: Three, dom :: DOM, console :: CONSOLE | e) Unit
 main' = do
   scene    <- initScene
-  project  <- DotMatrix.create
+  project  <- Sealike.create
   camera   <- Camera.createPerspectiveCamera 30.0 2.0 1.0 10000.0
   renderer <- createRenderer
   controls <- createControls camera scene
@@ -110,7 +110,7 @@ main' = do
   Camera.setCameraPosition (-299.32) 337.92 1173.99 camera
   Scene.debugScene scene
   Camera.debugCamera camera
-  Scene.addToScene (DotMatrix.getProjectObjects project) scene
+  Scene.addToScene (Sealike.getProjectObjects project) scene
   Renderer.mountRenderer renderer
   -- Main loop
   -- Maybe put all this elements, scene project, camera and 

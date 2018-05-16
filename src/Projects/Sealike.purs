@@ -1,4 +1,4 @@
-module Projects.DotMatrix 
+module Projects.Sealike 
   (create, update, Project, getProjectObjects)
 where
 
@@ -21,7 +21,7 @@ import Pure3.Scene as Scene
 import Three (createGeometry, forcePointsUpdate, pushVertices, updateVector3Position, getVector3Position)
 import Three.Types (Points, ThreeEff, Vector3)
 import Three.Objects.Points (createPoints) as Objects.Points
-import Three.Materials.PointsMaterial (createPointsMaterial)
+import Projects.Sealike.SeaMaterial (createSeaMaterial)
 
 -- Project config, maybe move to Record
 size = 3000.0    
@@ -91,7 +91,7 @@ update p t =
 create :: ThreeEff Project
 create = do
   g <- createGeometry
-  m <- createPointsMaterial
+  m <- createSeaMaterial
   -- this scene 'unparsing' will be done at the scene graph parsing level
   -- eventually
   vs <- traverse Scene.createVectorFromPoint sq1Points
