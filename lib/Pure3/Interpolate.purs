@@ -3,13 +3,14 @@ module Pure3.Interpolate where
 import Prelude
 import Data.List.Lazy as LazyList
 import Data.List (List, fromFoldable, range, take) as StrictList
-import Data.List (foldr)
+import Data.List (foldr, (..))
 import Data.Int (toNumber)
 import Data.List.ZipList (ZipList(..))
 import Control.Apply (lift2)
 
 import Pure3.Point as P
 import Pure3.Line as L
+import Pure3.Circle as C
 import Pure3.Square as SQ
 import Pure3.Transform (zigPoints)
 
@@ -21,9 +22,19 @@ interpolateRange from to s =
   in map (\x -> from + inc * toNumber x) (StrictList.range 0 s)
   -- \[x_n = x_i + \frac{x_f - x_i}{s} n\]
 
-
 class Interpolatable a where
   interpolate :: a -> Steps -> StrictList.List P.Point
+
+instance interpolateCircle :: Interpolatable C.Circle where
+  interpolate c s = 
+    let {center, radius} = C.unwrap c
+        inc = 360 / s 
+        rad = ((*) inc) <$> 1..s
+        -- Is there a way to chain this fmaps more beautifully?
+        points =  (+) center <$> (\r -> P.create r r r) <$> toNumber <$> rad
+    --  uncurry is gonna take a binary function and make it a unary function over Tuples
+    -- cartesianProductOfPoints :: (*) <$> lab <*> lac
+    in points
 
 instance interpolateSquare :: Interpolatable SQ.Square where
   interpolate sq s = 

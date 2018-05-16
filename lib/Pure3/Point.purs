@@ -6,13 +6,11 @@ import Data.Generic.Rep.Show (genericShow)
 import Data.Foreign.Class (class Encode)
 import Data.Foreign.Generic (defaultOptions, genericEncode)
 
-data Point = Point { x :: Number, y :: Number, z :: Number }
+newtype Point = Point { x :: Number, y :: Number, z :: Number }
 
 derive instance eqPoint :: Eq Point
 derive instance genPoint :: Generic Point _
 instance showPoint :: Show Point where show = genericShow
-instance encodePoint :: Encode Point where
-  encode = genericEncode $ defaultOptions {unwrapSingleConstructors = true}
 
 instance semiringPoint :: Semiring Point where
   add = sumPoint
@@ -22,6 +20,9 @@ instance semiringPoint :: Semiring Point where
 
 instance ringPoint :: Ring Point where
   sub = subPoint
+
+unwrap :: Point -> { x :: Number, y :: Number, z :: Number }
+unwrap (Point {x, y, z}) = {x, y, z}
 
 zeroPoint :: Point
 zeroPoint = Point { x:0.0, y:0.0, z:0.0}
