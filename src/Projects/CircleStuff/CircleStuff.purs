@@ -7,9 +7,11 @@ where
 -- given 2 points, gives you a line, given 3+ gives you a surface
 
 import Prelude
+import Data.Int (toNumber)
+import Data.List (List, (..), concat)
 import Data.Array (fromFoldable)
 import Data.Traversable (traverse, traverse_)
-import Math (cos) as Math
+import Math (cos, sin) as Math
 
 import Pure3.Point as P
 import Pure3.Line as L
@@ -26,24 +28,27 @@ import Projects.Sealike.SeaMaterial (createSeaMaterial)
 -- Project config, maybe move to Record
 radius = 100.0    
 steps = 120
-amplitude = 200.0
+amplitude = 0.005
+speed = 6.0
 
-center :: P.Point
-center = P.create 0.0 0.0 0.0
+centers :: List P.Point
+centers = (\n -> P.create 0.0 0.0 (n*5.0)) <<< toNumber <$> -5..5
 
-circle = C.create center radius
+-- aoid using a lambda here using applicative? problem is radius is not in a context
+circles :: List C.Circle
+circles = (\c -> C.create c radius) <$> centers
 
-sq1Points :: Array P.Point
-sq1Points = fromFoldable $ Interpolate.interpolate circle steps
+sq1Points :: List P.Point 
+sq1Points = concat $ (\c -> Interpolate.interpolate c steps) <$> circles
 
 newtype Project = Project
   { objects :: Points
-  , vectors :: Array Vector3 }
+  , vectors :: List Vector3 }
 
 getProjectObjects :: Project -> Points
 getProjectObjects (Project r) = r.objects
 
-getProjectVectors :: Project -> Array Vector3
+getProjectVectors :: Project -> List Vector3
 getProjectVectors (Project r) = r.vectors
 
 -- Things that can be created on init
@@ -59,9 +64,13 @@ getProjectVectors (Project r) = r.vectors
 updateVector :: Number -> Vector3 -> ThreeEff Unit
 updateVector t v = do
   vpos <- getVector3Position v
-  let delta = (vpos.x + vpos.y)
-      waveZ = (Math.cos (delta + 10.0 * t)) * amplitude
-  updateVector3Position vpos.x vpos.y waveZ v
+  -- we need some initial position to use it as a reference point for
+  -- incremental changes
+  -- reader monad here?
+  let delta = (vpos.x / vpos.y)
+      waveOutX = vpos.x + (vpos.x * (Math.cos (t * speed)) * (amplitude * (vpos.z * 0.25) ))
+      waveOutY = vpos.y + (vpos.y * (Math.sin (t * speed)) * (amplitude * (vpos.z * 0.25) ))
+  updateVector3Position waveOutX waveOutY vpos.z v
 
 update :: Project -> Number -> ThreeEff Unit
 update p t = 
