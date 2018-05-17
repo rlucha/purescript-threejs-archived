@@ -7,6 +7,7 @@ import Data.Int (toNumber)
 import Data.Array (unsafeIndex)
 import Partial.Unsafe (unsafePartial)
 import Data.Maybe
+import Data.Tuple (Tuple(..), fst, snd)
 import Math (cos) as Math
 
 import DOM (DOM)
@@ -34,24 +35,32 @@ incT (Timeline.Frame n) = toNumber(n + 1) / 100.0
 cosT :: Timeline.Frame -> Number
 cosT (Timeline.Frame n) = Math.cos(toNumber(n) * 0.01)
 
-createRenderer :: ∀ e. Eff (three :: Three, dom :: DOM | e) Renderer
-createRenderer = do
+unsafeGetAspectRatio :: ∀ e. Eff (three :: Three, dom :: DOM | e) Number
+unsafeGetAspectRatio = do
+  bs <- unsafeGetBodySize
+  pure ((fst bs) / (snd bs))
+
+unsafeGetBodySize :: ∀ e. Eff (three :: Three, dom :: DOM | e) (Tuple Number Number)
+unsafeGetBodySize = do
   w <- window
   d <- document w
   b <- body d
-  r <- Renderer.createWebGLRenderer 
   case b of
     Just b' -> do
-      Renderer.setPixelRatio r -- Defaults to device ratio right now
-      -- TODO move this to proper helper function
       bw <- offsetWidth b'
       bh <- offsetHeight b'
-      Renderer.setSize bw bh r
-      pure r    
+      pure $ Tuple bw bh
     -- TODO: On Nothing, cause exception
     Nothing -> do 
-      Renderer.setSize 1200.0 600.0 r
-      pure r
+      pure $ Tuple 0.0 0.0
+
+createRenderer :: ∀ e. Eff (three :: Three, dom :: DOM | e) Renderer
+createRenderer = do
+  bs <- unsafeGetBodySize
+  r <- Renderer.createWebGLRenderer 
+  Renderer.setPixelRatio r
+  Renderer.setSize (fst bs) (snd bs) r
+  pure r
 
 initScene :: ThreeEff Scene
 initScene = do 
@@ -68,7 +77,7 @@ attachAxesHelper scene size = do
 createControls :: Camera -> Scene -> ThreeEff Controls.OrbitControls
 createControls camera scene = do 
   controls <- Controls.createOrbitControls camera
-  Controls.toggleControls false controls
+  Controls.toggleControls true controls
   pure controls
 
 -- updateScene should pass the entire Array Number to the Project and let the project decide
@@ -100,13 +109,14 @@ init controls scene project camera renderer =
 
 main' :: ∀ e. Eff (three :: Three, dom :: DOM, console :: CONSOLE | e) Unit
 main' = do
+  ar <- unsafeGetAspectRatio
   scene    <- initScene
   project  <- CircleStuff.create
-  camera   <- Camera.createPerspectiveCamera 30.0 2.0 1.0 10000.0
+  camera   <- Camera.createPerspectiveCamera 30.0 ar 1.0 10000.0
   renderer <- createRenderer
   controls <- createControls camera scene
   -- Utils
-  -- attachAxesHelper scene 100.0
+  attachAxesHelper scene 100.0
   Camera.setCameraPosition (-299.32) 337.92 1173.99 camera
   Scene.debugScene scene
   Camera.debugCamera camera

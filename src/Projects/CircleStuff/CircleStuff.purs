@@ -13,7 +13,7 @@ import Math (cos) as Math
 
 import Pure3.Point as P
 import Pure3.Line as L
-import Pure3.Square as SQ
+import Pure3.Circle as C
 import Pure3.Transform as T
 import Pure3.Interpolate as Interpolate
 import Pure3.Scene as Scene
@@ -24,35 +24,17 @@ import Three.Objects.Points (createPoints) as Objects.Points
 import Projects.Sealike.SeaMaterial (createSeaMaterial)
 
 -- Project config, maybe move to Record
-size = 100.0    
-steps = 60       
-freq = 0.003     
-speed = 2.0     
-amplitude = 40.0
+radius = 100.0    
+steps = 120
+amplitude = 200.0
 
 center :: P.Point
-center = P.create (-size * 0.25) 0.0 (-size * 0.25)
+center = P.create 0.0 0.0 0.0
 
-a :: P.Point
-a = P.create 0.0 0.0 0.0
-
-b :: P.Point
-b = P.create size 0.0 0.0
-
-c :: P.Point
-c = P.create 0.0 0.0 size
-
-d :: P.Point
-d = P.create size 0.0 size
-
-sq1 :: SQ.Square
-sq1 = SQ.createFromLines (L.create a b) (L.create c d)
-
-sq1c :: SQ.Square
-sq1c = T.translateSquare sq1 center
+circle = C.create center radius
 
 sq1Points :: Array P.Point
-sq1Points = fromFoldable $ Interpolate.interpolate sq1c steps
+sq1Points = fromFoldable $ Interpolate.interpolate circle steps
 
 newtype Project = Project
   { objects :: Points
@@ -77,10 +59,9 @@ getProjectVectors (Project r) = r.vectors
 updateVector :: Number -> Vector3 -> ThreeEff Unit
 updateVector t v = do
   vpos <- getVector3Position v
-  let delta = (vpos.x + vpos.z) * freq
-      waveY = (Math.cos (delta + speed * t)) * amplitude
-      wave2 = (Math.cos (vpos.z + speed * t)) * amplitude * 0.4
-  updateVector3Position vpos.x ( waveY + wave2) vpos.z v
+  let delta = (vpos.x + vpos.y)
+      waveZ = (Math.cos (delta + 10.0 * t)) * amplitude
+  updateVector3Position vpos.x vpos.y waveZ v
 
 update :: Project -> Number -> ThreeEff Unit
 update p t = 
