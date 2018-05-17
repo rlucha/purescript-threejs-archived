@@ -28,11 +28,12 @@ import Projects.Sealike.SeaMaterial (createSeaMaterial)
 -- Project config, maybe move to Record
 radius = 100.0    
 steps = 120
-amplitude = 0.005
-speed = 6.0
+amplitude = 0.01
+speed = 3.0
+distance = 15.0
 
 centers :: List P.Point
-centers = (\n -> P.create 0.0 0.0 (n*5.0)) <<< toNumber <$> -5..5
+centers = (\n -> P.create 0.0 0.0 (n * distance)) <<< toNumber <$> -5..5
 
 -- aoid using a lambda here using applicative? problem is radius is not in a context
 circles :: List C.Circle
@@ -67,9 +68,10 @@ updateVector t v = do
   -- we need some initial position to use it as a reference point for
   -- incremental changes
   -- reader monad here?
-  let delta = (vpos.x / vpos.y)
-      waveOutX = vpos.x + (vpos.x * (Math.cos (t * speed)) * (amplitude * (vpos.z * 0.25) ))
-      waveOutY = vpos.y + (vpos.y * (Math.sin (t * speed)) * (amplitude * (vpos.z * 0.25) ))
+  let delta = (vpos.x / vpos.y) 
+              -- 0pos    + pos dependant cos over time and amplitude 
+      waveOutX = (vpos.x + ((vpos.x * (Math.cos (t * speed))) * amplitude) * vpos.z / 10.0)
+      waveOutY = (vpos.y + ((vpos.y * (Math.cos (t * speed))) * amplitude) * vpos.z / 10.0)
   updateVector3Position waveOutX waveOutY vpos.z v
 
 update :: Project -> Number -> ThreeEff Unit
