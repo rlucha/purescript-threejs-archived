@@ -1,5 +1,5 @@
-module Projects.CircleStuff 
-  (create, update, Project, getProjectObjects)
+module Projects.CircleStuff
+  (create, update, Project, exportProjectObjects)
 where
 
 -- Todo Plane & Plane interpolation from 4 points (only 3 really needed)
@@ -10,47 +10,66 @@ import Prelude
 import Data.Int (toNumber)
 import Data.List (List, (..), concat)
 import Data.Array (fromFoldable)
-import Data.Traversable (traverse, traverse_)
+import Data.Traversable (traverse, traverse_, sequence_)
 import Math (cos, sin) as Math
 
 import Pure3.Point as P
-import Pure3.Line as L
 import Pure3.Circle as C
-import Pure3.Transform as T
 import Pure3.Interpolate as Interpolate
 import Pure3.Scene as Scene
 
-import Three (createGeometry, forcePointsUpdate, pushVertices, updateVector3Position, getVector3Position)
-import Three.Types (Points, ThreeEff, Vector3)
-import Three.Objects.Points (createPoints) as Objects.Points
+import Three (createColor, createGeometry, getVector3Position, pushVertices, updateVector3Position)
+import Three.Geometry.BoxGeometry (createBoxGeometry)
+import Three.Types (Object3D, Object3D_, ThreeEff, Vector3)
+import Three.Object3D (setPosition, unwrapObject3D, forceVerticesUpdate) as Object3D
+import Three.Object3D.Points (create) as Object3D.Points
+import Three.Object3D.Mesh (create) as Object3D.Mesh
+import Three.Materials.MeshBasicMaterial (createMeshBasicMaterial)
+
 import Projects.Sealike.SeaMaterial (createSeaMaterial)
 
 -- Project config, maybe move to Record
-radius = 100.0    
+radius :: Number
+radius = 100.0
+steps :: Int
 steps = 120
-amplitude = 0.01
-speed = 3.0
+amplitude :: Number
+amplitude = 20.0
+speed :: Number
+speed = 10.0
+distance :: Number
 distance = 15.0
+elements :: Int
+elements = 5
 
 centers :: List P.Point
-centers = (\n -> P.create 0.0 0.0 (n * distance)) <<< toNumber <$> -5..5
+centers = (\n -> P.create 0.0 0.0 (n * distance)) <<< toNumber <$> -elements..elements
 
 -- aoid using a lambda here using applicative? problem is radius is not in a context
 circles :: List C.Circle
 circles = (\c -> C.create c radius) <$> centers
 
-sq1Points :: List P.Point 
+sq1Points :: List P.Point
 sq1Points = concat $ (\c -> Interpolate.interpolate c steps) <$> circles
 
+-- Create a union type of things that can go into a project
+-- end be exported by it
+-- Meaning... things can can be added to a ThreeJS scene
+
 newtype Project = Project
-  { objects :: Points
+  { objects :: Array Object3D
   , vectors :: List Vector3 }
 
-getProjectObjects :: Project -> Points
+-- make a function that aggregates project objects by type using the constructor
+-- we can enum to begin with, but we should do a generic one
+getProjectObjects :: Project -> Array Object3D
 getProjectObjects (Project r) = r.objects
 
 getProjectVectors :: Project -> List Vector3
 getProjectVectors (Project r) = r.vectors
+
+exportProjectObjects :: Project -> Array Object3D_
+exportProjectObjects (Project r) = Object3D.unwrapObject3D <$> r.objects
 
 -- Things that can be created on init
 -- geometry
@@ -68,17 +87,57 @@ updateVector t v = do
   -- we need some initial position to use it as a reference point for
   -- incremental changes
   -- reader monad here?
-  let delta = (vpos.x / vpos.y) 
-              -- 0pos    + pos dependant cos over time and amplitude 
+  let delta = (vpos.x / vpos.y)
+              -- 0pos    + pos dependant cos over time and amplitude
       waveOutX = (vpos.x + ((vpos.x * (Math.cos (t * speed))) * amplitude) * vpos.z / 10.0)
       waveOutY = (vpos.y + ((vpos.y * (Math.cos (t * speed))) * amplitude) * vpos.z / 10.0)
   updateVector3Position waveOutX waveOutY vpos.z v
 
-update :: Project -> Number -> ThreeEff Unit
-update p t = 
+-- Make this work for any kind of objects
+-- Or better, split into two functions for boxes and points
+-- updateObject :: Object3D -> ThreeEff Unit
+-- updateObject t o = case o of
+--   Points o' -> updateVector o'
+--   Mesh o' -> updateVector o' v
+
+-- TODO Object3D get position (and all Object3D stuff as a record representation)
+updateBox :: Number -> Object3D -> ThreeEff Unit
+updateBox t o = 
+  let waveOutX = (Math.cos (t * speed)) * amplitude
+      waveOutY = (Math.sin (t * speed)) * amplitude
+  in Object3D.setPosition o waveOutX waveOutY t
+
+updateBoxes :: Project -> Number -> ThreeEff Unit
+updateBoxes p t = 
+  let obs = getProjectObjects p
+    in traverse_ (updateBox t) obs 
+
+updatePoints :: Project -> Number -> ThreeEff Unit
+updatePoints p t =
   let vs  = getProjectVectors p
       g   = getProjectObjects p
-  in traverse_ (updateVector t) vs *> forcePointsUpdate g
+  in traverse_ (updateVector t) vs *> (sequence_ $ Object3D.forceVerticesUpdate <$> g)
+
+update = updateBoxes
+
+createBoxes :: List P.Point -> ThreeEff (Array Object3D)
+createBoxes ps = do
+  bgColor <- createColor "#ff0000"
+  boxMat <- createMeshBasicMaterial bgColor  
+  boxGs <- traverse (\(P.Point {x, y, z}) -> createBoxGeometry x y z) ps  -- ps ThreeEff (Array Geometry) -- Points -> Threeff Geometry
+  boxMeshes <- traverse (\g -> Object3D.Mesh.create g boxMat) boxGs
+  -- Can't get my head around this...
+  _ <- traverse <$> (setPositionByPoint <$> boxMeshes) ps
+  pure $ fromFoldable boxMeshes
+
+-- magic :: (Object3D -> Number -> Number -> Number) -> List Object3D -> P.Point-> ThreeEff Unit
+-- magic lfn lmsh p = do
+--   let r = P.unwrap p
+--   pure $ (\o -> lfn o r.x r.y r.z ) <$> lmsh
+setPositionByPoint :: Object3D -> P.Point -> ThreeEff Unit
+setPositionByPoint o p = 
+  let {x, y, z} = P.unwrap p
+  in Object3D.setPosition o x y z
 
 create :: ThreeEff Project
 create = do
@@ -87,11 +146,13 @@ create = do
   -- this scene 'unparsing' will be done at the scene graph parsing level
   -- eventually
   vs <- traverse Scene.createVectorFromPoint sq1Points
-  -- here we are mutating g in JS... then using the reference in createPoints g
-  -- should we express that effect somehow? 
+  -- here we are mutating g in JS... then using the reference in create g
+  -- should we express that effect somehow?
   _ <- traverse_ (pushVertices g) vs
-  p <- Objects.Points.createPoints g m
-  pure $ Project { objects: p, vectors: vs }
+  p <- Object3D.Points.create g m
+  -- BOX -------------
+  boxes <- createBoxes sq1Points
+  pure $ Project { objects: boxes, vectors: vs }
 
 -- Explain why traverse works and pure fmap does not
 -- traverse actually executes the effects , pure fmap does not...
@@ -104,7 +165,7 @@ create = do
 -- Scene now will use ThreeJS directly instead of just coordinate manipulation
 
 -- var dotGeometry = new Geometry();
--- var dotMaterial = new PointsMaterial( { size: 1, sizeAttenuation: false } );    
+-- var dotMaterial = new PointsMaterial( { size: 1, sizeAttenuation: false } );
 -- dotGeometry.vertices.push(new Vector3(x, y, z));
 -- var dot = new Points(dotGeometry, dotMaterial);
 -- scene.add(dot)

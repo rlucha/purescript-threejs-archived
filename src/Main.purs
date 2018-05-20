@@ -8,6 +8,7 @@ import Data.Array (unsafeIndex)
 import Partial.Unsafe (unsafePartial)
 import Data.Maybe
 import Data.Tuple (Tuple(..), fst, snd)
+import Data.Traversable (traverse_)
 import Math (cos) as Math
 
 import DOM (DOM)
@@ -72,7 +73,7 @@ initScene = do
 attachAxesHelper :: Scene -> Number -> ThreeEff Unit
 attachAxesHelper scene size = do
   axesHelper <- Three.createAxesHelper size
-  Scene.addToScene axesHelper scene
+  Scene.addToScene scene axesHelper
 
 createControls :: Camera -> Scene -> ThreeEff Controls.OrbitControls
 createControls camera scene = do 
@@ -120,7 +121,7 @@ main' = do
   Camera.setCameraPosition (-299.32) 337.92 1173.99 camera
   Scene.debugScene scene
   Camera.debugCamera camera
-  Scene.addToScene (CircleStuff.getProjectObjects project) scene
+  traverse_ (Scene.addToScene scene) (CircleStuff.exportProjectObjects project)
   Renderer.mountRenderer renderer
   -- Main loop
   -- Maybe put all this elements, scene project, camera and 

@@ -7,9 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "start:dev:js": "webpack --watch --config config/webpack.config.js --mode development",
+    "js": "webpack --watch --config config/webpack.config.js --mode development",
     "build": "webpack --config ./config/webpack.config.js --mode production",
-    "start:dev:ps": "pulp --watch build -I src:lib",
+    "ps": "pulp --watch build -I src:lib",
     "repl": "pulp repl -I src:lib",
     "start": "./run-dev.sh"
   },

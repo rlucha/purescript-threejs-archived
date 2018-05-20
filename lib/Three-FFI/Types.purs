@@ -19,8 +19,12 @@ foreign import data Geometry :: Type
 -- Materials
 foreign import data Material :: Type
 
+-- Internal ThreeJS representation of Object3D
+foreign import data Object3D_ :: Type
+
 -- Objects
-foreign import data Points :: Type
+data Object3D = Mesh Object3D_
+              | Points Object3D_
 
 foreign import data AxesHelper :: Type
 

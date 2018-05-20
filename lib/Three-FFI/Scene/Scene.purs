@@ -9,5 +9,5 @@ foreign import createScene :: SceneEff
 
 -- Do not return Scene on any of this side effectful functions
 foreign import setSceneBackground :: Color -> Scene -> ThreeEff Unit
-foreign import addToScene :: ∀ t. t -> Scene -> ThreeEff Unit
+foreign import addToScene :: ∀ t. Scene -> t -> ThreeEff Unit
 foreign import debugScene :: Scene -> ThreeEff Unit
