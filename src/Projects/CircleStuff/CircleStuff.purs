@@ -160,7 +160,7 @@ create = do
   p <- Object3D.Points.create g m
   -- BOX -------------
   boxes <- createBoxes sq1Points
-  lightColor1 <- createColor "#FF69B4"
+  lightColor1 <- createColor "#ff0000"
   lightColor2 <- createColor "#44d9e6"
   dlight <- DirectionalLight.create lightColor1
   alight <- AmbientLight.create lightColor2

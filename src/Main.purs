@@ -66,7 +66,7 @@ createRenderer = do
 initScene :: ThreeEff Scene
 initScene = do 
   scene <- Scene.createScene
-  bgColor <- Three.createColor "#000000"
+  bgColor <- Three.createColor "#A6FFD4"
   Scene.setSceneBackground bgColor scene
   pure scene
 
@@ -117,7 +117,7 @@ main' = do
   renderer <- createRenderer
   controls <- createControls camera scene
   -- Utils
-  attachAxesHelper scene 100.0
+  -- attachAxesHelper scene 100.0
   Camera.setCameraPosition (-670.66) 875.421 (-604.84) camera
   Scene.debugScene scene
   Camera.debugCamera camera
