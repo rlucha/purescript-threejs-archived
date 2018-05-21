@@ -32,18 +32,18 @@ import Projects.Sealike.SeaMaterial (createSeaMaterial)
 
 -- Project config, maybe move to Record
 radius :: Number
-radius = 100.0
+radius = 50.0
 steps :: Int
-steps = 120
+steps = 100
 amplitude :: Number
-amplitude = 20.0
+amplitude = 1.0
 speed :: Number
 speed = 2.0
 distance :: Number
-distance = 15.0
+distance = 50.0
 elements :: Int
-elements = 5
-size = 10.0
+elements = 10
+size = 8.0
 
 centers :: List P.Point
 centers = (\n -> P.create 0.0 0.0 (n * distance)) <<< toNumber <$> -elements..elements
@@ -108,8 +108,8 @@ updateVector t v = do
 updateBox :: Number -> Object3D -> ThreeEff Unit
 updateBox t o = do
   posV3 <- Object3D.getPosition o
-  let waveOutX = posV3.x + ((posV3.x * Math.cos(t * speed)) * (posV3.z) * 0.001)
-      waveOutY = posV3.y + ((posV3.y * Math.cos(t * speed)) * (posV3.z) * 0.001)
+  let waveOutX = posV3.x + ((posV3.x * Math.cos(t * speed)) * (posV3.z) * 0.00025)
+      waveOutY = posV3.y + ((posV3.y * Math.cos(t * speed)) * (posV3.z) * 0.00025)
   Object3D.setPosition waveOutX waveOutY posV3.z o
 
 updateBoxes :: Project -> Number -> ThreeEff Unit

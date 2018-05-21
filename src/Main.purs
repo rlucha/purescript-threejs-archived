@@ -118,7 +118,7 @@ main' = do
   controls <- createControls camera scene
   -- Utils
   attachAxesHelper scene 100.0
-  Camera.setCameraPosition (-364.18) 907.01 (-791.64) camera
+  Camera.setCameraPosition (-670.66) 875.421 (-604.84) camera
   Scene.debugScene scene
   Camera.debugCamera camera
   traverse_ (Scene.addToScene scene) (CircleStuff.exportProjectObjects project)
