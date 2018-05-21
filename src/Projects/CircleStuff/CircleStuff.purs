@@ -43,7 +43,7 @@ distance :: Number
 distance = 15.0
 elements :: Int
 elements = 5
-size = 3.0
+size = 10.0
 
 centers :: List P.Point
 centers = (\n -> P.create 0.0 0.0 (n * distance)) <<< toNumber <$> -elements..elements
@@ -108,8 +108,8 @@ updateVector t v = do
 updateBox :: Number -> Object3D -> ThreeEff Unit
 updateBox t o = do
   posV3 <- Object3D.getPosition o
-  let waveOutX = posV3.x + ((posV3.x * Math.cos(t * speed)) * (posV3.z * 0.1) * 0.001)
-      waveOutY = posV3.y + ((posV3.y * Math.cos(t * speed)) * (posV3.z * 0.1) * 0.001)
+  let waveOutX = posV3.x + ((posV3.x * Math.cos(t * speed)) * (posV3.z) * 0.001)
+      waveOutY = posV3.y + ((posV3.y * Math.cos(t * speed)) * (posV3.z) * 0.001)
   Object3D.setPosition waveOutX waveOutY posV3.z o
 
 updateBoxes :: Project -> Number -> ThreeEff Unit
@@ -155,8 +155,8 @@ create = do
   p <- Object3D.Points.create g m
   -- BOX -------------
   boxes <- createBoxes sq1Points
-  lightColor1 <- createColor "#990044"
-  lightColor2 <- createColor "#333388"
+  lightColor1 <- createColor "#FF69B4"
+  lightColor2 <- createColor "#44d9e6"
   dlight <- DirectionalLight.create lightColor1
   alight <- AmbientLight.create lightColor2
   -- Setting this position is not working because a weird type error
