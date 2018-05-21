@@ -7,7 +7,7 @@ import Data.List (foldr, (..))
 import Data.Int (toNumber)
 import Data.List.ZipList (ZipList(..))
 import Control.Apply (lift2)
-import Math (cos, sin)
+import Math (cos, sin, pi)
 import Pure3.Point as P
 import Pure3.Line as L
 import Pure3.Circle as C
@@ -22,18 +22,21 @@ interpolateRange from to s =
   in map (\x -> from + inc * toNumber x) (StrictList.range 0 s)
   -- \[x_n = x_i + \frac{x_f - x_i}{s} n\]
 
+degToRad :: Number -> Number
+degToRad n = n * (180.0 / pi)
+
 class Interpolatable a where
   interpolate :: a -> Steps -> StrictList.List P.Point
 
 instance interpolateCircle :: Interpolatable C.Circle where
   interpolate c s = 
     let {center, radius} = C.unwrap c
-        inc = 360 / s 
-        degs = ((*) inc) <$> 1..s
+        inc = 360.0 / degToRad (toNumber s)
+        degs = ((*) inc) <$> toNumber <$> 0..s
         cosR = (*) radius <<< cos
         sinR = (*) radius <<< sin
         -- Is there a way to chain this fmaps more beautifully?
-        points =  (+) center <$> (\r -> P.create (cosR r) (sinR r) 0.0) <$> toNumber <$> degs
+        points =  (+) center <$> (\r -> P.create (cosR r) (sinR r) 0.0) <$> degs
     --  uncurry is gonna take a binary function and make it a unary function over Tuples
     -- cartesianProductOfPoints :: (*) <$> lab <*> lac
     in points

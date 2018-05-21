@@ -136,6 +136,7 @@ main = Three.onDOMContentLoaded main'
 -- 01 Make Project a graph and provide a way to traverse it
 -- 02 Make results a record and provide a way to hook propery results -> Needs understading row types better
 -- 03 Remove all partial unsafe functions -> needs 02
+-- 04 getting 02 
 -- Remove any dependency from the lib module to the three module
 -- Connect datGUI to those params to get some interactivity
 -- Next steps: Try to reproduce hierarchy2 example from threejs 
@@ -154,3 +155,8 @@ main = Three.onDOMContentLoaded main'
 -- Add proper fog to scene instead of directly from js
 -- Transparent canvas color?
 -- Check for a way to easy the pain on wrapping unwrapping object3D
+-- Move camera && calculations inside scene
+-- Simplify timeline to just execute behaviours & time unbound effects
+-- pass time as well as frame to behaviours...
+-- get 2d coordinates from any element in canvas to match css elements on top
+-- create events that snapshot time or frame and ease on the diff from initial to duration...

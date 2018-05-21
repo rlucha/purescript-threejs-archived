@@ -24,6 +24,10 @@ instance ringPoint :: Ring Point where
 unwrap :: Point -> { x :: Number, y :: Number, z :: Number }
 unwrap (Point {x, y, z}) = {x, y, z}
 
+-- a way to fetch a record value from label?
+getZ :: Point -> Number
+getZ p = (\r -> r.z) $ unwrap p 
+
 zeroPoint :: Point
 zeroPoint = Point { x:0.0, y:0.0, z:0.0}
 
