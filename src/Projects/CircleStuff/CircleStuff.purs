@@ -9,7 +9,7 @@ where
 import Prelude
 import Data.Int (toNumber)
 import Data.List (List, (..), concat, zipWith)
-import Data.Array (fromFoldable)
+import Data.Array (fromFoldable, concat) as Array
 import Data.Traversable (traverse, traverse_, sequence_)
 import Math (cos, sin) as Math
 
@@ -24,7 +24,9 @@ import Three.Types (Object3D, Object3D_, ThreeEff, Vector3)
 import Three.Object3D (setPosition, unwrapObject3D, forceVerticesUpdate, getPosition) as Object3D
 import Three.Object3D.Points (create) as Object3D.Points
 import Three.Object3D.Mesh (create) as Object3D.Mesh
-import Three.Materials.MeshBasicMaterial (createMeshBasicMaterial)
+import Three.Materials.MeshPhongMaterial (createMeshPhongMaterial)
+import Three.Object3D.Light.DirectionalLight (create) as DirectionalLight
+import Three.Object3D.Light.AmbientLight (create) as AmbientLight
 
 import Projects.Sealike.SeaMaterial (createSeaMaterial)
 
@@ -125,15 +127,15 @@ update = updateBoxes
 
 createBoxes :: List P.Point -> ThreeEff (Array Object3D)
 createBoxes ps = do
-  bgColor <- createColor "#ff0000"
-  boxMat <- createMeshBasicMaterial bgColor  
+  bgColor <- createColor "#339966"
+  boxMat <- createMeshPhongMaterial bgColor  
   -- create an many boxes as points
   boxGs <- traverse (\_ -> createBoxGeometry size size size) ps  -- ps ThreeEff (Array Geometry) -- Points -> Threeff Geometry
   boxMeshes <- traverse (\g -> Object3D.Mesh.create g boxMat) boxGs
   -- Can't get my head around this...
   -- How to apply a binary function mapped over two list of arguments?
   _ <- sequence_ $ zipWith setPositionByPoint sq1Points boxMeshes
-  pure $ fromFoldable boxMeshes
+  pure $ Array.fromFoldable boxMeshes
 
 setPositionByPoint :: P.Point -> Object3D -> ThreeEff Unit
 setPositionByPoint p o = 
@@ -153,9 +155,14 @@ create = do
   p <- Object3D.Points.create g m
   -- BOX -------------
   boxes <- createBoxes sq1Points
+  lightColor1 <- createColor "#990044"
+  lightColor2 <- createColor "#333388"
+  dlight <- DirectionalLight.create lightColor1
+  alight <- AmbientLight.create lightColor2
   -- Setting this position is not working because a weird type error
   -- _ <- sequence_ $ (setPositionByPoint <$> boxes) <*> fromFoldable sq1Points
-  pure $ Project { objects: boxes, vectors: vs }
+  -- Make a proper structure instead of arrays of arrays of arrays...
+  pure $ Project { objects: Array.concat [boxes <> [dlight, alight]], vectors: vs }
 
 -- Explain why traverse works and pure fmap does not
 -- traverse actually executes the effects , pure fmap does not...
