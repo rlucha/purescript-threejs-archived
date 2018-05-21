@@ -153,3 +153,4 @@ main = Three.onDOMContentLoaded main'
 -- Move camera into project?
 -- Add proper fog to scene instead of directly from js
 -- Transparent canvas color?
+-- Check for a way to easy the pain on wrapping unwrapping object3D

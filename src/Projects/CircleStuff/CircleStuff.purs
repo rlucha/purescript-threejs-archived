@@ -8,7 +8,7 @@ where
 
 import Prelude
 import Data.Int (toNumber)
-import Data.List (List, (..), concat)
+import Data.List (List, (..), concat, zipWith)
 import Data.Array (fromFoldable)
 import Data.Traversable (traverse, traverse_, sequence_)
 import Math (cos, sin) as Math
@@ -21,7 +21,7 @@ import Pure3.Scene as Scene
 import Three (createColor, createGeometry, getVector3Position, pushVertices, updateVector3Position)
 import Three.Geometry.BoxGeometry (createBoxGeometry)
 import Three.Types (Object3D, Object3D_, ThreeEff, Vector3)
-import Three.Object3D (setPosition, unwrapObject3D, forceVerticesUpdate) as Object3D
+import Three.Object3D (setPosition, unwrapObject3D, forceVerticesUpdate, getPosition) as Object3D
 import Three.Object3D.Points (create) as Object3D.Points
 import Three.Object3D.Mesh (create) as Object3D.Mesh
 import Three.Materials.MeshBasicMaterial (createMeshBasicMaterial)
@@ -36,11 +36,12 @@ steps = 120
 amplitude :: Number
 amplitude = 20.0
 speed :: Number
-speed = 10.0
+speed = 2.0
 distance :: Number
 distance = 15.0
 elements :: Int
 elements = 5
+size = 3.0
 
 centers :: List P.Point
 centers = (\n -> P.create 0.0 0.0 (n * distance)) <<< toNumber <$> -elements..elements
@@ -101,11 +102,13 @@ updateVector t v = do
 --   Mesh o' -> updateVector o' v
 
 -- TODO Object3D get position (and all Object3D stuff as a record representation)
+-- get position or else eveything will get the same pos always
 updateBox :: Number -> Object3D -> ThreeEff Unit
-updateBox t o = 
-  let waveOutX = (Math.cos (t * speed)) * amplitude
-      waveOutY = (Math.sin (t * speed)) * amplitude
-  in Object3D.setPosition o waveOutX waveOutY t
+updateBox t o = do
+  posV3 <- Object3D.getPosition o
+  let waveOutX = posV3.x + ((posV3.x * Math.cos(t * speed)) * (posV3.z * 0.1) * 0.001)
+      waveOutY = posV3.y + ((posV3.y * Math.cos(t * speed)) * (posV3.z * 0.1) * 0.001)
+  Object3D.setPosition waveOutX waveOutY posV3.z o
 
 updateBoxes :: Project -> Number -> ThreeEff Unit
 updateBoxes p t = 
@@ -124,20 +127,18 @@ createBoxes :: List P.Point -> ThreeEff (Array Object3D)
 createBoxes ps = do
   bgColor <- createColor "#ff0000"
   boxMat <- createMeshBasicMaterial bgColor  
-  boxGs <- traverse (\(P.Point {x, y, z}) -> createBoxGeometry x y z) ps  -- ps ThreeEff (Array Geometry) -- Points -> Threeff Geometry
+  -- create an many boxes as points
+  boxGs <- traverse (\_ -> createBoxGeometry size size size) ps  -- ps ThreeEff (Array Geometry) -- Points -> Threeff Geometry
   boxMeshes <- traverse (\g -> Object3D.Mesh.create g boxMat) boxGs
   -- Can't get my head around this...
-  _ <- traverse <$> (setPositionByPoint <$> boxMeshes) ps
+  -- How to apply a binary function mapped over two list of arguments?
+  _ <- sequence_ $ zipWith setPositionByPoint sq1Points boxMeshes
   pure $ fromFoldable boxMeshes
 
--- magic :: (Object3D -> Number -> Number -> Number) -> List Object3D -> P.Point-> ThreeEff Unit
--- magic lfn lmsh p = do
---   let r = P.unwrap p
---   pure $ (\o -> lfn o r.x r.y r.z ) <$> lmsh
-setPositionByPoint :: Object3D -> P.Point -> ThreeEff Unit
-setPositionByPoint o p = 
+setPositionByPoint :: P.Point -> Object3D -> ThreeEff Unit
+setPositionByPoint p o = 
   let {x, y, z} = P.unwrap p
-  in Object3D.setPosition o x y z
+  in Object3D.setPosition x y z o
 
 create :: ThreeEff Project
 create = do
@@ -152,6 +153,8 @@ create = do
   p <- Object3D.Points.create g m
   -- BOX -------------
   boxes <- createBoxes sq1Points
+  -- Setting this position is not working because a weird type error
+  -- _ <- sequence_ $ (setPositionByPoint <$> boxes) <*> fromFoldable sq1Points
   pure $ Project { objects: boxes, vectors: vs }
 
 -- Explain why traverse works and pure fmap does not
