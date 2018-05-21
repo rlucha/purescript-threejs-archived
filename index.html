@@ -21,8 +21,6 @@
     }
 
     .title {
-      color: #f0f0f0;
-      font-family: 'Prata', serif;
       position: fixed;
       font-weight: 300;
       user-select: none;
@@ -31,12 +29,12 @@
     }
 
     h1 {
+      font-family: 'Prata', serif;
       font-size: 5rem;
       margin: 0;
       line-height: 1em;
       font-weight: normal;
       opacity: 1;
-      color: #125055;
       transition: opacity 300ms ease-in-out;
     }
     h2 {
@@ -58,9 +56,51 @@
       display: inline-block;
     }
 
-    .links:hover {
-      color: #FF5C60;
+    .page {
+      
+      padding: 5px;
+      text-decoration: none;
+      color: #fff;
+      font-size: 14px;
+      display: inline-block;
+      margin: 20px 5px 0 0;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: bold;
     }
+
+    body.theme01 .title, body.theme01 .page {
+      color: #125055;
+    }
+
+    body.theme01 .links {
+      color: #333;
+    }
+
+    body.theme01 h2 {
+      color: #ffee5c;
+    }
+
+    body.theme01 .page {
+      border-bottom: 3px solid #125055;
+    }
+
+    body.theme02 .title, body.theme02 .page {
+      color: #fff;
+    }
+
+    body.theme02 .links {
+      color: #aaa;
+    }    
+
+    body.theme02 h2 {
+      color:#FF5C60;
+    }    
+
+    body.theme02 .page {
+      border-bottom: 3px solid #f0f0f0;
+    }
+
+
 
   </style>
 </head>
@@ -68,11 +108,13 @@
 <body>
   <div class="title">
     <h1>Roberto Lucha</h1>
-    <h2>Playground</h2>   
+    <h2>Playground</h2>
     <div>
       <a class="links" href="https://www.github.com/rlucha">github</a>
       <a class="links" href="https://www.twitter.com/@rlucha">twitter</a>
     </div>
+    <a href="#/01" onclick="go()" class="page">01</a>
+    <a href="#/02" onclick="go()" class="page">02</a>
   </div>
   <script src="./dist/main.js"></script>
 </body>
