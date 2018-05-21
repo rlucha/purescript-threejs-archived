@@ -79,7 +79,7 @@ attachAxesHelper scene size = do
 createControls :: Camera -> Scene -> ThreeEff Controls.OrbitControls
 createControls camera scene = do 
   controls <- Controls.createOrbitControls camera
-  Controls.toggleControls true controls
+  Controls.toggleControls false controls
   pure controls
 
 -- updateScene should pass the entire Array Number to the Project and let the project decide
