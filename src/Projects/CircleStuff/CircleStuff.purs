@@ -34,7 +34,7 @@ import Projects.Sealike.SeaMaterial (createSeaMaterial)
 radius :: Number
 radius = 200.0
 steps :: Int
-steps = 60
+steps = 50
 amplitude :: Number
 amplitude = 1.0
 speed :: Number
