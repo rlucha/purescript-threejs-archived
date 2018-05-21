@@ -21,7 +21,7 @@ import Pure3.Scene as Scene
 import Three (createColor, createGeometry, getVector3Position, pushVertices, updateVector3Position)
 import Three.Geometry.BoxGeometry (createBoxGeometry)
 import Three.Types (Object3D, Object3D_, ThreeEff, Vector3)
-import Three.Object3D (setPosition, unwrapObject3D, forceVerticesUpdate, getPosition) as Object3D
+import Three.Object3D (setPosition, setRotation, unwrapObject3D, forceVerticesUpdate, getPosition) as Object3D
 import Three.Object3D.Points (create) as Object3D.Points
 import Three.Object3D.Mesh (create) as Object3D.Mesh
 import Three.Materials.MeshPhongMaterial (createMeshPhongMaterial)
@@ -32,13 +32,13 @@ import Projects.Sealike.SeaMaterial (createSeaMaterial)
 
 -- Project config, maybe move to Record
 radius :: Number
-radius = 50.0
+radius = 200.0
 steps :: Int
-steps = 100
+steps = 60
 amplitude :: Number
 amplitude = 1.0
 speed :: Number
-speed = 2.0
+speed = 1.0
 distance :: Number
 distance = 50.0
 elements :: Int
@@ -51,6 +51,9 @@ centers = (\n -> P.create 0.0 0.0 (n * distance)) <<< toNumber <$> -elements..el
 -- aoid using a lambda here using applicative? problem is radius is not in a context
 circles :: List C.Circle
 circles = (\c -> C.create c radius) <$> centers
+
+circle :: C.Circle
+circle = C.create (P.create 0.0 0.0 0.0) radius
 
 sq1Points :: List P.Point
 sq1Points = concat $ (\c -> Interpolate.interpolate c steps) <$> circles
@@ -110,7 +113,9 @@ updateBox t o = do
   posV3 <- Object3D.getPosition o
   let waveOutX = posV3.x + ((posV3.x * Math.cos(t * speed)) * (posV3.z) * 0.00025)
       waveOutY = posV3.y + ((posV3.y * Math.cos(t * speed)) * (posV3.z) * 0.00025)
+      rotY = (posV3.y * 0.01 + t)
   Object3D.setPosition waveOutX waveOutY posV3.z o
+  Object3D.setRotation rotY rotY rotY o
 
 updateBoxes :: Project -> Number -> ThreeEff Unit
 updateBoxes p t = 
@@ -128,9 +133,9 @@ update = updateBoxes
 createBoxes :: List P.Point -> ThreeEff (Array Object3D)
 createBoxes ps = do
   bgColor <- createColor "#339966"
-  boxMat <- createMeshPhongMaterial bgColor  
+  boxMat <- createMeshPhongMaterial bgColor true
   -- create an many boxes as points
-  boxGs <- traverse (\_ -> createBoxGeometry size size size) ps  -- ps ThreeEff (Array Geometry) -- Points -> Threeff Geometry
+  boxGs <- traverse (\_ -> createBoxGeometry 20.0 80.0 20.0) ps  -- ps ThreeEff (Array Geometry) -- Points -> Threeff Geometry
   boxMeshes <- traverse (\g -> Object3D.Mesh.create g boxMat) boxGs
   -- Can't get my head around this...
   -- How to apply a binary function mapped over two list of arguments?

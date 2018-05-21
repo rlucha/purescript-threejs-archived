@@ -13,6 +13,16 @@ setPosition x y z o = case o of
   Points o' -> setPosition_ x y z o'
   Light o' -> setPosition_ x y z o'
 
+foreign import setRotation_ :: Number -> Number -> Number -> Object3D_ -> ThreeEff Unit
+
+setRotation :: Number -> Number -> Number -> Object3D -> ThreeEff Unit
+setRotation x y z o = case o of
+  Mesh o' -> setRotation_ x y z o'
+  -- Fix points position setting
+  Points o' -> setRotation_ x y z o'
+  Light o' -> setRotation_ x y z o'
+
+
 unwrapObject3D :: Object3D -> Object3D_
 unwrapObject3D o = case o of
     Points o' -> o' 
