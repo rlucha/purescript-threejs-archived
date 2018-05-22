@@ -50,3 +50,4 @@ Run a local server from project folder to see it move
 - 22 get 2d coordinates from any element in canvas to match css elements on top
 - 23 create events that snapshot time or frame and ease on the diff from initial to duration...
 - 24 Merge all common code in projects into a project runner
+- 25 Move projects config to a record

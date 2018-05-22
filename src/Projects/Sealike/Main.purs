@@ -27,6 +27,7 @@ import Three.Camera (create, debug, setPosition) as Camera
 import Three.OrbitControls (OrbitControls, create, toggle, update) as Controls
 
 -- import Projects.CircleStuff  as Sealike
+import Projects.BaseProject as BaseProject
 import Projects.Sealike  as Sealike
 
 incT :: Timeline.Frame -> Number
@@ -87,7 +88,7 @@ createControls camera scene = do
 -- It makes the project dependant on the Timeline payload `Array Number`
 -- I think the scene should be the one doing its own calculations, and behaviours should only pick t
 -- Then we can provide a common set of calculations from time in a module that can be shared between projects
-updateScene :: ∀ e. Sealike.Project -> Camera -> Renderer -> Array Number -> Eff (three :: Three | e) Unit
+updateScene :: ∀ e. BaseProject.Project -> Camera -> Renderer -> Array Number -> Eff (three :: Three | e) Unit
 updateScene s c r t = do
 -- Just while developing!! dangerous!
   Sealike.update s (unsafePartial $ unsafeIndex t 0)
@@ -97,7 +98,7 @@ updateScene s c r t = do
 -- and merge them with the default ones...
 -- TODO Provide an interface to run loop with just the custom things
 
-init :: Controls.OrbitControls -> Scene -> Sealike.Project -> Camera -> Renderer -> ThreeEff Unit
+init :: Controls.OrbitControls -> Scene -> BaseProject.Project -> Camera -> Renderer -> ThreeEff Unit
 init controls scene project camera renderer = 
   Timeline.create calculations behaviours effects (Timeline.Frame 0)
     where 
@@ -120,7 +121,7 @@ main = do
   Camera.setPosition (-1215.27) 285.24 (153.98) camera
   Scene.debug scene
   Camera.debug camera
-  traverse_ (Scene.add scene) (Sealike.exportProjectObjects project)
+  traverse_ (Scene.add scene) (BaseProject.exportProjectObjects project)
   Renderer.mount renderer
   -- Main loop
   -- Maybe put all this elements, scene project, camera and 
