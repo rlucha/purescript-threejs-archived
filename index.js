@@ -8,12 +8,12 @@ const route = rlite(notFound, {
     circleStuff.main()
   },
   '01': function () {
-    document.body.className = 'theme01'
-    circleStuff.main()
-  },
-  '02': function () {
     document.body.className = 'theme02'
     seaLike.main()
+  },
+  '02': function () {
+    document.body.className = 'theme01'
+    circleStuff.main()
   },
 
 });
