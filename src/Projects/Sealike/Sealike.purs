@@ -20,7 +20,7 @@ import Pure3.Scene as Scene
 
 import Three (createGeometry, pushVertices, updateVector3Position, getVector3Position)
 import Three.Types (Object3D, ThreeEff, Vector3, Object3D_)
-import Three.Object3D (forceVerticesUpdate, unwrapObject3D) as Object3D
+import Three.Object3D (forceVerticesUpdate, unwrap) as Object3D
 import Three.Object3D.Points (create) as Object3D.Points
 import Projects.Sealike.SeaMaterial (createSeaMaterial)
 
@@ -66,7 +66,7 @@ getProjectVectors :: Project -> Array Vector3
 getProjectVectors (Project r) = r.vectors
 
 exportProjectObjects :: Project -> Array Object3D_
-exportProjectObjects (Project r) = Object3D.unwrapObject3D <$> r.objects
+exportProjectObjects (Project r) = Object3D.unwrap <$> r.objects
 -- Things that can be created on init
 -- geometry
 -- materials

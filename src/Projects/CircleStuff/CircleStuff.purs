@@ -19,12 +19,12 @@ import Pure3.Interpolate as Interpolate
 import Pure3.Scene as Scene
 
 import Three (createColor, createGeometry, getVector3Position, pushVertices, updateVector3Position)
-import Three.Geometry.BoxGeometry (createBoxGeometry)
+import Three.Geometry.BoxGeometry (create) as BoxGeometry
 import Three.Types (Object3D, Object3D_, ThreeEff, Vector3)
-import Three.Object3D (setPosition, setRotation, unwrapObject3D, forceVerticesUpdate, getPosition) as Object3D
+import Three.Object3D (setPosition, setRotation, unwrap, forceVerticesUpdate, getPosition) as Object3D
 import Three.Object3D.Points (create) as Object3D.Points
 import Three.Object3D.Mesh (create) as Object3D.Mesh
-import Three.Materials.MeshPhongMaterial (createMeshPhongMaterial)
+import Three.Materials.MeshPhongMaterial (create) as MeshPhongMaterial
 import Three.Object3D.Light.DirectionalLight (create) as DirectionalLight
 import Three.Object3D.Light.AmbientLight (create) as AmbientLight
 
@@ -75,7 +75,7 @@ getProjectVectors :: Project -> List Vector3
 getProjectVectors (Project r) = r.vectors
 
 exportProjectObjects :: Project -> Array Object3D_
-exportProjectObjects (Project r) = Object3D.unwrapObject3D <$> r.objects
+exportProjectObjects (Project r) = Object3D.unwrap <$> r.objects
 
 -- Things that can be created on init
 -- geometry
@@ -133,9 +133,9 @@ update = updateBoxes
 createBoxes :: List P.Point -> ThreeEff (Array Object3D)
 createBoxes ps = do
   bgColor <- createColor "#339966"
-  boxMat <- createMeshPhongMaterial bgColor true
+  boxMat <- MeshPhongMaterial.create bgColor true
   -- create an many boxes as points
-  boxGs <- traverse (\_ -> createBoxGeometry 20.0 80.0 20.0) ps  -- ps ThreeEff (Array Geometry) -- Points -> Threeff Geometry
+  boxGs <- traverse (\_ -> BoxGeometry.create 20.0 80.0 20.0) ps  -- ps ThreeEff (Array Geometry) -- Points -> Threeff Geometry
   boxMeshes <- traverse (\g -> Object3D.Mesh.create g boxMat) boxGs
   -- Can't get my head around this...
   -- How to apply a binary function mapped over two list of arguments?

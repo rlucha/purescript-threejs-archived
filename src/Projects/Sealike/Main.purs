@@ -1,12 +1,12 @@
 module Projects.Sealike.Main where
 
-import Prelude
+import Prelude (Unit, bind, discard, negate, pure, ($), (*), (+), (/))
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE)
 import Data.Int (toNumber)
 import Data.Array (unsafeIndex)
 import Partial.Unsafe (unsafePartial)
-import Data.Maybe
+import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..), fst, snd)
 import Data.Traversable (traverse_)
 import Math (cos) as Math
@@ -16,17 +16,15 @@ import DOM.HTML (window)
 import DOM.HTML.Window (document)
 import DOM.HTML.Document (body)
 import DOM.HTML.HTMLElement (offsetWidth, offsetHeight)
-import DOM.Event.EventTarget
-import DOM.Event.Types (EventTarget, Event, EventType(..))
 
 import Timeline (create, Frame(..)) as Timeline
 
-import Three (createColor, createAxesHelper, onDOMContentLoaded) as Three
+import Three (createColor, createAxesHelper) as Three
 import Three.Types (Camera, Renderer, Scene, Three, ThreeEff)
-import Three.Scene (debugScene, createScene, setSceneBackground, addToScene) as Scene
-import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mountRenderer, render) as Renderer
-import Three.Camera (createPerspectiveCamera, debugCamera, setCameraPosition) as Camera
-import Three.OrbitControls (OrbitControls, createOrbitControls, toggleControls, updateControls) as Controls
+import Three.Scene (debug, create, setBackground, add) as Scene
+import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mount, render) as Renderer
+import Three.Camera (create, debug, setPosition) as Camera
+import Three.OrbitControls (OrbitControls, create, toggle, update) as Controls
 
 -- import Projects.CircleStuff  as Sealike
 import Projects.Sealike  as Sealike
@@ -66,20 +64,20 @@ createRenderer = do
 
 initScene :: ThreeEff Scene
 initScene = do 
-  scene <- Scene.createScene
+  scene <- Scene.create
   bgColor <- Three.createColor "#000000"
-  Scene.setSceneBackground bgColor scene
+  Scene.setBackground bgColor scene
   pure scene
 
 attachAxesHelper :: Scene -> Number -> ThreeEff Unit
 attachAxesHelper scene size = do
   axesHelper <- Three.createAxesHelper size
-  Scene.addToScene scene axesHelper
+  Scene.add scene axesHelper
 
 createControls :: Camera -> Scene -> ThreeEff Controls.OrbitControls
 createControls camera scene = do 
-  controls <- Controls.createOrbitControls camera
-  Controls.toggleControls false controls
+  controls <- Controls.create camera
+  Controls.toggle false controls
   pure controls
 
 -- updateScene should pass the entire Array Number to the Project and let the project decide
@@ -106,7 +104,7 @@ init controls scene project camera renderer =
       calculations = [incT, cosT]
       behaviours = [updateScene project camera renderer]
       effects = 
-        [ Controls.updateControls controls
+        [ Controls.update controls
         , Renderer.render scene camera renderer ]
 
 main :: ∀ e. Eff (three :: Three, dom :: DOM, console :: CONSOLE | e) Unit
@@ -114,16 +112,16 @@ main = do
   ar <- unsafeGetAspectRatio
   scene    <- initScene
   project  <- Sealike.create
-  camera   <- Camera.createPerspectiveCamera 30.0 ar 1.0 10000.0
+  camera   <- Camera.create 30.0 ar 1.0 10000.0
   renderer <- createRenderer
   controls <- createControls camera scene
   -- Utils
   -- attachAxesHelper scene 100.0
-  Camera.setCameraPosition (-1215.27) 285.24 (153.98) camera
-  Scene.debugScene scene
-  Camera.debugCamera camera
-  traverse_ (Scene.addToScene scene) (Sealike.exportProjectObjects project)
-  Renderer.mountRenderer renderer
+  Camera.setPosition (-1215.27) 285.24 (153.98) camera
+  Scene.debug scene
+  Camera.debug camera
+  traverse_ (Scene.add scene) (Sealike.exportProjectObjects project)
+  Renderer.mount renderer
   -- Main loop
   -- Maybe put all this elements, scene project, camera and 
   -- renderer into a ctx that gets passed to init... or it will grow very big

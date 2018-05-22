@@ -4,7 +4,7 @@ import Three.Types (ThreeEff, Material, Color)
 
 type Lights = Boolean
 
-foreign import createMeshPhongMaterial 
+foreign import create 
   :: Color
   -> Lights
   -> ThreeEff Material 

@@ -5,9 +5,9 @@ import Three.Types (Color, Scene, ThreeEff)
 
 type SceneEff = ThreeEff Scene
 
-foreign import createScene :: SceneEff
+foreign import create :: SceneEff
 
 -- Do not return Scene on any of this side effectful functions
-foreign import setSceneBackground :: Color -> Scene -> ThreeEff Unit
-foreign import addToScene :: ∀ t. Scene -> t -> ThreeEff Unit
-foreign import debugScene :: Scene -> ThreeEff Unit
+foreign import setBackground :: Color -> Scene -> ThreeEff Unit
+foreign import add :: ∀ t. Scene -> t -> ThreeEff Unit
+foreign import debug :: Scene -> ThreeEff Unit

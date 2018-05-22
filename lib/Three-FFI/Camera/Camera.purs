@@ -9,9 +9,14 @@ type Aspect = Number
 type Near = Number
 type Far = Number
 
-foreign import createPerspectiveCamera 
+type X = Number
+type Y = Number
+type Z = Number
+
+foreign import create 
   :: Fov -> Aspect -> Near -> Far -> ThreeEff Camera
 
-foreign import debugCamera :: Camera -> ThreeEff Unit
-foreign import setCameraPosition 
-  :: Number -> Number -> Number -> Camera -> ThreeEff Unit
+foreign import debug :: Camera -> ThreeEff Unit
+
+foreign import setPosition 
+  :: X -> Y -> Z -> Camera -> ThreeEff Unit

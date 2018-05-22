@@ -2,7 +2,7 @@ module Three.Materials.MeshNormalMaterial where
 
 import Three.Types (ThreeEff, Material, Color)
 
-foreign import createMeshNormalMaterial 
+foreign import create 
   :: Color
   -> Boolean
   -> ThreeEff Material
