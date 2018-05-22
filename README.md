@@ -51,3 +51,5 @@ Run a local server from project folder to see it move
 - 23 create events that snapshot time or frame and ease on the diff from initial to duration...
 - 24 Merge all common code in projects into a project runner
 - 25 Move projects config to a record
+- 26 onResize event, use full purescript code to handle it
+- 27 throttle onResize

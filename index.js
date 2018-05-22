@@ -3,6 +3,9 @@ const rlite = require('rlite-router')
 const circleStuff = require('./output/Projects.CircleStuff.Main')
 const seaLike = require('./output/Projects.Sealike.Main')
 
+window.circleStuff = circleStuff
+window.seaLike = seaLike
+
 const route = rlite(notFound, {
   '': function () {
     circleStuff.main()

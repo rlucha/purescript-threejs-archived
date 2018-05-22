@@ -19,6 +19,7 @@ foreign import getVector3Position
 
 -- TODO this is too specific and JS reliant
 foreign import onDOMContentLoaded :: ∀ f e. f -> Eff (three :: Three | e) Unit
+foreign import onResize :: ∀ f e. f -> Eff (three :: Three | e) Unit
 
 foreign import voidEff :: ThreeEff Unit
  
