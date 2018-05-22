@@ -1,16 +1,14 @@
-Purescript simple scene model and geometric operations. 
+Purescript simple scene model and geometric operations. Simple ThreeJS bindings included.
+
+This is a personal exploratoty project to learn more Purescript and WegGL.
 
 See it live at [Purescript ThreeJS](https://rlucha.github.io/purescript-threejs/)
 
-Renders using Three.js 
-
 ```
-npm run start:dev:js
-npm run start:dev:ps
+npm run js
+npm run ps
 ```
-
-open localhost:8080
-
+Run a local server from project folder to see it move
 
 ## Project hierarchy
 - Editor
@@ -24,30 +22,31 @@ open localhost:8080
 - Main
   - Entry point
 
-##TODO
+## TODO
 - 01 Make Project a graph and provide a way to traverse it
 - 02 Make results a record and provide a way to hook propery results -> Needs understading row ypes better
 - 03 Remove all partial unsafe functions -> needs 02
-- 04 getting 02 
-- Connect datGUI to those params to get some interactivity
-- Next steps: Try to reproduce hierarchy2 example from threejs 
-- Create a set of JS utils to make IFF less painful
+- 04 Replace 02 with moving calculations inside the scene
+- 05 Connect datGUI to those params to get some interactivity
+- 06 Next steps: Try to reproduce hierarchy2 example from threejs 
+- 07 Create a set of JS utils to make IFF less painful
   - Get webpack to serve all files using purs-loader or similar
   - Get to write the JS in es6 and server that to the compiler
   - Write fat arrow utility functions
-- Change it on resize, updateMatrices
-- Add Camera lookAt fn
-- Orbitcontrol rotate, autoupdate fns, enable zoom, etc.
-- Write a bit of documentation about the type decisions on Timeline and Main mostly
-- Remove most comments and create function names for those
-- Generalize the project file utils into a project object in Pure3
-- Add mousePositionValues to the project update fn input
-- Move camera into project?
-- Add proper fog to scene instead of directly from js
-- Transparent canvas color?
-- Check for a way to easy the pain on wrapping unwrapping object3D
-- Move camera && calculations inside scene
-- Simplify timeline to just execute behaviours & time unbound effects
-- pass time as well as frame to behaviours...
-- get 2d coordinates from any element in canvas to match css elements on top
-- create events that snapshot time or frame and ease on the diff from initial to duration...
+- 08 Change it on resize, updateMatrices
+- 09 Add Camera lookAt fn
+- 10 Orbitcontrol rotate, autoupdate fns, enable zoom, etc.
+- 11 Write a bit of documentation about the type decisions on Timeline and Main mostly
+- 12 Remove most comments and create function names for those
+- 13 Generalize the project file utils into a project object in Pure3
+- 14 Add mousePositionValues to the project update fn input
+- 15 Move camera into project?
+- 16 Add proper fog to scene instead of directly from js
+- 17 Transparent canvas color?
+- 18 Check for a way to easy the pain on wrapping unwrapping object3D
+- 19 Move camera && calculations inside scene
+- 20 Simplify timeline to just execute behaviours & time unbound effects
+- 21 pass time as well as frame to behaviours...
+- 22 get 2d coordinates from any element in canvas to match css elements on top
+- 23 create events that snapshot time or frame and ease on the diff from initial to duration...
+- 24 Merge all common code in projects into a project runner
