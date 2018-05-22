@@ -62,7 +62,7 @@
 /******/ 	}
 /******/
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "1597ad91fe902b14e660"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "83d68c9ce153c79833c4"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -771,7 +771,7 @@
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("var rlite = __webpack_require__(/*! rlite-router */ \"./node_modules/rlite-router/rlite.js\");\n\nvar circleStuff = __webpack_require__(/*! ./output/Projects.CircleStuff.Main */ \"./output/Projects.CircleStuff.Main/index.js\");\nvar seaLike = __webpack_require__(/*! ./output/Projects.Sealike.Main */ \"./output/Projects.Sealike.Main/index.js\");\n\nvar route = rlite(notFound, {\n  '': function _() {\n    circleStuff.main();\n  },\n  '01': function _() {\n    document.body.className = 'theme02';\n    seaLike.main();\n  },\n  '02': function _() {\n    document.body.className = 'theme01';\n    circleStuff.main();\n  }\n\n});\n\nfunction notFound() {\n  document.body.className = 'theme01';\n  circleStuff.main();\n}\n\n// Hash-based routing\nfunction processHash() {\n  var hash = location.hash || '#';\n  route(hash.slice(2));\n}\n\nwindow.go = function () {\n  setTimeout(function () {\n    return window.location.reload(true);\n  }, 200);\n};\n\nwindow.addEventListener('hashchange', processHash);\nprocessHash();\n\n//# sourceURL=webpack:///./index.js?");
+eval("var rlite = __webpack_require__(/*! rlite-router */ \"./node_modules/rlite-router/rlite.js\");\n\nvar circleStuff = __webpack_require__(/*! ./output/Projects.CircleStuff.Main */ \"./output/Projects.CircleStuff.Main/index.js\");\nvar seaLike = __webpack_require__(/*! ./output/Projects.Sealike.Main */ \"./output/Projects.Sealike.Main/index.js\");\n\nvar route = rlite(notFound, {\n  '': function _() {\n    circleStuff.main();\n  },\n  '01': function _() {\n    document.body.className = 'theme02';\n    seaLike.main();\n  },\n  '02': function _() {\n    document.body.className = 'theme01';\n    circleStuff.main();\n  }\n\n});\n\nfunction notFound() {\n  document.body.className = 'theme01';\n  circleStuff.main();\n}\n\n// Hash-based routing\nfunction processHash() {\n  var hash = location.hash || '#';\n  route(hash.slice(2));\n}\n\nfunction toggleFullScreen() {\n  var doc = window.document;\n  var docEl = doc.documentElement;\n\n  var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;\n  var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;\n\n  if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {\n    requestFullScreen.call(docEl);\n  } else {\n    cancelFullScreen.call(doc);\n  }\n}\n\nwindow.go = function () {\n  setTimeout(function () {\n    return window.location.reload(true);\n  }, 200);\n};\n\ndocument.addEventListener('dblclick', toggleFullScreen);\nwindow.addEventListener('hashchange', processHash);\nprocessHash();\n\n//# sourceURL=webpack:///./index.js?");
 
 /***/ }),
 
