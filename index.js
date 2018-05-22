@@ -30,7 +30,7 @@ function processHash() {
 }
 
 window.go = () => {
-  window.location.reload(false);
+  setTimeout(()=> window.location.reload(true), 200)
 }
 
 window.addEventListener('hashchange', processHash);

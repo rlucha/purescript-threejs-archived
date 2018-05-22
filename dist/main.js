@@ -62,7 +62,7 @@
 /******/ 	}
 /******/
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "be852d795ec04edbe0a1"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "4b0c1c1ef8e9a747fbb0"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -771,7 +771,7 @@
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("var rlite = __webpack_require__(/*! rlite-router */ \"./node_modules/rlite-router/rlite.js\");\n\nvar circleStuff = __webpack_require__(/*! ./output/Projects.CircleStuff.Main */ \"./output/Projects.CircleStuff.Main/index.js\");\nvar seaLike = __webpack_require__(/*! ./output/Projects.Sealike.Main */ \"./output/Projects.Sealike.Main/index.js\");\n\nvar route = rlite(notFound, {\n  '': function _() {\n    circleStuff.main();\n  },\n  '01': function _() {\n    document.body.className = 'theme01';\n    circleStuff.main();\n  },\n  '02': function _() {\n    document.body.className = 'theme02';\n    seaLike.main();\n  }\n\n});\n\nfunction notFound() {\n  document.body.className = 'theme01';\n  circleStuff.main();\n}\n\n// Hash-based routing\nfunction processHash() {\n  var hash = location.hash || '#';\n  route(hash.slice(2));\n}\n\nwindow.go = function () {\n  window.location.reload(false);\n};\n\nwindow.addEventListener('hashchange', processHash);\nprocessHash();\n\n//# sourceURL=webpack:///./index.js?");
+eval("var rlite = __webpack_require__(/*! rlite-router */ \"./node_modules/rlite-router/rlite.js\");\n\nvar circleStuff = __webpack_require__(/*! ./output/Projects.CircleStuff.Main */ \"./output/Projects.CircleStuff.Main/index.js\");\nvar seaLike = __webpack_require__(/*! ./output/Projects.Sealike.Main */ \"./output/Projects.Sealike.Main/index.js\");\n\nvar route = rlite(notFound, {\n  '': function _() {\n    circleStuff.main();\n  },\n  '01': function _() {\n    document.body.className = 'theme01';\n    circleStuff.main();\n  },\n  '02': function _() {\n    document.body.className = 'theme02';\n    seaLike.main();\n  }\n\n});\n\nfunction notFound() {\n  document.body.className = 'theme01';\n  circleStuff.main();\n}\n\n// Hash-based routing\nfunction processHash() {\n  var hash = location.hash || '#';\n  route(hash.slice(2));\n}\n\nwindow.go = function () {\n  setTimeout(function () {\n    return window.location.reload(true);\n  }, 200);\n};\n\nwindow.addEventListener('hashchange', processHash);\nprocessHash();\n\n//# sourceURL=webpack:///./index.js?");
 
 /***/ }),
 
