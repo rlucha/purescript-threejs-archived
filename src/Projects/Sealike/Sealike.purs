@@ -18,7 +18,7 @@ import Pure3.Transform as T
 import Pure3.Interpolate as Interpolate
 import Pure3.Scene as Scene
 
-import Three (createGeometry, pushVertices, updateVector3Position, getVector3Position)
+import Three (createGeometry, createVector3, pushVertices, updateVector3Position, getVector3Position)
 import Three.Types (Object3D, ThreeEff, Vector3, Object3D_)
 import Three.Object3D (forceVerticesUpdate, unwrap) as Object3D
 import Three.Object3D.Points (create) as Object3D.Points
@@ -91,13 +91,16 @@ update p t =
       g   = getProjectObjects p
   in traverse_ (updateVector t) vs *> traverse_ Object3D.forceVerticesUpdate g
 
+createVectorFromPoint :: P.Point -> ThreeEff Vector3
+createVectorFromPoint (P.Point {x, y, z}) = createVector3 x y z
+
 create :: ThreeEff Project
 create = do
   g <- createGeometry
   m <- createSeaMaterial
   -- this scene 'unparsing' will be done at the scene graph parsing level
   -- eventually
-  vs <- traverse Scene.createVectorFromPoint sq1Points
+  vs <- traverse createVectorFromPoint sq1Points
   -- here we are mutating g in JS... then using the reference in create g
   -- should we express that effect somehow?
   _ <- traverse_ (pushVertices g) vs
