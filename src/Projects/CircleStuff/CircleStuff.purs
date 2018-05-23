@@ -2,27 +2,24 @@ module Projects.CircleStuff
   (create, update)
 where
 
-import Prelude (Unit, bind, discard, negate, pure, ($), (*), (+), (<$>), (<<<), (<>), flip)
+import Data.Array (fromFoldable, concat) as Array
 import Data.Int (toNumber)
 import Data.List (List, (..), concat, zipWith)
-import Data.Array (fromFoldable, concat) as Array
 import Data.Traversable (traverse, traverse_, sequence_)
 import Math (cos) as Math
-
-import Pure3.Point as P
+import Prelude (Unit, bind, discard, flip, negate, pure, ($), (*), (+), (<$>), (<<<), (<>), (=<<))
+import Projects.BaseProject (Project(Project), getProjectObjects) as BaseProject
 import Pure3.Circle as C
 import Pure3.Interpolate as Interpolate
-
+import Pure3.Point as P
 import Three (createColor)
 import Three.Geometry.BoxGeometry (create) as BoxGeometry
-import Three.Types (Object3D, ThreeEff)
-import Three.Object3D (getPosition, setPosition, setRotation) as Object3D
-import Three.Object3D.Mesh (create) as Object3D.Mesh
 import Three.Materials.MeshPhongMaterial (create) as MeshPhongMaterial
-import Three.Object3D.Light.DirectionalLight (create) as DirectionalLight
+import Three.Object3D (getPosition, setPosition, setRotation) as Object3D
 import Three.Object3D.Light.AmbientLight (create) as AmbientLight
-
-import Projects.BaseProject (Project(Project), getProjectObjects) as BaseProject
+import Three.Object3D.Light.DirectionalLight (create) as DirectionalLight
+import Three.Object3D.Mesh (create) as Object3D.Mesh
+import Three.Types (Object3D, ThreeEff)
 
 radius = 200.0
 steps = 50
@@ -31,6 +28,9 @@ speed = 1.0
 distance = 50.0
 elements = 10
 size = 8.0
+bgColor = "#339966"
+directionalColor = "#ff0000"
+ambientColor = "#44d9e6"
 
 centers :: List P.Point
 centers = P.create 0.0 0.0 <<< (*) distance <<< toNumber <$> -elements..elements
@@ -51,29 +51,24 @@ updateBox t o = do
   Object3D.setRotation rotY rotY rotY o
 
 update :: BaseProject.Project -> Number -> ThreeEff Unit
-update p t = 
-  let obs = BaseProject.getProjectObjects p
-    in traverse_ (updateBox t) obs 
+update p t = traverse_ (updateBox t) (BaseProject.getProjectObjects p) 
 
 createBoxes :: List P.Point -> ThreeEff (Array Object3D)
 createBoxes ps = do
-  bgColor <- createColor "#339966"
+  bgColor <- createColor bgColor
   boxMat <- MeshPhongMaterial.create bgColor true
   boxGs <- traverse (\_ -> BoxGeometry.create 20.0 80.0 20.0) ps
-  boxMeshes <- traverse (\g -> Object3D.Mesh.create g boxMat) boxGs
+  boxMeshes <- traverse (flip Object3D.Mesh.create boxMat) boxGs
   _ <- sequence_ $ zipWith setPositionByPoint points boxMeshes
   pure $ Array.fromFoldable boxMeshes
 
 setPositionByPoint :: P.Point -> Object3D -> ThreeEff Unit
-setPositionByPoint p o = 
-  let {x, y, z} = P.unwrap p
-  in Object3D.setPosition x y z o
+-- Maybe make Object3D.setPosition accept a Point || Vector3 so we can avoid unwrapping points here?
+setPositionByPoint (P.Point {x, y, z}) o = Object3D.setPosition x y z o
 
 create :: ThreeEff BaseProject.Project
 create = do
   boxes <- createBoxes points
-  lightColor1 <- createColor "#ff0000"
-  lightColor2 <- createColor "#44d9e6"
-  dlight <- DirectionalLight.create lightColor1
-  alight <- AmbientLight.create lightColor2
+  dlight <-  DirectionalLight.create =<< createColor directionalColor
+  alight <- AmbientLight.create =<< createColor ambientColor
   pure $ BaseProject.Project { objects: Array.concat [boxes <> [dlight, alight]], vectors: [] }
