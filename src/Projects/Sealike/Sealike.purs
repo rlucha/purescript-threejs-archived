@@ -49,7 +49,7 @@ sq1c :: SQ.Square
 sq1c = T.translateSquare sq1 center
 
 sq1Points :: Array P.Point
-sq1Points = fromFoldable $ Interpolate.interpolate sq1c steps
+sq1Points = fromFoldable $ Interpolate.interpolate steps sq1c 
 
 updateVector :: Number -> Vector3 -> ThreeEff Unit
 updateVector t v = do

@@ -26,10 +26,10 @@ degToRad :: Number -> Number
 degToRad n = n * (180.0 / pi)
 
 class Interpolatable a where
-  interpolate :: a -> Steps -> StrictList.List P.Point
+  interpolate :: Steps -> a -> StrictList.List P.Point
 
 instance interpolateCircle :: Interpolatable C.Circle where
-  interpolate c s = 
+  interpolate s c = 
     let {center, radius} = C.unwrap c
         inc = 360.0 / degToRad (toNumber s)
         degs = ((*) inc) <$> toNumber <$> 0..s
@@ -42,10 +42,10 @@ instance interpolateCircle :: Interpolatable C.Circle where
     in points
 
 instance interpolateSquare :: Interpolatable SQ.Square where
-  interpolate sq s = 
+  interpolate s sq =
     let points = SQ.getPoints sq
-        lab = interpolate (L.create points.a points.b) s
-        lac = interpolate (L.create points.a points.c) s
+        lab = interpolate s (L.create points.a points.b)
+        lac = interpolate s (L.create points.a points.c)
     --  uncurry is gonna take a binary function and make it a unary function over Tuples
     -- cartesianProductOfPoints :: (*) <$> lab <*> lac
     in StrictList.fromFoldable $ lift2 (+) lab lac -- (*) <$> lab <*> lac
@@ -66,7 +66,7 @@ instance interpolateSquare :: Interpolatable SQ.Square where
       -- How does this work?
       -- P.create is a pure function
 instance il :: Interpolatable L.Line where
-  interpolate (L.Line {a:P.Point a, b:P.Point b}) s = 
+  interpolate s (L.Line {a:P.Point a, b:P.Point b}) = 
   -- Change the destructuring of the line to a getLinePoints fn
     let ai = interpolateRange a.x b.x s
         bi = interpolateRange a.y b.y s
@@ -84,17 +84,18 @@ instance il :: Interpolatable L.Line where
 -- getDistanceFromLine Nil = P.create 0.0 0.0 0.0
 -- getDistanceFromLine (Line l) = StrictList.take 2 lab 
 
-interpolateStarSquare :: SQ.Square -> Int -> StrictList.List P.Point
-interpolateStarSquare sq s = 
-  let points = SQ.getPoints sq
-      lab = interpolate (L.create points.a points.b) s
-      distancePoint = (*) (P.create 0.25 1.0 1.0) $ foldr (-) P.zeroPoint $ StrictList.take 2 lab
-      -- zigPoint = 
-      --   case distance of
-      --     Nil -> f
-      --     (distance:Nil) -> distance
-      -- lac = interpolate (L.create points.a points.c) s
-      lac = zigPoints distancePoint (P.negatePoint distancePoint) $ interpolate (L.create points.a points.c) s
-  --  uncurry is gonna take a binary function and make it a unary function over Tuples
-  -- cartesianProductOfPoints :: (*) <$> lab <*> lac
-  in StrictList.fromFoldable $ lift2 (+) lab lac -- (*) <$> lab <*> lac
+-- -- This is a failed tesselation prototype
+-- interpolateStarSquare :: SQ.Square -> Int -> StrictList.List P.Point
+-- interpolateStarSquare s sq = 
+--   let points = SQ.getPoints sq
+--       lab = interpolate s (L.create points.a points.b)
+--       distancePoint = (*) (P.create 0.25 1.0 1.0) $ foldr (-) P.zeroPoint $ StrictList.take 2 lab
+--       -- zigPoint = 
+--       --   case distance of
+--       --     Nil -> f
+--       --     (distance:Nil) -> distance
+--       -- lac = interpolate (L.create points.a points.c) s
+--       lac = zigPoints distancePoint (P.negatePoint distancePoint) $ interpolate (L.create points.a points.c) s
+--   --  uncurry is gonna take a binary function and make it a unary function over Tuples
+--   -- cartesianProductOfPoints :: (*) <$> lab <*> lac
+--   in StrictList.fromFoldable $ lift2 (+) lab lac -- (*) <$> lab <*> lac
