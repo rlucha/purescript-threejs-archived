@@ -2,6 +2,7 @@ const rlite = require('rlite-router')
 
 const circleStuff = require('./output/Projects.CircleStuff.Main')
 const seaLike = require('./output/Projects.Sealike.Main')
+const FrameBound = require('./output/Projects.FrameBound.Main')
 
 window.circleStuff = circleStuff
 window.seaLike = seaLike
@@ -18,12 +19,15 @@ const route = rlite(notFound, {
     document.body.className = 'theme01'
     circleStuff.main()
   },
-
+  '03': function () {
+    document.body.className = 'theme01'
+    FrameBound.main()
+  },
 });
 
 function notFound() {
   document.body.className = 'theme01'
-  circleStuff.main()
+  FrameBound.main()
 }
 
 // Hash-based routing
