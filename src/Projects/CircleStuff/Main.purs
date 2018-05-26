@@ -9,23 +9,16 @@ import Data.Traversable (traverse_)
 import Data.Tuple (fst, snd)
 import Math (cos) as Math
 import Partial.Unsafe (unsafePartial)
-import Prelude (Unit, bind, discard, negate, pure, ($), (*), (+), (/))
+import Prelude (Unit, bind, discard, negate, pure, ($), (*), (+), (/), (>>=))
+import Projects.BaseProject as BaseProject
+import Projects.CircleStuff as CircleStuff
 import Three (createColor, onResize) as Three
 import Three.Camera (create, debug, setPosition) as Camera
 import Three.OrbitControls (OrbitControls, create, toggle, update) as Controls
 import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mount, render) as Renderer
 import Three.Scene (debug, create, setBackground, add) as Scene
 import Three.Types (Camera, Renderer, Scene, Three, ThreeEff)
-import Timeline (create, Frame(..)) as Timeline
-
-import Projects.BaseProject as BaseProject
-import Projects.CircleStuff as CircleStuff
-
-incT :: Timeline.Frame -> Number
-incT (Timeline.Frame n) = toNumber(n + 1) / 100.0
-
-cosT :: Timeline.Frame -> Number
-cosT (Timeline.Frame n) = Math.cos(toNumber(n) * 0.01)
+import Timeline (create, Frame) as Timeline
 
 initScene :: ThreeEff Scene
 initScene = do 
@@ -34,24 +27,22 @@ initScene = do
   Scene.setBackground bgColor scene
   pure scene
 
-updateScene :: ∀ e. BaseProject.Project -> Camera -> Renderer -> Array Number -> Eff (three :: Three | e) Unit
+updateScene :: ∀ e. BaseProject.Project -> Camera -> Renderer -> Timeline.Frame -> Eff (three :: Three | e) Unit
 updateScene s c r t = do
--- Just while developing!! dangerous!
-  CircleStuff.update s (unsafePartial $ unsafeIndex t 0)
+  CircleStuff.update s $ toNumber t
 
-init :: Controls.OrbitControls -> Scene -> BaseProject.Project -> Camera -> Renderer -> ThreeEff Unit
+init :: ∀ e. Controls.OrbitControls -> Scene -> BaseProject.Project -> Camera -> Renderer -> MainEff Unit
 init controls scene project camera renderer = 
-  Timeline.create calculations behaviours effects (Timeline.Frame 0)
+  Timeline.create behaviours 0
     where 
-      calculations = [incT, cosT]
-      behaviours = [updateScene project camera renderer]
-      effects = 
-        [ Controls.update controls
-        , Renderer.render scene camera renderer ]
+      behaviours = 
+        [ updateScene project camera renderer
+        , \_ -> Controls.update controls 
+        , \_ -> Renderer.render scene camera renderer ]
 
-type MainEff = ∀ e. Eff (three :: Three, dom :: DOM, console :: CONSOLE | e) Unit
+type MainEff a = ∀ e. Eff (three :: Three, dom :: DOM, console :: CONSOLE | e) a
 
-main :: MainEff
+main :: MainEff Unit
 main = do
   ar <- BaseProject.unsafeGetAspectRatio
   scene    <- initScene

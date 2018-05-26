@@ -23,7 +23,7 @@ Run a local server from project folder to see it move
   - Entry point
 
 ## TODO
-- 01 Make Project a graph and provide a way to traverse it
+- 01 Make Project a graph and provide a way to traverse it (Functor Project?)
 - 02 Make results a record and provide a way to hook propery results -> Needs understading row ypes better
 - 03 Remove all partial unsafe functions -> needs 02
 - 04 Replace 02 with moving calculations inside the scene
@@ -53,3 +53,4 @@ Run a local server from project folder to see it move
 - 25 Move projects config to a record
 - 26 onResize event, use full purescript code to handle it
 - 27 throttle onResize
+- 28 Replace Maintype with Effect, currently Timeline is coupled

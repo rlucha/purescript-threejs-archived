@@ -1,4 +1,4 @@
-module Projects.CircleStuff
+module Projects.FrameBound
   (create, update)
 where
 
@@ -24,43 +24,32 @@ import Three.Types (Object3D, ThreeEff)
 radius = 200.0
 steps = 50
 amplitude = 1.0
-speed = 0.1
+speed = 1.0
 distance = 50.0
 elements = 10
 size = 8.0
-bgColor = "#339966"
+boxColor = "#339966"
 directionalColor = "#ff0000"
 ambientColor = "#44d9e6"
-
-centers :: List P.Point
-centers = P.create 0.0 0.0 <<< (*) distance <<< toNumber <$> -elements..elements
-
-circles :: List C.Circle
-circles = flip C.create radius <$> centers
-
-points :: List P.Point
-points = concat $ Interpolate.interpolate steps <$> circles
 
 updateBox :: Number -> Object3D -> ThreeEff Unit
 updateBox t o = do
   posV3 <- Object3D.getPosition o
-  let waveOutX = posV3.x + ((posV3.x * Math.cos(t * speed)) * (posV3.z) * 0.00025)
-      waveOutY = posV3.y + ((posV3.y * Math.cos(t * speed)) * (posV3.z) * 0.00025)
-      rotY = (posV3.y * 0.01 + t)
-  Object3D.setPosition waveOutX waveOutY posV3.z o
-  Object3D.setRotation rotY rotY rotY o
+  let x = t
+      y = t
+      z = t
+  Object3D.setPosition x y z o
 
 update :: BaseProject.Project -> Number -> ThreeEff Unit
 update p t = traverse_ (updateBox t) (BaseProject.getProjectObjects p) 
 
-createBoxes :: List P.Point -> ThreeEff (Array Object3D)
-createBoxes ps = do
-  bgColor <- createColor bgColor
-  boxMat <- MeshPhongMaterial.create bgColor true
-  boxGs <- traverse (\_ -> BoxGeometry.create 20.0 80.0 20.0) ps
-  boxMeshes <- traverse (flip Object3D.Mesh.create boxMat) boxGs
-  _ <- sequence_ $ zipWith setPositionByPoint points boxMeshes
-  pure $ Array.fromFoldable boxMeshes
+createBox :: ThreeEff Object3D
+createBox = do
+  boxColor <- createColor boxColor
+  boxMat <- MeshPhongMaterial.create boxColor true
+  boxGs <- BoxGeometry.create 20.0 80.0 20.0
+  boxMeshes <- Object3D.Mesh.create boxGs boxMat 
+  pure boxMeshes
 
 setPositionByPoint :: P.Point -> Object3D -> ThreeEff Unit
 -- Maybe make Object3D.setPosition accept a Point || Vector3 so we can avoid unwrapping points here?
@@ -68,7 +57,7 @@ setPositionByPoint (P.Point {x, y, z}) o = Object3D.setPosition x y z o
 
 create :: ThreeEff BaseProject.Project
 create = do
-  boxes <- createBoxes points
+  boxes <- createBox
   dlight <-  DirectionalLight.create =<< createColor directionalColor
   alight <- AmbientLight.create =<< createColor ambientColor
-  pure $ BaseProject.Project { objects: Array.concat [boxes <> [dlight, alight]], vectors: [] }
+  pure $ BaseProject.Project { objects: Array.concat [[boxes] <> [dlight, alight]], vectors: [] }
