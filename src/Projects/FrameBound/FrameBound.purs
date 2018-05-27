@@ -23,33 +23,43 @@ import Three.Types (Object3D, ThreeEff)
 
 radius = 200.0
 steps = 50
-amplitude = 1.0
+amplitude = 50.0
 speed = 1.0
 distance = 50.0
 elements = 10
 size = 8.0
-boxColor = "#339966"
+bgColor = "#339966"
 directionalColor = "#ff0000"
 ambientColor = "#44d9e6"
+
+centers :: List P.Point
+centers = P.create 0.0 0.0 <<< (*) distance <<< toNumber <$> -elements..elements
+
+circles :: List C.Circle
+circles = flip C.create radius <$> centers
+
+points :: List P.Point
+points = concat $ Interpolate.interpolate steps <$> circles
 
 updateBox :: Number -> Object3D -> ThreeEff Unit
 updateBox t o = do
   posV3 <- Object3D.getPosition o
-  let x = t
-      y = t
-      z = t
+  let x = Math.cos(t * 0.1) * amplitude
+      y = Math.cos(t * 0.1) * amplitude
+      z = Math.cos(t * 0.1) * amplitude
   Object3D.setPosition x y z o
 
 update :: BaseProject.Project -> Number -> ThreeEff Unit
 update p t = traverse_ (updateBox t) (BaseProject.getProjectObjects p) 
 
-createBox :: ThreeEff Object3D
-createBox = do
-  boxColor <- createColor boxColor
-  boxMat <- MeshPhongMaterial.create boxColor true
-  boxGs <- BoxGeometry.create 20.0 80.0 20.0
-  boxMeshes <- Object3D.Mesh.create boxGs boxMat 
-  pure boxMeshes
+createBoxes :: List P.Point -> ThreeEff (Array Object3D)
+createBoxes ps = do
+  bgColor <- createColor bgColor
+  boxMat <- MeshPhongMaterial.create bgColor true
+  boxGs <- traverse (\_ -> BoxGeometry.create 20.0 80.0 20.0) ps
+  boxMeshes <- traverse (flip Object3D.Mesh.create boxMat) boxGs
+  _ <- sequence_ $ zipWith setPositionByPoint points boxMeshes
+  pure $ Array.fromFoldable boxMeshes
 
 setPositionByPoint :: P.Point -> Object3D -> ThreeEff Unit
 -- Maybe make Object3D.setPosition accept a Point || Vector3 so we can avoid unwrapping points here?
@@ -57,7 +67,7 @@ setPositionByPoint (P.Point {x, y, z}) o = Object3D.setPosition x y z o
 
 create :: ThreeEff BaseProject.Project
 create = do
-  boxes <- createBox
+  boxes <- createBoxes points
   dlight <-  DirectionalLight.create =<< createColor directionalColor
   alight <- AmbientLight.create =<< createColor ambientColor
-  pure $ BaseProject.Project { objects: Array.concat [[boxes] <> [dlight, alight]], vectors: [] }
+  pure $ BaseProject.Project { objects: Array.concat [boxes <> [dlight, alight]], vectors: [] }

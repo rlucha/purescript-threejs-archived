@@ -116,6 +116,9 @@
     <a href="#/02" onclick="go()" class="page">02</a>
     <a href="#/01" onclick="go()" class="page">01</a>
   </div>
+  <input type="range" min="0" max="1000" value="0"
+    oninput="window.foo = Number(this.value)" 
+    style="width: 100%">
   <script src="./dist/main.js"></script>
 </body>
 </html>

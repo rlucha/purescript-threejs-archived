@@ -22,7 +22,7 @@ import Three.Types (ThreeEff, Vector3)
 size = 3000.0
 steps = 60
 freq = 0.003
-speed = 2.0
+speed = 0.025
 amplitude = 40.0
 
 center :: P.Point

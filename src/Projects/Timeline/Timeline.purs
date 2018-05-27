@@ -26,7 +26,7 @@ nextFrame :: ∀ e. Frame -> Eff (console :: CONSOLE | e) Frame
 nextFrame t = do
   val <- unsafeGetGlobalValue "foo"
   log $ "Current increment: " <> show val
-  pure $ val + t
+  pure $ val
 
 -- Lift an effect to a row of effects
 -- Export increment frame function to be used from the outside world
