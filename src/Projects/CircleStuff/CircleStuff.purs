@@ -48,8 +48,9 @@ updateBox t (P.Point {x,y,z}) o = do
          -- posV3.x ((posV3.x * Math.cos(t * speed)) * (posV3.z) * 0.00025)
       waveOutX = x + ((x * tLoop) * (z * z * 0.00001))
       waveOutY = y + ((y * tLoop) * (z * z * 0.00001))
-      rotY = (y + tLoop * 6.0)
-  Object3D.setPosition waveOutX waveOutY z o
+      waveOutZ = z + ((z * tLoop) * (z * z * 0.000001))
+      rotY = y * 0.01 + (t * speed)
+  Object3D.setPosition waveOutX waveOutY waveOutZ o
   Object3D.setRotation rotY rotY rotY o
 
 update :: BaseProject.Project -> Number -> ThreeEff Unit

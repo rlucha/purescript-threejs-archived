@@ -79,5 +79,5 @@ createRenderer = do
 createControls :: Camera -> Scene -> ThreeEff Controls.OrbitControls
 createControls camera scene = do 
   controls <- Controls.create camera
-  Controls.toggle false controls
+  Controls.toggle true controls
   pure controls

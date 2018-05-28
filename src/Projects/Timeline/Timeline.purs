@@ -22,11 +22,14 @@ type Frame = Int
 runBehaviours :: ∀ e. Frame -> Array (Frame -> Eff e Unit) -> Eff e Unit
 runBehaviours fr bs = traverse_ (\b -> b fr) bs
 
+-- nextFrame :: ∀ e. Frame -> Eff (console :: CONSOLE | e) Frame
+-- nextFrame t = do
+--   val <- unsafeGetGlobalValue "foo"
+--   log $ "Current increment: " <> show val
+--   pure $ val
+
 nextFrame :: ∀ e. Frame -> Eff (console :: CONSOLE | e) Frame
-nextFrame t = do
-  val <- unsafeGetGlobalValue "foo"
-  log $ "Current increment: " <> show val
-  pure $ val
+nextFrame t = pure $ t + 1
 
 -- Lift an effect to a row of effects
 -- Export increment frame function to be used from the outside world
