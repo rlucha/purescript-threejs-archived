@@ -2,12 +2,13 @@ module Projects.CircleStuff
   (create, update)
 where
 
-import Data.Array (fromFoldable, concat) as Array
+import Data.Array (fromFoldable, concat, zipWith) as Array
 import Data.Int (toNumber)
 import Data.List (List, (..), concat, zipWith)
 import Data.Traversable (traverse, traverse_, sequence_)
-import Math (cos) as Math
-import Prelude (Unit, bind, discard, flip, negate, pure, ($), (*), (+), (<$>), (<<<), (<>), (=<<))
+import Math (cos, pow) as Math
+import Math as Math
+import Prelude (Unit, bind, discard, flip, negate, pure, zero, ($), (*), (+), (-), (<$>), (<<<), (<>), (=<<))
 import Projects.BaseProject (Project(Project), getProjectObjects) as BaseProject
 import Pure3.Circle as C
 import Pure3.Interpolate as Interpolate
@@ -24,8 +25,8 @@ import Three.Types (Object3D, ThreeEff)
 radius = 200.0
 steps = 50
 amplitude = 1.0
-speed = 0.1
-distance = 50.0
+speed = 0.01
+distance = 100.0
 elements = 10
 size = 8.0
 bgColor = "#339966"
@@ -41,17 +42,19 @@ circles = flip C.create radius <$> centers
 points :: List P.Point
 points = concat $ Interpolate.interpolate steps <$> circles
 
-updateBox :: Number -> Object3D -> ThreeEff Unit
-updateBox t o = do
-  posV3 <- Object3D.getPosition o
-  let waveOutX = posV3.x + ((posV3.x * Math.cos(t * speed)) * (posV3.z) * 0.00025)
-      waveOutY = posV3.y + ((posV3.y * Math.cos(t * speed)) * (posV3.z) * 0.00025)
-      rotY = (posV3.y * 0.01 + t)
-  Object3D.setPosition waveOutX waveOutY posV3.z o
+updateBox :: Number -> P.Point -> Object3D -> ThreeEff Unit
+updateBox t (P.Point {x,y,z}) o = do
+  let tLoop = Math.cos(t * speed)
+         -- posV3.x ((posV3.x * Math.cos(t * speed)) * (posV3.z) * 0.00025)
+      waveOutX = x + ((x * tLoop) * (z * z * 0.00001))
+      waveOutY = y + ((y * tLoop) * (z * z * 0.00001))
+      rotY = (y + tLoop * 6.0)
+  Object3D.setPosition waveOutX waveOutY z o
   Object3D.setRotation rotY rotY rotY o
 
 update :: BaseProject.Project -> Number -> ThreeEff Unit
-update p t = traverse_ (updateBox t) (BaseProject.getProjectObjects p) 
+update p t = 
+  sequence_ $ Array.zipWith (updateBox t) (Array.fromFoldable points) (BaseProject.getProjectObjects p) 
 
 createBoxes :: List P.Point -> ThreeEff (Array Object3D)
 createBoxes ps = do
@@ -59,7 +62,7 @@ createBoxes ps = do
   boxMat <- MeshPhongMaterial.create bgColor true
   boxGs <- traverse (\_ -> BoxGeometry.create 20.0 80.0 20.0) ps
   boxMeshes <- traverse (flip Object3D.Mesh.create boxMat) boxGs
-  _ <- sequence_ $ zipWith setPositionByPoint points boxMeshes
+  -- _ <- sequence_ $ zipWith setPositionByPoint points boxMeshes
   pure $ Array.fromFoldable boxMeshes
 
 setPositionByPoint :: P.Point -> Object3D -> ThreeEff Unit
