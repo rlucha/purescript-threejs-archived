@@ -8,7 +8,7 @@ import Data.List (List, (..), concat, zipWith)
 import Data.Traversable (traverse, traverse_, sequence_)
 import Math (cos, pow) as Math
 import Math as Math
-import Prelude (Unit, bind, discard, flip, negate, pure, zero, ($), (*), (+), (-), (<$>), (<<<), (<>), (=<<))
+import Prelude (Unit, bind, discard, flip, negate, pure, zero, ($), (*), (+), (-), (/), (<$>), (<<<), (<>), (=<<))
 import Projects.BaseProject (Project(Project), getProjectObjects) as BaseProject
 import Pure3.Circle as C
 import Pure3.Interpolate as Interpolate
@@ -26,8 +26,8 @@ radius = 200.0
 steps = 50
 amplitude = 1.0
 speed = 0.01
-distance = 100.0
-elements = 10
+distance = 75.0
+elements = 8
 size = 8.0
 bgColor = "#339966"
 directionalColor = "#ff0000"
@@ -46,8 +46,8 @@ updateBox :: Number -> P.Point -> Object3D -> ThreeEff Unit
 updateBox t (P.Point {x,y,z}) o = do
   let tLoop = Math.cos(t * speed)
          -- posV3.x ((posV3.x * Math.cos(t * speed)) * (posV3.z) * 0.00025)
-      waveOutX = x + ((x * tLoop) * (z * z * 0.00001))
-      waveOutY = y + ((y * tLoop) * (z * z * 0.00001))
+      waveOutX = x + ((x * tLoop) * (-10.0 + (z * z * 0.00005)))
+      waveOutY = y + ((y * tLoop) * (-10.0 + (z * z * 0.00005)))
       waveOutZ = z + ((z * tLoop) * (z * z * 0.000001))
       rotY = y * 0.01 + (t * speed)
   Object3D.setPosition waveOutX waveOutY waveOutZ o
