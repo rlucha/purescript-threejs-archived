@@ -23,9 +23,9 @@ import Three.Object3D.Mesh (create) as Object3D.Mesh
 import Three.Types (Object3D, ThreeEff)
 
 radius = 200.0
-steps = 50
-amplitude = 1.0
-speed = 0.01
+steps = 80
+amplitude = 0.000025
+speed = 0.0025
 distance = 75.0
 elements = 8
 size = 8.0
@@ -45,13 +45,16 @@ points = concat $ Interpolate.interpolate steps <$> circles
 updateBox :: Number -> P.Point -> Object3D -> ThreeEff Unit
 updateBox t (P.Point {x,y,z}) o = do
   let tLoop = Math.cos(t * speed)
-         -- posV3.x ((posV3.x * Math.cos(t * speed)) * (posV3.z) * 0.00025)
-      waveOutX = x + ((x * tLoop) * (-10.0 + (z * z * 0.00005)))
-      waveOutY = y + ((y * tLoop) * (-10.0 + (z * z * 0.00005)))
-      waveOutZ = z + ((z * tLoop) * (z * z * 0.000001))
-      rotY = y * 0.01 + (t * speed)
-  Object3D.setPosition waveOutX waveOutY waveOutZ o
-  Object3D.setRotation rotY rotY rotY o
+      -- offset = Math.cos(t * speed)
+      -- Initital position + Loop * modifier
+      -- Try to get the inverse of pow z z or another fn that makes the center of the scene more interesting...
+      waveOutX = x + ((x * tLoop) * ((z * z * amplitude)))
+      waveOutY = y + ((y * tLoop) * ((z * z * amplitude)))
+      -- waveOutZ = z + ((z * tLoop) * (z * z * 0.000001))
+      rot = (x + y + z) * 0.01 + (t * speed)
+  Object3D.setPosition waveOutX waveOutY z o
+  -- Ideas, set rotation to one/two axis only
+  Object3D.setRotation rot rot rot o
 
 update :: BaseProject.Project -> Number -> ThreeEff Unit
 update p t = 
