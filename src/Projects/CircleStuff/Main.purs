@@ -51,7 +51,7 @@ main = do
   renderer <- BaseProject.createRenderer
   controls <- BaseProject.createControls camera scene
   BaseProject.attachAxesHelper scene 1000.0
-  Camera.setPosition (-1167.31) 1371.93 (-1080.79) camera
+  Camera.setPosition (-571.77) 1856.65 (-799.26) camera
   Scene.debug scene
   Camera.debug camera
   traverse_ (Scene.add scene) (BaseProject.exportProjectObjects project)
