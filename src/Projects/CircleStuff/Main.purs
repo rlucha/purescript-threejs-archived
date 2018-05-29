@@ -13,7 +13,7 @@ import Prelude (Unit, bind, discard, negate, pure, ($), (*), (+), (/), (>>=))
 import Projects.BaseProject as BaseProject
 import Projects.CircleStuff as CircleStuff
 import Three (createColor, onResize) as Three
-import Three.Camera (create, debug, setPosition) as Camera
+import Three.Camera as Camera
 import Three.OrbitControls (OrbitControls, create, toggle, update) as Controls
 import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mount, render) as Renderer
 import Three.Scene (debug, create, setBackground, add) as Scene
@@ -37,7 +37,7 @@ init controls scene project camera renderer =
     where 
       behaviours = 
         [ updateScene project camera renderer
-        , \_ -> Controls.update controls 
+        -- , \_ -> Controls.update controls 
         , \_ -> Renderer.render scene camera renderer ]
 
 type MainEff a = ∀ e. Eff (three :: Three, dom :: DOM, console :: CONSOLE | e) a
@@ -52,6 +52,8 @@ main = do
   controls <- BaseProject.createControls camera scene
   -- BaseProject.attachAxesHelper scene 1000.0
   Camera.setPosition (-571.77) 1856.65 (-799.26) camera
+  -- Camera.lookAt doesn't work with controls enabled...
+  Camera.lookAt 0.0 0.0 0.0 camera 
   Scene.debug scene
   Camera.debug camera
   traverse_ (Scene.add scene) (BaseProject.exportProjectObjects project)

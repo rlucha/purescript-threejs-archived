@@ -20,6 +20,9 @@ foreign import debug :: Camera -> ThreeEff Unit
 foreign import setPosition 
   :: X -> Y -> Z -> Camera -> ThreeEff Unit
 
+foreign import lookAt
+  :: X -> Y -> Z -> Camera -> ThreeEff Unit
+
 foreign import setAspect
   :: Number -> Camera -> ThreeEff Unit
 

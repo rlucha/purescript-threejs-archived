@@ -30,7 +30,6 @@ Run a local server from project folder to see it move
   - Get webpack to serve all files using purs-loader or similar
   - Get to write the JS in es6 and server that to the compiler
   - Write fat arrow utility functions
-- 09 Add Camera lookAt fn
 - 10 Orbitcontrol rotate, autoupdate fns, enable zoom, etc.
 - 11 Write a bit of documentation about the type decisions on Timeline and Main mostly
 - 12 Remove most comments and create function names for those
