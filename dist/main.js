@@ -62,7 +62,7 @@
 /******/ 	}
 /******/
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "b00229c0b327d3236846"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "1334866665d68adca74b"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -782,7 +782,7 @@ eval("var rlite = __webpack_require__(/*! rlite-router */ \"./node_modules/rlite
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("exports.uncurry1 = function (fn) {\n  return function (p1) {\n    return function () {\n      return fn(p1);\n    };\n  };\n};\n\nexports.uncurry2 = function (fn) {\n  return function (p1) {\n    return function (p2) {\n      return function () {\n        return fn(p1, p2);\n      };\n    };\n  };\n};\n\nexports.uncurry3 = function (fn) {\n  return function (p1) {\n    return function (p2) {\n      return function (p3) {\n        return function () {\n          return fn(p1, p2, p3);\n        };\n      };\n    };\n  };\n};\n\nexports.uncurry4 = function (fn) {\n  return function (p1) {\n    return function (p2) {\n      return function (p3) {\n        return function (p4) {\n          return function () {\n            return fn(p1, p2, p3, p4);\n          };\n        };\n      };\n    };\n  };\n};\n\n//# sourceURL=webpack:///./lib/FFIUtils/index.js?");
+eval("exports.curry1 = function (fn) {\n  return function (p1) {\n    return function () {\n      return fn(p1);\n    };\n  };\n};\n\nexports.curry2 = function (fn) {\n  return function (p1) {\n    return function (p2) {\n      return function () {\n        return fn(p1, p2);\n      };\n    };\n  };\n};\n\nexports.curry3 = function (fn) {\n  return function (p1) {\n    return function (p2) {\n      return function (p3) {\n        return function () {\n          return fn(p1, p2, p3);\n        };\n      };\n    };\n  };\n};\n\nexports.curry4 = function (fn) {\n  return function (p1) {\n    return function (p2) {\n      return function (p3) {\n        return function (p4) {\n          return function () {\n            return fn(p1, p2, p3, p4);\n          };\n        };\n      };\n    };\n  };\n};\n\n//# sourceURL=webpack:///./lib/FFIUtils/index.js?");
 
 /***/ }),
 
@@ -3319,7 +3319,7 @@ eval("\n\nvar Data_List = __webpack_require__(/*! ../Data.List */ \"./output/Dat
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("var PerspectiveCamera = __webpack_require__(/*! three */ \"./node_modules/three/build/three.module.js\").PerspectiveCamera;\nvar ffi = __webpack_require__(/*! ffi-utils */ \"./lib/FFIUtils/index.js\");\n\nexports.create = ffi.uncurry4(function (fov, aspect, near, far) {\n  var camera = new PerspectiveCamera(fov, aspect, near, far);\n  camera.position.set(50, 50, 50);\n  camera.lookAt(0, 0, 0);\n  return camera;\n});\n\nexports.setAspect = ffi.uncurry2(function (aspect, camera) {\n  camera.aspect = aspect;\n});\n\nexports.setPosition = ffi.uncurry4(function (x, y, z, camera) {\n  camera.position.set(x, y, z);\n});\n\nexports.debug = ffi.uncurry1(function (camera) {\n  window.camera = camera;\n});\n\nexports.updateProjectionMatrix = ffi.uncurry1(function (camera) {\n  camera.updateProjectionMatrix();\n});\n\n//# sourceURL=webpack:///./output/Three.Camera/foreign.js?");
+eval("var PerspectiveCamera = __webpack_require__(/*! three */ \"./node_modules/three/build/three.module.js\").PerspectiveCamera;\nvar ffi = __webpack_require__(/*! ffi-utils */ \"./lib/FFIUtils/index.js\");\n\nexports.create = ffi.curry4(function (fov, aspect, near, far) {\n  var camera = new PerspectiveCamera(fov, aspect, near, far);\n  camera.position.set(50, 50, 50);\n  camera.lookAt(0, 0, 0);\n  return camera;\n});\n\nexports.setAspect = ffi.curry2(function (aspect, camera) {\n  camera.aspect = aspect;\n});\n\nexports.setPosition = ffi.curry4(function (x, y, z, camera) {\n  camera.position.set(x, y, z);\n});\n\nexports.debug = ffi.curry1(function (camera) {\n  window.camera = camera;\n});\n\nexports.updateProjectionMatrix = ffi.curry1(function (camera) {\n  camera.updateProjectionMatrix();\n});\n\n//# sourceURL=webpack:///./output/Three.Camera/foreign.js?");
 
 /***/ }),
 
