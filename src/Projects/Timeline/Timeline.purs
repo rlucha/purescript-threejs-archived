@@ -24,8 +24,8 @@ runBehaviours fr bs = traverse_ (\b -> b fr) bs
 
 nextFrame :: ∀ e. Frame -> Eff (console :: CONSOLE | e) Frame
 nextFrame t = do
-  val <- unsafeGetGlobalValue "foo"
-  log $ "Current increment: " <> show val
+  val <- unsafeGetGlobalValue "cFrame"
+  -- log $ "Current increment: " <> show val
   pure $ val
 
 -- nextFrame :: ∀ e. Frame -> Eff (console :: CONSOLE | e) Frame
@@ -39,7 +39,7 @@ create :: ∀ e
   -> MainEff Unit
 create bs fr = do 
     nfr <- nextFrame fr
-    log $ "Current frame : " <> show nfr
+    -- log $ "Current frame : " <> show nfr
     -- unsafeCoerceEff forces a closed eff row into an open one
     unsafeCoerceEff $ runBehaviours nfr bs
     setAnimationFrameBehaviour $ create bs nfr

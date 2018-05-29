@@ -115,13 +115,25 @@
     <a href="#/02" onclick="go()" class="page">02</a>
     <a href="#/01" onclick="go()" class="page">01</a>
   </div>
+
+  <!-- <input type="range" min="0" max="180" value="0"
+    oninput="window.cFrame = Number(this.value)" 
+    style="width: 100%"> -->
+
   <script src="./dist/main.js"></script>
 
   <script>
     window.addEventListener("deviceorientation", function(e) {
-      window.foo = e.beta
-      console.log(e.beta)
+      window.cFrame = e.alpha
     }, true);
   </script>
+
+<script>
+  window.addEventListener("mousemove", function(e) {
+    window.cFrame = (e.clientX / window.innerWidth) * 160
+  }, true);
+</script>
+
+
 </body>
 </html>

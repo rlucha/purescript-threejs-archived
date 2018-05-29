@@ -25,7 +25,7 @@ import Three.Types (Object3D, ThreeEff)
 radius = 200.0
 steps = 80
 amplitude = 0.000025
-speed = 0.0025
+speed = 0.02
 distance = 75.0
 elements = 8
 size = 8.0
@@ -50,7 +50,6 @@ updateBox t (P.Point {x,y,z}) o = do
       -- Try to get the inverse of pow z z or another fn that makes the center of the scene more interesting...
       waveOutX = x + ((x * tLoop) * ((z * z * amplitude)))
       waveOutY = y + ((y * tLoop) * ((z * z * amplitude)))
-      -- waveOutZ = z + ((z * tLoop) * (z * z * 0.000001))
       rot = (x + y + z) * 0.01 + (t * speed)
   Object3D.setPosition waveOutX waveOutY z o
   -- Ideas, set rotation to one/two axis only

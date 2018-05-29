@@ -50,7 +50,7 @@ main = do
   camera   <- Camera.create 30.0 ar 1.0 10000.0
   renderer <- BaseProject.createRenderer
   controls <- BaseProject.createControls camera scene
-  BaseProject.attachAxesHelper scene 1000.0
+  -- BaseProject.attachAxesHelper scene 1000.0
   Camera.setPosition (-571.77) 1856.65 (-799.26) camera
   Scene.debug scene
   Camera.debug camera
