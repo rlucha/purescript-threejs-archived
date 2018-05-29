@@ -62,7 +62,7 @@
 /******/ 	}
 /******/
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "bcc39c33bb9a0e10b1af"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "b27803a5f6406dd74812"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -772,6 +772,17 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 eval("var rlite = __webpack_require__(/*! rlite-router */ \"./node_modules/rlite-router/rlite.js\");\n\nvar circleStuff = __webpack_require__(/*! ./output/Projects.CircleStuff.Main */ \"./output/Projects.CircleStuff.Main/index.js\");\nvar seaLike = __webpack_require__(/*! ./output/Projects.Sealike.Main */ \"./output/Projects.Sealike.Main/index.js\");\nvar frameBound = __webpack_require__(/*! ./output/Projects.FrameBound.Main */ \"./output/Projects.FrameBound.Main/index.js\");\n\nwindow.circleStuff = circleStuff;\nwindow.seaLike = seaLike;\n\nvar route = rlite(notFound, {\n  '': function _() {\n    circleStuff.main();\n  },\n  '01': function _() {\n    document.body.className = 'theme02';\n    seaLike.main();\n  },\n  '02': function _() {\n    document.body.className = 'theme01';\n    circleStuff.main();\n  }\n});\n\nfunction notFound() {\n  document.body.className = 'theme01';\n  circleStuff.main();\n}\n\n// Hash-based routing\nfunction processHash() {\n  var hash = location.hash || '#';\n  route(hash.slice(2));\n}\n\nfunction toggleFullScreen() {\n  var doc = window.document;\n  var docEl = doc.documentElement;\n\n  var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;\n  var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;\n\n  if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {\n    requestFullScreen.call(docEl);\n  } else {\n    cancelFullScreen.call(doc);\n  }\n}\n\nwindow.go = function () {\n  setTimeout(function () {\n    return window.location.reload(true);\n  }, 200);\n};\n\ndocument.addEventListener('dblclick', toggleFullScreen);\nwindow.addEventListener('hashchange', processHash);\nprocessHash();\n\n//# sourceURL=webpack:///./index.js?");
+
+/***/ }),
+
+/***/ "./lib/FFIUtils/index.js":
+/*!*******************************!*\
+  !*** ./lib/FFIUtils/index.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("exports.uncurry1 = function (fn) {\n  return function (p1) {\n    return function () {\n      return fn(p1);\n    };\n  };\n};\n\nexports.uncurry2 = function (fn) {\n  return function (p1) {\n    return function (p2) {\n      return function () {\n        return fn(p1, p2);\n      };\n    };\n  };\n};\n\nexports.uncurry3 = function (p1, p2, p3, fn) {\n  return function (p1) {\n    return function (p2) {\n      return function (p3) {\n        return function () {\n          return fn(p1, p2, p3);\n        };\n      };\n    };\n  };\n};\n\nexports.uncurry4 = function (fn) {\n  return function (p1) {\n    return function (p2) {\n      return function (p3) {\n        return function (p4) {\n          return function () {\n            return fn(p1, p2, p3, p4);\n          };\n        };\n      };\n    };\n  };\n};\n\n//# sourceURL=webpack:///./lib/FFIUtils/index.js?");
 
 /***/ }),
 
@@ -3308,7 +3319,7 @@ eval("\n\nvar Data_List = __webpack_require__(/*! ../Data.List */ \"./output/Dat
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("var PerspectiveCamera = __webpack_require__(/*! three */ \"./node_modules/three/build/three.module.js\").PerspectiveCamera;\n\nvar create = function create(fov) {\n  return function (aspect) {\n    return function (near) {\n      return function (far) {\n        return function () {\n          var camera = new PerspectiveCamera(fov, aspect, near, far);\n          camera.position.set(50, 50, 50);\n          camera.lookAt(0, 0, 0);\n          return camera;\n        };\n      };\n    };\n  };\n};\n\nvar setAspect = function setAspect(aspect) {\n  return function (camera) {\n    return function () {\n      camera.aspect = aspect;\n    };\n  };\n};\n\nvar setPosition = function setPosition(x) {\n  return function (y) {\n    return function (z) {\n      return function (camera) {\n        return function () {\n          camera.position.set(x, y, z);\n        };\n      };\n    };\n  };\n};\n\nvar debug = function debug(camera) {\n  return function () {\n    window.camera = camera;\n  };\n};\n\nvar updateProjectionMatrix = function updateProjectionMatrix(camera) {\n  return function () {\n    camera.updateProjectionMatrix();\n  };\n};\n\nmodule.exports = {\n  create: create,\n  debug: debug,\n  setPosition: setPosition,\n  setAspect: setAspect,\n  updateProjectionMatrix: updateProjectionMatrix\n};\n\n//# sourceURL=webpack:///./output/Three.Camera/foreign.js?");
+eval("var PerspectiveCamera = __webpack_require__(/*! three */ \"./node_modules/three/build/three.module.js\").PerspectiveCamera;\nvar ffi = __webpack_require__(/*! ffi-utils */ \"./lib/FFIUtils/index.js\");\n\nexports.create = ffi.uncurry4(function (fov, aspect, near, far) {\n  var camera = new PerspectiveCamera(fov, aspect, near, far);\n  camera.position.set(50, 50, 50);\n  camera.lookAt(0, 0, 0);\n  return camera;\n});\n\nexports.setAspect = ffi.uncurry2(function (aspect, camera) {\n  camera.aspect = aspect;\n});\n\nexports.setPosition = ffi.uncurry4(function (x, y, z, camera) {\n  camera.position.set(x, y, z);\n});\n\nexports.debug = ffi.uncurry1(function (camera) {\n  window.camera = camera;\n});\n\nexports.updateProjectionMatrix = ffi.uncurry1(function (camera) {\n  camera.updateProjectionMatrix();\n});\n\n//# sourceURL=webpack:///./output/Three.Camera/foreign.js?");
 
 /***/ }),
 
@@ -3320,7 +3331,7 @@ eval("var PerspectiveCamera = __webpack_require__(/*! three */ \"./node_modules/
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nvar $foreign = __webpack_require__(/*! ./foreign */ \"./output/Three.Camera/foreign.js\");\nvar Prelude = __webpack_require__(/*! ../Prelude */ \"./output/Prelude/index.js\");\nvar Three_Types = __webpack_require__(/*! ../Three.Types */ \"./output/Three.Types/index.js\");\nmodule.exports = {\n    create: $foreign.create,\n    debug: $foreign.debug,\n    setPosition: $foreign.setPosition,\n    setAspect: $foreign.setAspect,\n    updateProjectionMatrix: $foreign.updateProjectionMatrix\n};\n\n//# sourceURL=webpack:///./output/Three.Camera/index.js?");
+eval("// Generated by purs version 0.11.7\n\n\nvar $foreign = __webpack_require__(/*! ./foreign */ \"./output/Three.Camera/foreign.js\");\nvar Prelude = __webpack_require__(/*! ../Prelude */ \"./output/Prelude/index.js\");\nvar Three_Types = __webpack_require__(/*! ../Three.Types */ \"./output/Three.Types/index.js\");\nmodule.exports = {\n    create: $foreign.create,\n    debug: $foreign.debug,\n    setPosition: $foreign.setPosition,\n    setAspect: $foreign.setAspect,\n    updateProjectionMatrix: $foreign.updateProjectionMatrix\n};\n\n//# sourceURL=webpack:///./output/Three.Camera/index.js?");
 
 /***/ }),
 

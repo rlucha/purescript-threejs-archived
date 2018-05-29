@@ -1,6 +1,5 @@
 module Three.Camera where
 
--- Maybe move the camera type into the camera module?
 import Prelude
 import Three.Types (ThreeEff, Camera)
 
