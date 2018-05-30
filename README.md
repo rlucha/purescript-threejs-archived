@@ -46,4 +46,3 @@ Run a local server from project folder to see it move
 - 26 move onResize event to purescript
 - 27 throttle onResize
 - 28 Replace Maintype with Effect, currently Timeline is coupled
-- 29 Maybe rename curryN to createEffectfullCurriedFunctionN (kidding)

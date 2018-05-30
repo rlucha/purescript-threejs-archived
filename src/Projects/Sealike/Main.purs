@@ -1,25 +1,22 @@
 module Projects.Sealike.Main where
 
+import Prelude
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE)
 import DOM (DOM)
-import Data.Array (unsafeIndex)
-import Data.Array.ST.Iterator (next)
 import Data.Int (toNumber)
 import Data.Traversable (traverse_)
-import Data.Tuple (fst, snd)
-import Math (cos) as Math
-import Partial.Unsafe (unsafePartial)
-import Prelude (Unit, bind, discard, negate, pure, ($), (*), (+), (/), (>>=), (>>>))
+
+import Three as Three
+import Three.Camera as Camera
+import Three.OrbitControls as Controls
+import Three.Renderer as Renderer
+import Three.Scene as Scene
+import Three.Types (Camera, Renderer, Scene, Three, ThreeEff)
+import Timeline as Timeline
+
 import Projects.BaseProject as BaseProject
 import Projects.Sealike as Sealike
-import Three (createColor, onResize) as Three
-import Three.Camera (create, debug, setPosition) as Camera
-import Three.OrbitControls (OrbitControls, create, toggle, update) as Controls
-import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize, mount, render) as Renderer
-import Three.Scene (debug, create, setBackground, add) as Scene
-import Three.Types (Camera, Renderer, Scene, Three, ThreeEff)
-import Timeline (create, Frame) as Timeline
 
 initScene :: ThreeEff Scene
 initScene = do 

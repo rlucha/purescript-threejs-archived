@@ -7,7 +7,8 @@ module Pure3.Transform
 import Prelude
 import Data.List (List)
 
-import Pure3.Point as P
+import Pure3.Point (Point)
+import Pure3.Point as Point
 import Pure3.Utils (evens, odds)
 import Pure3.Square(Square(..))
 
@@ -19,14 +20,14 @@ import Pure3.Square(Square(..))
 scaleSquare :: Number -> Square -> Square
 scaleSquare n (Square {a, b, c, d})  = 
   Square 
-  { a: a * P.create n n n
-  , b: b * P.create n n n
-  , c: c * P.create n n n
-  , d: d * P.create n n n
+  { a: a * Point.create n n n
+  , b: b * Point.create n n n
+  , c: c * Point.create n n n
+  , d: d * Point.create n n n
   }  
 
 -- Replace with https://qiita.com/kimagure/items/06d7eed9521b6217b771
-translateSquare :: Square -> P.Point -> Square
+translateSquare :: Square -> Point -> Square
 translateSquare (Square {a, b, c, d}) g = 
   Square 
   { a: a + g
