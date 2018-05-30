@@ -12,7 +12,7 @@ import Three.Types (Camera, Renderer, Scene, Three, ThreeEff)
 import Three.Camera as Camera
 import Three.OrbitControls as Controls
 import Three.Renderer as Renderer
-import Three.Scene as Scene
+import Three.Scene as Scene 
 import Timeline as Timeline
 
 import Projects.BaseProject as BaseProject

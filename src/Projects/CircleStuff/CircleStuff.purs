@@ -8,24 +8,23 @@ import Data.Int as Int
 import Data.List (List, (..))
 import Data.List as List
 import Data.Traversable as Traversable
-import Math (cos, pow) as Math
 import Math as Math
 
 import Pure3.Types (Circle, Point(..))
 import Pure3.Circle as Circle
 import Pure3.Point as Point
-
 import Pure3.Interpolate as Interpolate
-import Three (createColor)
-import Three.Geometry.BoxGeometry (create) as BoxGeometry
-import Three.Materials.MeshPhongMaterial (create) as MeshPhongMaterial
-import Three.Object3D (getPosition, setPosition, setRotation) as Object3D
-import Three.Object3D.Light.AmbientLight (create) as AmbientLight
-import Three.Object3D.Light.DirectionalLight (create) as DirectionalLight
-import Three.Object3D.Mesh (create) as Object3D.Mesh
-import Three.Types (Object3D, ThreeEff)
 
-import Projects.BaseProject (Project(..))
+import Three as Three
+import Three.Types (Object3D, ThreeEff)
+import Three.Geometry.BoxGeometry as BoxGeometry
+import Three.Materials.MeshPhongMaterial as MeshPhongMaterial
+import Three.Object3D as Object3D
+import Three.Object3D.Light.AmbientLight as AmbientLight
+import Three.Object3D.Light.DirectionalLight as DirectionalLight
+import Three.Object3D.Mesh as Object3D.Mesh 
+
+import Projects.BaseProject (Project)
 import Projects.BaseProject as BaseProject
 
 radius = 200.0
@@ -67,7 +66,7 @@ update p t =
 
 createBoxes :: List Point -> ThreeEff (Array Object3D)
 createBoxes ps = do
-  bgColor <- createColor bgColor
+  bgColor <- Three.createColor bgColor
   boxMat <- MeshPhongMaterial.create bgColor true
   boxGs <- Traversable.traverse (\_ -> BoxGeometry.create 20.0 80.0 20.0) ps
   boxMeshes <- Traversable.traverse (flip Object3D.Mesh.create boxMat) boxGs
@@ -81,7 +80,7 @@ setPositionByPoint (Point {x, y, z}) o = Object3D.setPosition x y z o
 create :: ThreeEff Project
 create = do
   boxes <- createBoxes points
-  dlight <-  DirectionalLight.create =<< createColor directionalColor
-  aColor <- createColor ambientColor
+  dlight <-  DirectionalLight.create =<< Three.createColor directionalColor
+  aColor <- Three.createColor ambientColor
   alight <- AmbientLight.create aColor 0.75
   pure $ BaseProject.Project { objects: Array.concat [boxes <> [dlight, alight]], vectors: [] }

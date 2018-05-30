@@ -2,31 +2,29 @@ module Projects.FrameBound
   (create, update)
 where
 
+import Prelude
 import Data.Array as Array
 import Data.Int (toNumber)
-import Data.List (List(..), (..))
+import Data.List (List, (..))
 import Data.List as List
 import Data.Traversable (traverse, traverse_, sequence_)
 import Math as Math
-import Prelude
-import Pure3.Circle (Circle(..))
+
+import Pure3.Types (Circle, Point(..))
 import Pure3.Circle as Circle
-import Pure3.Point (Point(..))
 import Pure3.Point as Point
 import Pure3.Interpolate as Interpolate
 
 import Three as Three
+import Three.Types (Object3D, ThreeEff)
 import Three.Geometry.BoxGeometry as BoxGeometry
 import Three.Materials.MeshPhongMaterial as MeshPhongMaterial
 import Three.Object3D as Object3D
 import Three.Object3D.Light.AmbientLight as AmbientLight
 import Three.Object3D.Light.DirectionalLight as DirectionalLight
-import Three.Object3D.Mesh as Object3D.Mesh
-import Three.Types (Object3D, ThreeEff)
+import Three.Object3D.Mesh as Object3D.Mesh 
 
-import Projects.BaseProject (Project(..))
 import Projects.BaseProject as BaseProject
-
 
 radius = 200.0
 steps = 50

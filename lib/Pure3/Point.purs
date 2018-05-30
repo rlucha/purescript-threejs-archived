@@ -3,8 +3,6 @@ module Pure3.Point where
 import Prelude
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
-import Data.Foreign.Class (class Encode)
-import Data.Foreign.Generic (defaultOptions, genericEncode)
 
 newtype Point = Point { x :: Number, y :: Number, z :: Number }
 
