@@ -11,9 +11,8 @@ import Data.Traversable as Traversable
 import Math (cos, pow) as Math
 import Math as Math
 
-import Pure3.Circle (Circle)
+import Pure3.Types (Circle, Point(..))
 import Pure3.Circle as Circle
-import Pure3.Point (Point(..))
 import Pure3.Point as Point
 
 import Pure3.Interpolate as Interpolate
