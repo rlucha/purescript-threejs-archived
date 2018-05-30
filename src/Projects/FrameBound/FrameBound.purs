@@ -7,7 +7,7 @@ import Data.Int (toNumber)
 import Data.List (List, (..), concat, zipWith)
 import Data.Traversable (traverse, traverse_, sequence_)
 import Math (cos) as Math
-import Prelude (Unit, bind, discard, flip, negate, pure, ($), (*), (+), (<$>), (<<<), (<>), (=<<))
+import Prelude (Unit, bind, discard, flip, negate, pure, ($), (*), (+), (<$>), (<*>), (<<<), (<>), (=<<))
 import Projects.BaseProject (Project(Project), getProjectObjects) as BaseProject
 import Pure3.Circle as C
 import Pure3.Interpolate as Interpolate
@@ -69,5 +69,6 @@ create :: ThreeEff BaseProject.Project
 create = do
   boxes <- createBoxes points
   dlight <-  DirectionalLight.create =<< createColor directionalColor
-  alight <- AmbientLight.create =<< createColor ambientColor
+  aColor <- createColor ambientColor
+  alight <- AmbientLight.create aColor 0.75
   pure $ BaseProject.Project { objects: Array.concat [boxes <> [dlight, alight]], vectors: [] }

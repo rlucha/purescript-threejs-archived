@@ -76,5 +76,6 @@ create :: ThreeEff BaseProject.Project
 create = do
   boxes <- createBoxes points
   dlight <-  DirectionalLight.create =<< createColor directionalColor
-  alight <- AmbientLight.create =<< createColor ambientColor
+  aColor <- createColor ambientColor
+  alight <- AmbientLight.create aColor 0.75
   pure $ BaseProject.Project { objects: Array.concat [boxes <> [dlight, alight]], vectors: [] }
