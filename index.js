@@ -4,8 +4,7 @@ const circleStuff = require('./output/Projects.CircleStuff.Main')
 const seaLike = require('./output/Projects.Sealike.Main')
 const frameBound = require('./output/Projects.FrameBound.Main')
 
-window.circleStuff = circleStuff
-window.seaLike = seaLike
+const editorFactory = require("./src/editor/main")
 
 const route = rlite(notFound, {
   '': function () {
@@ -15,9 +14,12 @@ const route = rlite(notFound, {
     document.body.className = 'theme02'
     seaLike.main()
   },
-  '02': function () {
+  '02': function ({editor}) {
     document.body.className = 'theme01'
     circleStuff.main()
+    if (editor === 'true') {
+      editorFactory.editor()
+    }
   },
   // '03': function () {
   //   document.body.className = 'theme01'
