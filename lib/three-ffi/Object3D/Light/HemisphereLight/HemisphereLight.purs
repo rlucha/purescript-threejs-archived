@@ -3,9 +3,9 @@ module Three.Object3D.Light.HemisphereLight where
 import Prelude
 import Three.Types (ThreeEff, Color, Object3D(Light), Object3D_)
 
-type Intensity = Number
 type SkyColor = Color
 type GroundColor = Color
+type Intensity = Number
 
 foreign import create_ :: SkyColor -> GroundColor -> Intensity -> ThreeEff Object3D_
 

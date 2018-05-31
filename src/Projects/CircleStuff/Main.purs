@@ -23,6 +23,7 @@ initScene = do
   scene <- Scene.create
   bgColor <- Three.createColor "#A6FFD4"
   Scene.setBackground bgColor scene
+  Scene.debug scene
   pure scene
 
 updateScene :: ∀ e. BaseProject.Project -> Camera -> Renderer -> Timeline.Frame -> Eff (three :: Three | e) Unit
@@ -40,20 +41,27 @@ init controls scene project camera renderer =
 
 type MainEff a = ∀ e. Eff (three :: Three, dom :: DOM, console :: CONSOLE | e) a
 
+initCamera :: MainEff Camera
+initCamera = do
+  -- Camera.lookAt doesn't work with controls enabled...
+  ar       <- BaseProject.unsafeGetAspectRatio
+  camera   <- Camera.create 30.0 ar 1.0 10000.0
+  Camera.setPosition (-571.77) 1856.65 (-799.26) camera
+  Camera.lookAt 0.0 0.0 0.0 camera 
+  Camera.debug camera
+  pure camera
+
 main :: MainEff Unit
 main = do
-  ar <- BaseProject.unsafeGetAspectRatio
   scene    <- initScene
+  camera   <- initCamera
   project  <- CircleStuff.create
-  camera   <- Camera.create 30.0 ar 1.0 10000.0
   renderer <- BaseProject.createRenderer
   controls <- BaseProject.createControls camera scene
   -- BaseProject.attachAxesHelper scene 1000.0
-  Camera.setPosition (-571.77) 1856.65 (-799.26) camera
-  -- Camera.lookAt doesn't work with controls enabled...
-  Camera.lookAt 0.0 0.0 0.0 camera 
-  Scene.debug scene
-  Camera.debug camera
+  -- This might be an effect on timeline
+  -- If we pass a frame to scene, we can make it add elements to the scene only 
+  -- if within the frame constrains
   Traversable.traverse_ (Scene.add scene) (BaseProject.exportProjectObjects project)
   Renderer.mount renderer
   -- Event handling

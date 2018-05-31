@@ -18,7 +18,11 @@ const route = rlite(notFound, {
   '02': function () {
     document.body.className = 'theme01'
     circleStuff.main()
-  }
+  },
+  // '03': function () {
+  //   document.body.className = 'theme01'
+  //   frameBound.main()
+  // }  
 });
 
 function notFound() {

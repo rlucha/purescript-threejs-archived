@@ -34,7 +34,7 @@ speed = 0.02
 distance = 75.0
 elements = 8
 size = 8.0
-bgColor = "#339966"
+boxColor = "#FFD9DC"
 directionalColor = "#ff0000"
 ambientColor = "#44d9e6"
 
@@ -66,8 +66,8 @@ update p t =
 
 createBoxes :: List Point -> ThreeEff (Array Object3D)
 createBoxes ps = do
-  bgColor <- Three.createColor bgColor
-  boxMat <- MeshPhongMaterial.create bgColor true
+  boxColor <- Three.createColor boxColor
+  boxMat <- MeshPhongMaterial.create boxColor true
   boxGs <- Traversable.traverse (\_ -> BoxGeometry.create 20.0 80.0 20.0) ps
   boxMeshes <- Traversable.traverse (flip Object3D.Mesh.create boxMat) boxGs
   -- _ <- sequence_ $ zipWith setPositionByPoint points boxMeshes
@@ -80,7 +80,8 @@ setPositionByPoint (Point {x, y, z}) o = Object3D.setPosition x y z o
 create :: ThreeEff Project
 create = do
   boxes <- createBoxes points
-  dlight <-  DirectionalLight.create =<< Three.createColor directionalColor
+  dColor <- Three.createColor directionalColor
+  dlight <-  DirectionalLight.create dColor 1.0
   aColor <- Three.createColor ambientColor
   alight <- AmbientLight.create aColor 0.75
   pure $ BaseProject.Project { objects: Array.concat [boxes <> [dlight, alight]], vectors: [] }

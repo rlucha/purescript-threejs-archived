@@ -14,6 +14,7 @@ derive instance genSquare :: Generic Square _
 instance showSquare :: Show Square where
   show = genericShow
 
+-- [NEWTYPE]
 create :: Point -> Point -> Point -> Point -> Square
 create a b c d = Square { a: a, b: b, c: c, d: d }
 

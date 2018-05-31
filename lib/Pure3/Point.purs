@@ -19,6 +19,7 @@ instance semiringPoint :: Semiring Point where
 instance ringPoint :: Ring Point where
   sub = subPoint
 
+-- [NEWTYPE]
 unwrap :: Point -> { x :: Number, y :: Number, z :: Number }
 unwrap (Point {x, y, z}) = {x, y, z}
 

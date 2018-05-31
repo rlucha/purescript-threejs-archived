@@ -11,13 +11,10 @@ import Data.List.ZipList (ZipList(..))
 
 import Control.Apply (lift2)
 
-import Pure3.Point (Point(..))
+import Pure3.Types (Circle, Line(..), Point(..), Square)
 import Pure3.Point as Point
-import Pure3.Line (Line(..))
 import Pure3.Line as Line
-import Pure3.Circle (Circle)
 import Pure3.Circle as Circle
-import Pure3.Square (Square)
 import Pure3.Square as Square
 
 type Steps = Int

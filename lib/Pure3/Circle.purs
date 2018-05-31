@@ -8,6 +8,8 @@ import Pure3.Point (Point)
 
 type Radius = Number
 
+-- Move to newtype, make a function to show if needed
+-- get unwrap for free
 data Circle = Circle { center :: Point, radius :: Radius }
 derive instance genCircle :: Generic Circle _
 instance showCircle :: Show Circle where
@@ -16,12 +18,6 @@ instance showCircle :: Show Circle where
 create :: Point -> Radius -> Circle
 create c r = Circle { center: c, radius: r }
 
--- Is there a way to pass a record-like datatype to a record automatically?
+-- [NEWTYPE]
 unwrap :: Circle -> { center :: Point, radius :: Radius }
 unwrap (Circle {center, radius}) = {center, radius}
-
--- TODO
--- How to write a function that accepts different number of params and types?
--- create :: Point -> Point -> Point -> Point -> Square
--- create :: L.Line -> L.Line -> Square
--- create .... = implementation 1 || implemenetation 2
