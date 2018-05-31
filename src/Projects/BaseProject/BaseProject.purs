@@ -1,24 +1,24 @@
 module Projects.BaseProject where
 
-import Prelude
+import Prelude (Unit, bind, discard, pure, ($), (/), (<$>))
 
-import Control.Monad.Eff (Eff)
 import DOM (DOM)
 import DOM.HTML (window)
 import DOM.HTML.Document (body)
 import DOM.HTML.HTMLElement (offsetHeight, offsetWidth)
 import DOM.HTML.Window (document)
+import Control.Monad.Eff (Eff)
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..), fst, snd)
-import Pure3.Point as P
-import Three (createVector3)
+import Pure3.Types (Point(..))
+
 import Three as Three
-import Three.Camera (setAspect, updateProjectionMatrix) as Camera
-import Three.Object3D (unwrap) as Object3D
-import Three.OrbitControls as Controls
-import Three.Renderer (createWebGLRenderer, setPixelRatio, setSize) as Renderer
-import Three.Scene as Scene
 import Three.Types (Camera, Object3D, Object3D_, Renderer, Scene, Three, ThreeEff, Vector3)
+import Three.Camera as Camera
+import Three.Object3D as Object3D
+import Three.OrbitControls as Controls
+import Three.Renderer as Renderer
+import Three.Scene as Scene
 
 newtype Project = Project
   { objects :: Array Object3D
@@ -33,8 +33,8 @@ getProjectVectors (Project r) = r.vectors
 exportProjectObjects :: Project -> Array Object3D_
 exportProjectObjects (Project r) = Object3D.unwrap <$> r.objects
 
-createVectorFromPoint :: P.Point -> ThreeEff Vector3
-createVectorFromPoint (P.Point {x, y, z}) = createVector3 x y z
+createVectorFromPoint :: Point -> ThreeEff Vector3
+createVectorFromPoint (Point {x, y, z}) = Three.createVector3 x y z
 
 unsafeGetAspectRatio :: ∀ e. Eff (three :: Three, dom :: DOM | e) Number
 unsafeGetAspectRatio = do

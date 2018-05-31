@@ -1,18 +1,21 @@
 module Pure3.Interpolate where
 
 import Prelude
+import Math as Math
+
+import Data.List ((..))
+import Data.List as StrictList
 import Data.List.Lazy as LazyList
-import Data.List (List, fromFoldable, range, take) as StrictList
-import Data.List (foldr, (..))
 import Data.Int (toNumber)
 import Data.List.ZipList (ZipList(..))
+
 import Control.Apply (lift2)
-import Math (cos, sin, pi)
-import Pure3.Point as P
-import Pure3.Line as L
-import Pure3.Circle as C
-import Pure3.Square as SQ
-import Pure3.Transform (zigPoints)
+
+import Pure3.Types (Circle, Line(..), Point(..), Square)
+import Pure3.Point as Point
+import Pure3.Line as Line
+import Pure3.Circle as Circle
+import Pure3.Square as Square
 
 type Steps = Int
 
@@ -23,34 +26,34 @@ interpolateRange from to s =
   -- \[x_n = x_i + \frac{x_f - x_i}{s} n\]
 
 degToRad :: Number -> Number
-degToRad n = n * (180.0 / pi)
+degToRad n = n * (180.0 / Math.pi)
 
 class Interpolatable a where
-  interpolate :: Steps -> a -> StrictList.List P.Point
+  interpolate :: Steps -> a -> StrictList.List Point
 
-instance interpolateCircle :: Interpolatable C.Circle where
+instance interpolateCircle :: Interpolatable Circle where
   interpolate s c = 
-    let {center, radius} = C.unwrap c
+    let {center, radius} = Circle.unwrap c
         inc = 360.0 / degToRad (toNumber s)
         degs = ((*) inc) <$> toNumber <$> 0..s
-        cosR = (*) radius <<< cos
-        sinR = (*) radius <<< sin
+        cosR = (*) radius <<< Math.cos
+        sinR = (*) radius <<< Math.sin
         -- Is there a way to chain this fmaps more beautifully?
-        points =  (+) center <$> (\r -> P.create (cosR r) (sinR r) 0.0) <$> degs
+        points =  (+) center <$> (\r -> Point.create (cosR r) (sinR r) 0.0) <$> degs
     --  uncurry is gonna take a binary function and make it a unary function over Tuples
     -- cartesianProductOfPoints :: (*) <$> lab <*> lac
     in points
 
-instance interpolateSquare :: Interpolatable SQ.Square where
+instance interpolateSquare :: Interpolatable Square where
   interpolate s sq =
-    let points = SQ.getPoints sq
-        lab = interpolate s (L.create points.a points.b)
-        lac = interpolate s (L.create points.a points.c)
+    let points = Square.getPoints sq
+        lab = interpolate s (Line.create points.a points.b)
+        lac = interpolate s (Line.create points.a points.c)
     --  uncurry is gonna take a binary function and make it a unary function over Tuples
     -- cartesianProductOfPoints :: (*) <$> lab <*> lac
     in StrictList.fromFoldable $ lift2 (+) lab lac -- (*) <$> lab <*> lac
 
--- something :: ∀ a. Interpolatable a => a -> StrictList.List P.Point
+-- something :: ∀ a. Interpolatable a => a -> StrictList.List Point
 -- something s = interpolate s 10
 
 -- Previously this was -----------
@@ -65,13 +68,13 @@ instance interpolateSquare :: Interpolatable SQ.Square where
       
       -- How does this work?
       -- P.create is a pure function
-instance il :: Interpolatable L.Line where
-  interpolate s (L.Line {a:P.Point a, b:P.Point b}) = 
+instance il :: Interpolatable Line where
+  interpolate s (Line {a:Point a, b:Point b}) = 
   -- Change the destructuring of the line to a getLinePoints fn
     let ai = interpolateRange a.x b.x s
         bi = interpolateRange a.y b.y s
         ci = interpolateRange a.z b.z s
-        ri = P.create 
+        ri = Point.create 
             <$> ZipList (LazyList.fromFoldable ai) 
             <*> ZipList (LazyList.fromFoldable bi) 
             <*> ZipList (LazyList.fromFoldable ci)
@@ -85,7 +88,7 @@ instance il :: Interpolatable L.Line where
 -- getDistanceFromLine (Line l) = StrictList.take 2 lab 
 
 -- -- This is a failed tesselation prototype
--- interpolateStarSquare :: SQ.Square -> Int -> StrictList.List P.Point
+-- interpolateStarSquare :: SQ.Square -> Int -> StrictList.List Point
 -- interpolateStarSquare s sq = 
 --   let points = SQ.getPoints sq
 --       lab = interpolate s (L.create points.a points.b)

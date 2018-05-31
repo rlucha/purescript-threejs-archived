@@ -5,16 +5,17 @@ import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.Array (concat)
 
-import Pure3.Point as P
-import Pure3.Line  as L
-import Pure3.Square (Square(..)) as S
+import Pure3.Point (Point)
+import Pure3.Line (Line)
+import Pure3.Line as Line
+import Pure3.Square (Square(..))
 
-type Mesh = Array P.Point
+type Mesh = Array Point
 
 data Scene = Scene 
-  { points :: Array P.Point
-  , lines ::  Array L.Line
-  , squares :: Array S.Square
+  { points :: Array Point
+  , lines ::  Array Line
+  , squares :: Array Square
   , meshes :: Array Mesh
 }
 
@@ -31,19 +32,19 @@ instance showScene :: Show Scene where show = genericShow
 -- for now we will represent an square as a list of 4 lines
 -- so we need to create lines from the points of an square
 
-squareToLines :: S.Square -> Array L.Line
-squareToLines (S.Square {a,b,c,d}) = 
-  let lab = L.create a b
-      lbd = L.create b d
-      ldc = L.create d c
-      lca = L.create c a
+squareToLines :: Square -> Array Line
+squareToLines (Square {a,b,c,d}) = 
+  let lab = Line.create a b
+      lbd = Line.create b d
+      ldc = Line.create d c
+      lca = Line.create c a
   in [lab, lbd, ldc, lca]
 
 -- create parses the squares to lines, this should be a row type I think
 create :: 
-  { points :: Array P.Point
-  , lines :: Array L.Line
-  , squares :: Array S.Square
+  { points :: Array Point
+  , lines :: Array Line
+  , squares :: Array Square
   , meshes ::  Array Mesh } -> Scene
 
 create scene = 

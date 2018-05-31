@@ -2,22 +2,26 @@ module Projects.Sealike
   (create, update)
 where
 
-import Data.Array (fromFoldable)
+import Prelude
+import Data.Array as Array
 import Data.List (List)
 import Data.Traversable (traverse, traverse_)
-import Math (cos) as Math
-import Prelude (Unit, bind, negate, pure, ($), (*), (*>), (+))
-import Projects.BaseProject (Project(..), getProjectObjects, getProjectVectors, createVectorFromPoint) as BaseProject
-import Projects.Sealike.SeaMaterial (createSeaMaterial)
-import Pure3.Interpolate as Interpolate
-import Pure3.Line as L
-import Pure3.Point as P
-import Pure3.Square as SQ
-import Pure3.Transform as T
-import Three (createGeometry, getVector3Position, pushVertices, updateVector3Position)
-import Three.Object3D (forceVerticesUpdate) as Object3D
-import Three.Object3D.Points (create) as Object3D.Points
+import Math as Math
+
+import Three as Three
 import Three.Types (ThreeEff, Vector3)
+import Pure3.Interpolate as Interpolate
+import Pure3.Types (Point)
+import Pure3.Line as Line
+import Pure3.Point as Point
+import Pure3.Square as Square
+import Pure3.Transform as Transform
+
+import Three.Object3D as Object3D
+import Three.Object3D.Points as Object3D.Points
+
+import Projects.BaseProject as BaseProject
+import Projects.Sealike.SeaMaterial (createSeaMaterial)
 
 size = 3000.0
 steps = 60
@@ -25,26 +29,26 @@ freq = 0.003
 speed = 0.025
 amplitude = 40.0
 
-center :: P.Point
-center = P.create (-size * 0.25) 0.0 (-size * 0.25)
+center :: Point
+center = Point.create (-size * 0.25) 0.0 (-size * 0.25)
 
-a = P.create 0.0 0.0 0.0
-b = P.create size 0.0 0.0
-c = P.create 0.0 0.0 size
-d = P.create size 0.0 size
-sq1 = SQ.createFromLines (L.create a b) (L.create c d)
-sq1c = T.translateSquare sq1 center
+a = Point.create 0.0 0.0 0.0
+b = Point.create size 0.0 0.0
+c = Point.create 0.0 0.0 size
+d = Point.create size 0.0 size
+sq1 = Square.createFromLines (Line.create a b) (Line.create c d)
+sq1c = Transform.translateSquare sq1 center
 
-sq1Points :: List P.Point
+sq1Points :: List Point
 sq1Points = Interpolate.interpolate steps sq1c 
 
 updateVector :: Number -> Vector3 -> ThreeEff Unit
 updateVector t v = do
-  vpos <- getVector3Position v
+  vpos <- Three.getVector3Position v
   let delta = (vpos.x + vpos.z) * freq
       waveY = (Math.cos (delta + speed * t)) * amplitude
       wave2 = (Math.cos (vpos.z + speed * t)) * amplitude * 0.4
-  updateVector3Position vpos.x ( waveY + wave2) vpos.z v
+  Three.updateVector3Position vpos.x ( waveY + wave2) vpos.z v
 
 update :: BaseProject.Project -> Number -> ThreeEff Unit
 update p t = 
@@ -56,9 +60,9 @@ create :: ThreeEff BaseProject.Project
 create = do
   -- here we are mutating g in JS... then using the reference in create g
   -- should we express that effect somehow?
-  g <- createGeometry
+  g <- Three.createGeometry
   m <- createSeaMaterial
   vs <- traverse BaseProject.createVectorFromPoint sq1Points
-  _ <- traverse_ (pushVertices g) vs
+  _ <- traverse_ (Three.pushVertices g) vs
   p <- Object3D.Points.create g m
-  pure $ BaseProject.Project { objects: [p], vectors: fromFoldable vs }
+  pure $ BaseProject.Project { objects: [p], vectors: Array.fromFoldable vs }

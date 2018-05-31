@@ -6,12 +6,15 @@ module Timeline
 import Prelude
 
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, log)
+import Control.Monad.Eff.Console (CONSOLE)
 import Control.Monad.Eff.Unsafe (unsafeCoerceEff)
 import DOM (DOM)
 import Data.Traversable (traverse_)
-import Three.Types (Three)
 
+import Three.Types (Three) 
+
+-- This doesn't scale, we cannot use it from the outside without passing the type
+-- Maybe we do this fully polymorphic on efects?
 type MainEff a = ∀ e. Eff (three :: Three, dom :: DOM, console :: CONSOLE | e) a
 
 foreign import setAnimationFrameBehaviour :: ∀ e. (Eff e) Unit -> Eff e Unit
