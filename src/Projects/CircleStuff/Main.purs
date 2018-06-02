@@ -8,7 +8,7 @@ import Control.Monad.Eff.Console (CONSOLE)
 import DOM (DOM)
 
 import Three as Three
-import Three.Types (Camera, Renderer, Scene, Three, ThreeEff)
+import Three.Types (Camera, Renderer, Scene, THREE, ThreeEff)
 import Three.Camera as Camera
 import Three.OrbitControls as Controls
 import Three.Renderer as Renderer
@@ -26,7 +26,7 @@ initScene = do
   Scene.debug scene
   pure scene
 
-updateScene :: ∀ e. BaseProject.Project -> Camera -> Renderer -> Timeline.Frame -> Eff (three :: Three | e) Unit
+updateScene :: ∀ e. BaseProject.Project -> Camera -> Renderer -> Timeline.Frame -> Eff (three :: THREE | e) Unit
 updateScene s c r t = do
   CircleStuff.update s $ Int.toNumber t
 
@@ -39,7 +39,7 @@ init controls scene project camera renderer =
         -- , \_ -> Controls.update controls 
         , \_ -> Renderer.render scene camera renderer ]
 
-type MainEff a = ∀ e. Eff (three :: Three, dom :: DOM, console :: CONSOLE | e) a
+type MainEff a = ∀ e. Eff (three :: THREE, dom :: DOM, console :: CONSOLE | e) a
 
 initCamera :: MainEff Camera
 initCamera = do

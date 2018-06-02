@@ -21,15 +21,15 @@ const route = rlite(notFound, {
       editorFactory.editor()
     }
   },
-  // '03': function () {
-  //   document.body.className = 'theme01'
-  //   frameBound.main()
-  // }  
+  '03': function () {
+    document.body.className = 'theme01'
+    frameBound.main()
+  }  
 });
 
 function notFound() {
   document.body.className = 'theme01'
-  circleStuff.main()
+  frameBound.main()
 }
 
 // Hash-based routing

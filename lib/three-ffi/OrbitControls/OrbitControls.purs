@@ -7,4 +7,5 @@ foreign import data OrbitControls :: Type
 
 foreign import create :: Camera -> ThreeEff OrbitControls
 foreign import toggle :: Boolean -> OrbitControls -> ThreeEff Unit
+foreign import setAutoRotate :: Boolean -> OrbitControls -> ThreeEff Unit
 foreign import update :: OrbitControls -> ThreeEff Unit

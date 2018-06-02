@@ -12,7 +12,7 @@ import Three.Camera as Camera
 import Three.OrbitControls as Controls
 import Three.Renderer as Renderer
 import Three.Scene as Scene 
-import Three.Types (Camera, Renderer, Scene, Three, ThreeEff)
+import Three.Types (Camera, Renderer, Scene, THREE, ThreeEff)
 import Timeline as Timeline
 
 import Projects.BaseProject as BaseProject
@@ -25,7 +25,7 @@ initScene = do
   Scene.setBackground bgColor scene
   pure scene
 
-updateScene :: ∀ e. BaseProject.Project -> Camera -> Renderer -> Timeline.Frame -> Eff (three :: Three | e) Unit
+updateScene :: ∀ e. BaseProject.Project -> Camera -> Renderer -> Timeline.Frame -> Eff (three :: THREE | e) Unit
 updateScene s c r t = do
   Sealike.update s $ toNumber t
 
@@ -38,7 +38,7 @@ init controls scene project camera renderer =
         , \_ -> Controls.update controls 
         , \_ -> Renderer.render scene camera renderer ]
 
-type MainEff a = ∀ e. Eff (three :: Three, dom :: DOM, console :: CONSOLE | e) a
+type MainEff a = ∀ e. Eff (three :: THREE, dom :: DOM, console :: CONSOLE | e) a
 
 main :: MainEff Unit
 main = do

@@ -13,7 +13,7 @@ import Data.Tuple (Tuple(..), fst, snd)
 import Pure3.Types (Point(..))
 
 import Three as Three
-import Three.Types (Camera, Object3D, Object3D_, Renderer, Scene, Three, ThreeEff, Vector3)
+import Three.Types (Camera, Object3D, Object3D_, Renderer, Scene, THREE, ThreeEff, Vector3)
 import Three.Camera as Camera
 import Three.Object3D as Object3D
 import Three.OrbitControls as Controls
@@ -36,12 +36,12 @@ exportProjectObjects (Project r) = Object3D.unwrap <$> r.objects
 createVectorFromPoint :: Point -> ThreeEff Vector3
 createVectorFromPoint (Point {x, y, z}) = Three.createVector3 x y z
 
-unsafeGetAspectRatio :: ∀ e. Eff (three :: Three, dom :: DOM | e) Number
+unsafeGetAspectRatio :: ∀ e. Eff (three :: THREE, dom :: DOM | e) Number
 unsafeGetAspectRatio = do
   bs <- unsafeGetBodySize
   pure ((fst bs) / (snd bs))
 
-unsafeGetBodySize :: ∀ e. Eff (three :: Three, dom :: DOM | e) (Tuple Number Number)
+unsafeGetBodySize :: ∀ e. Eff (three :: THREE, dom :: DOM | e) (Tuple Number Number)
 unsafeGetBodySize = do
   w <- window
   d <- document w
@@ -55,7 +55,7 @@ unsafeGetBodySize = do
     Nothing -> do 
       pure $ Tuple 0.0 0.0
 
-handleResize :: Camera -> Renderer -> ∀ e. Eff (three :: Three, dom :: DOM | e) Unit
+handleResize :: Camera -> Renderer -> ∀ e. Eff (three :: THREE, dom :: DOM | e) Unit
 handleResize c r = do
   ar <- unsafeGetAspectRatio
   bs <- unsafeGetBodySize
@@ -68,7 +68,7 @@ attachAxesHelper scene size = do
   axesHelper <- Three.createAxesHelper size
   Scene.add scene axesHelper
 
-createRenderer :: ∀ e. Eff (three :: Three, dom :: DOM | e) Renderer
+createRenderer :: ∀ e. Eff (three :: THREE, dom :: DOM | e) Renderer
 createRenderer = do 
   bs <- unsafeGetBodySize
   r <- Renderer.createWebGLRenderer

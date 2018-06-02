@@ -1,7 +1,7 @@
 module Three where
 
 import Prelude
-import Three.Types (Three, ThreeEff, Color, Geometry, Vector3, Object3D(..), Object3D_)
+import Three.Types (Color, Geometry, THREE, ThreeEff, Vector3)
 import Control.Monad.Eff (Eff, kind Effect)
 
 foreign import createColor :: String -> ThreeEff Color
@@ -18,8 +18,8 @@ foreign import getVector3Position
   -> ThreeEff { x :: Number, y :: Number, z :: Number }
 
 -- TODO this is too specific and JS reliant
-foreign import onDOMContentLoaded :: ∀ f e. f -> Eff (three :: Three | e) Unit
-foreign import onResize :: ∀ f e. f -> Eff (three :: Three | e) Unit
+foreign import onDOMContentLoaded :: ∀ f e. f -> Eff (three :: THREE | e) Unit
+foreign import onResize :: ∀ f e. f -> Eff (three :: THREE | e) Unit
 
 foreign import voidEff :: ThreeEff Unit
  
