@@ -23,6 +23,11 @@ Run a local server from project folder to see it move
   - Entry point
 
 ## TODO
+- Use import Control.Monad.Eff.Uncurried instead of custom js-ffi
+- Make udpdate functions in projects NOT perform side effects but get a collection of objects and properties and
+  return a new collection of objects and properties. A consumer will use that to apply the changes
+  under Eff making the scene as pure as possible. Under that idea, the project would use a DSL and a "runner" module
+  would transform those into actual threejs calls.
 - Make Project a graph and provide a way to traverse it (Functor Project?)
 - Generalize the project file utils into a project object in Pure3
 - Connect datGUI to those params to get some interactivity

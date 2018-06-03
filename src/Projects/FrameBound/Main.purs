@@ -4,7 +4,6 @@ import Prelude
 
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE)
-import Control.Monad.Eff.Random (RANDOM)
 import DOM (DOM)
 import Data.Int (toNumber)
 import Data.Traversable (traverse_)
@@ -18,7 +17,7 @@ import Three.Scene as Scene
 import Three.Types (Camera, Renderer, Scene, THREE, ThreeEff)
 import Timeline as Timeline
 
-type MainEff a = ∀ e. Eff (random :: RANDOM, three :: THREE, dom :: DOM, console :: CONSOLE | e) a
+type ModuleEff a = ∀ e. Eff (console :: CONSOLE, three :: THREE, dom :: DOM | e) a
 
 doT :: Timeline.Frame -> Number
 doT n = toNumber n
@@ -30,11 +29,11 @@ initScene = do
   Scene.setBackground bgColor scene
   pure scene
 
-updateScene :: ∀ e. BaseProject.Project -> Camera -> Renderer -> Timeline.Frame -> Eff (random :: RANDOM, three :: THREE | e) Unit
+updateScene :: ∀ e. BaseProject.Project -> Camera -> Renderer -> Timeline.Frame -> Eff (console :: CONSOLE, three :: THREE, dom :: DOM | e) Unit
 updateScene s c r t = do
   FrameBound.update s $ toNumber t
 
-init :: Controls.OrbitControls -> Scene -> BaseProject.Project -> Camera -> Renderer -> MainEff Unit
+init :: Controls.OrbitControls -> Scene -> BaseProject.Project -> Camera -> Renderer -> ModuleEff Unit
 init controls scene project camera renderer = 
   Timeline.create behaviours 0
     where 
@@ -43,7 +42,7 @@ init controls scene project camera renderer =
         , \_ -> Controls.update controls 
         , \_ -> Renderer.render scene camera renderer ]
 
-main :: MainEff Unit
+main :: ModuleEff Unit
 main = do
   ar <- BaseProject.unsafeGetAspectRatio
   scene    <- initScene
