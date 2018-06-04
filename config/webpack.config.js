@@ -9,7 +9,7 @@ module.exports = {
   },
   module: {
     rules: [
-      {test: /\.(js|jsx)$/, use: "babel-loader"},
+      {test: /\.(js|jsx|json)$/, use: "babel-loader"},
     ]
   },
   resolve: {

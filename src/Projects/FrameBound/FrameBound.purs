@@ -35,12 +35,16 @@ import Three.Geometry.BoxGeometry as BoxGeometry
 import Three.Geometry.ExtrudeGeometry as ExtrudeGeometry
 import Three.Materials.MeshPhongMaterial as MeshPhongMaterial
 import Three.Object3D as Object3D
+import Three.Object3D.Light.AmbientLight as AmbientLight
+import Three.Object3D.Light.DirectionalLight as DirectionalLight
 import Three.Object3D.Mesh as Object3D.Mesh
 import Three.Types (Object3D, THREE, ThreeEff, Vector2)
 
 elements = 50
 area = 500.0
-boxColor = "#ff0000"
+boxColor = "#FFD9DC"
+directionalColor = "#ff0000"
+ambientColor = "#44d9e6"
 
 newtype Coords = Coords { x :: Number, y :: Number, z :: Number }
 derive instance newtypeCoords :: Newtype Coords _
@@ -91,7 +95,7 @@ doBuilding :: Array Point -> ModuleEff Object3D
 doBuilding ps = do 
   let scale = calculateProjection ps
   -- let scale = 1.0
-  _ <- log $ show scale
+  -- _ <- log $ show scale
   boxColor <- Three.createColor boxColor
   vs <- traverse (projectBuildingPoint scale) ps
   sh <- Shape.create vs
@@ -108,19 +112,23 @@ calculateProjection ps =
   let maxX  = fromMaybe 0.0 $ maximum $ _.x <<< unwrap <$> ps
       maxZ  = fromMaybe 0.0 $ maximum $ _.z <<< unwrap <$> ps
       scale = fromMaybe 0.0 $ maximum [maxX, maxZ]
-  in (scale / 100.0)
+  in (scale / 100.0) 
 
 -- project to desired scale
 -- get example working in the js only playground and reproduce here
 -- Using 3d points, we do not need to do most of this stuff and just project those into the view
 projectBuildingPoint :: Number -> Point -> ModuleEff Vector2
-projectBuildingPoint sc (Point {x, y, z}) = Three.createVector2 (x + 10000.0) (z - 6700000.5)
+projectBuildingPoint sc (Point {x, y, z}) = Three.createVector2 (x + 10000.0) (z - 6705000.5)
 
 create :: ModuleEff Project
 create = do
   map <- loadBuildings
+  dColor <- Three.createColor directionalColor
+  dlight <-  DirectionalLight.create dColor 1.0
+  aColor <- Three.createColor ambientColor
+  alight <- AmbientLight.create aColor 0.75  
   boxes <- createBuildings $ doBuildings map
-  pure $ BaseProject.Project { objects: Array.concat [boxes], vectors: [] }
+  pure $ BaseProject.Project { objects: Array.concat [boxes <> [dlight, alight]], vectors: [] }
 
 -- use Functor instead of this function
 doBuildings :: forall e. (Either (NonEmptyList ForeignError) (Array Building)) -> Array Building
