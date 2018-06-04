@@ -13,7 +13,7 @@ import Data.Tuple (Tuple(..), fst, snd)
 import Pure3.Types (Point(..))
 
 import Three as Three
-import Three.Types (Camera, Object3D, Object3D_, Renderer, Scene, THREE, ThreeEff, Vector3)
+import Three.Types (Camera, Object3D, Object3D_, Renderer, Scene, THREE, ThreeEff, Vector2, Vector3)
 import Three.Camera as Camera
 import Three.Object3D as Object3D
 import Three.OrbitControls as Controls
@@ -33,8 +33,11 @@ getProjectVectors (Project r) = r.vectors
 exportProjectObjects :: Project -> Array Object3D_
 exportProjectObjects (Project r) = Object3D.unwrap <$> r.objects
 
-createVectorFromPoint :: Point -> ThreeEff Vector3
-createVectorFromPoint (Point {x, y, z}) = Three.createVector3 x y z
+createVector3FromPoint :: Point -> ThreeEff Vector3
+createVector3FromPoint (Point {x, y, z}) = Three.createVector3 x y z
+
+createVector2FromPoint :: Point -> ThreeEff Vector2
+createVector2FromPoint (Point {x, y}) = Three.createVector2 x y
 
 unsafeGetAspectRatio :: ∀ e. Eff (three :: THREE, dom :: DOM | e) Number
 unsafeGetAspectRatio = do
@@ -79,5 +82,5 @@ createRenderer = do
 createControls :: Camera -> Scene -> ThreeEff Controls.OrbitControls
 createControls camera scene = do 
   controls <- Controls.create camera
-  Controls.toggle false controls
+  Controls.toggle true controls
   pure controls

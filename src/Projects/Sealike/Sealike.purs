@@ -3,25 +3,23 @@ module Projects.Sealike
 where
 
 import Prelude
+
 import Data.Array as Array
 import Data.List (List)
 import Data.Traversable (traverse, traverse_)
 import Math as Math
-
-import Three as Three
-import Three.Types (ThreeEff, Vector3)
+import Projects.BaseProject as BaseProject
+import Projects.Sealike.SeaMaterial (createSeaMaterial)
 import Pure3.Interpolate as Interpolate
-import Pure3.Types (Point)
 import Pure3.Line as Line
 import Pure3.Point as Point
 import Pure3.Square as Square
 import Pure3.Transform as Transform
-
+import Pure3.Types (Point)
+import Three as Three
 import Three.Object3D as Object3D
 import Three.Object3D.Points as Object3D.Points
-
-import Projects.BaseProject as BaseProject
-import Projects.Sealike.SeaMaterial (createSeaMaterial)
+import Three.Types (ThreeEff, Vector3)
 
 size = 3000.0
 steps = 60
@@ -62,7 +60,7 @@ create = do
   -- should we express that effect somehow?
   g <- Three.createGeometry
   m <- createSeaMaterial
-  vs <- traverse BaseProject.createVectorFromPoint sq1Points
+  vs <- traverse BaseProject.createVector3FromPoint sq1Points
   _ <- traverse_ (Three.pushVertices g) vs
   p <- Object3D.Points.create g m
   pure $ BaseProject.Project { objects: [p], vectors: Array.fromFoldable vs }

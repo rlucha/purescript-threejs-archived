@@ -47,12 +47,12 @@ main = do
   ar <- BaseProject.unsafeGetAspectRatio
   scene    <- initScene
   project  <- FrameBound.create
-  camera   <- Camera.create 30.0 ar 1.0 10000.0
+  camera   <- Camera.create 30.0 ar 1.0 1000000.0
   renderer <- BaseProject.createRenderer
   controls <- BaseProject.createControls camera scene
   Controls.setAutoRotate true controls
-  -- BaseProject.attachAxesHelper scene 100.0
-  Camera.setPosition (-670.66) 875.421 (-604.84) camera
+  BaseProject.attachAxesHelper scene 10000.0
+  Camera.setPosition (260567.301) 174910.795 (-63662.28) camera
   Scene.debug scene
   Camera.debug camera
   traverse_ (Scene.add scene) (BaseProject.exportProjectObjects project)

@@ -12,9 +12,15 @@ foreign import data Camera :: Type
 
 foreign import data Color :: Type
 
+foreign import data Vector2 :: Type
+
 foreign import data Vector3 :: Type
 
+-- Core
 foreign import data Geometry :: Type
+-- Extras.Core
+foreign import data Path :: Type
+foreign import data Shape :: Type
  
 -- Materials
 foreign import data Material :: Type

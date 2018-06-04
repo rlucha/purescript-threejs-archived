@@ -1,11 +1,14 @@
 module Pure3.Point where
 
 import Prelude
+
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
+import Data.Newtype (class Newtype)
 
 newtype Point = Point { x :: Number, y :: Number, z :: Number }
 
+derive instance newPoint :: Newtype Point _
 derive instance eqPoint :: Eq Point
 derive instance genPoint :: Generic Point _
 instance showPoint :: Show Point where show = genericShow

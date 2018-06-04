@@ -48,3 +48,4 @@ Run a local server from project folder to see it move
 - throttle onResize
 - Replace Maintype with Effect, currently Timeline is coupled
 - [NEWTYPE] Wrap / Unwrap using newtype instance for Line and other Pure3 types 
+- Flip shape matrix to the ground
