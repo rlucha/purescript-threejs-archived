@@ -25,7 +25,7 @@ doT n = toNumber n
 initScene :: ThreeEff Scene
 initScene = do 
   scene <- Scene.create
-  bgColor <- Three.createColor "#A6FFD4"
+  bgColor <- Three.createColor "#dddddd"
   Scene.setBackground bgColor scene
   pure scene
 
@@ -50,9 +50,10 @@ main = do
   camera   <- Camera.create 30.0 ar 1.0 1000000.0
   renderer <- BaseProject.createRenderer
   controls <- BaseProject.createControls camera scene
-  Controls.setAutoRotate true controls
+  -- Controls.setAutoRotate true controls
   BaseProject.attachAxesHelper scene 10000.0
-  Camera.setPosition (260567.301) 174910.795 (-63662.28) camera
+  -- Camera.lookAt 1000.0 0.0 1000.0 camera
+  Camera.setPosition (-2695.27) 1376.19 (-2738.3508) camera
   Scene.debug scene
   Camera.debug camera
   traverse_ (Scene.add scene) (BaseProject.exportProjectObjects project)
