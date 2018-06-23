@@ -73,14 +73,6 @@ setPositionByPoint :: Point -> Object3D -> ThreeEff Unit
 -- Maybe make Object3D.setPosition accept a Point || Vector3 so we can avoid unwrapping points here?
 setPositionByPoint (Point {x, y, z}) o = Object3D.setPosition x y z o
 
-createBuildings :: Array Building -> ModuleEff (Array Object3D)
-createBuildings bs = do
-  let ps = buildingCoordsToPoints <$> bs
-  boxMeshes <- traverse buildingToMesh ps
-  -- Do proper numbers here instead of magic
-  sequence_ $ Object3D.setRotation (-90.0 * (Math.pi / 180.0)) 0.0 0.0 <$> boxMeshes
-  pure $ Array.fromFoldable boxMeshes
-
 buildingToMesh :: Array Point -> ModuleEff Object3D
 buildingToMesh ps = do 
   let scale = 10.0 -- calculateProjection ps
@@ -92,26 +84,30 @@ buildingToMesh ps = do
   mat <- MeshPhongMaterial.create boxColor true
   Object3D.Mesh.create ex mat
 
-buildingCoordsToPoints :: Building -> Array Point
-buildingCoordsToPoints (Building b) = 
-  (\(Coords {x, y, z}) -> Point.create x y z) <$> _.coordinates b
-
 -- project to desired scale
 -- get example working in the js only playground and reproduce here
 -- Using 3d points, we do not need to do most of this stuff and just project those into the view
 projectBuildingPoint :: Number -> Point -> ModuleEff Vector2
 projectBuildingPoint sc (Point {x, y, z}) = 
   Three.createVector2 x' z'
-  where x' = ((x * sc) + (10000.0 * sc))
-        z' = ((z * sc) - (6705000.5 * sc))
+  where x' = x * sc
+        z' = z * sc
 
+buildingCoordsToPoints :: Building -> Array Point
+buildingCoordsToPoints (Building b) = 
+  (\(Coords {x, y, z}) -> Point.create x y z) <$> _.coordinates b
 
--- projectToCenter :: Array Building -> Array Building
--- projectToCenter bs = 
---   let maxX  = fromMaybe 0.0 $ maximum $ _.x <<< unwrap <$> bs
---       maxZ  = fromMaybe 0.0 $ maximum $ _.z <<< unwrap <$> bs
---       scale = fromMaybe 0.0 $ maximum [maxX, maxZ]
---   in (scale / 100.0) 
+-- Maybe use a general function instead of a named one?
+translateToCenter :: Point -> Array Point -> Array Point
+translateToCenter center ps = (-) center <$> ps
+
+createBuildings :: Array Building -> Point -> ModuleEff (Array Object3D)
+createBuildings bs center = do
+  let ps = translateToCenter center <<< buildingCoordsToPoints <$> bs
+  boxMeshes <- traverse buildingToMesh ps
+  -- Do proper numbers here instead of magic
+  sequence_ $ Object3D.setRotation (-90.0 * (Math.pi / 180.0)) 0.0 0.0 <$> boxMeshes
+  pure $ Array.fromFoldable boxMeshes
 
 create :: ModuleEff Project
 create = do
@@ -119,10 +115,10 @@ create = do
   gColor <- Three.createColor groundColor
   dColor <- Three.createColor directionalColor
   dlight <-  DirectionalLight.create dColor 0.75
-  hlight <- HemisphereLight.create sColor gColor 0.75  
+  hlight <- HemisphereLight.create sColor gColor 0.75
   -- Json to Building types
   buildingsData <- loadBuildingsData
-  let buildingsData' = doBuildings buildingsData
+  let buildingsData' = doBuildings buildingsData 
       center = Projection.calculate buildingsData'
   -- buildingsData' <- doBuildings buildingsData
   -- scale buildingsData to proper scale
@@ -130,9 +126,7 @@ create = do
   -- Building types to meshes
   -- PROJECTION HERE <<<<<-------------------------
   -- pas center to createBuildings, then buildingCoordsToPoints
-  log $ show $ _.x center
-  log $ show $ _.z center
-  boxes <- createBuildings buildingsData'
+  boxes <- createBuildings buildingsData' center
   pure $ BaseProject.Project { objects: Array.concat [boxes <> [dlight, hlight]], vectors: [] }
 
 -- use Functor instead of this function
