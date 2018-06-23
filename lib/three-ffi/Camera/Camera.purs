@@ -17,6 +17,7 @@ foreign import create
 
 foreign import debug :: Camera -> ThreeEff Unit
 
+-- TODO Use Object3D setPoasition instead
 foreign import setPosition 
   :: X -> Y -> Z -> Camera -> ThreeEff Unit
 

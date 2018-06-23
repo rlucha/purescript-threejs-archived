@@ -55,6 +55,7 @@ main = do
   -- Controls.setAutoRotate true controls
   BaseProject.attachAxesHelper scene 10000.0
   -- Camera.lookAt 1000.0 0.0 1000.0 camera
+  -- {x: -2816.4106737900843, y: 27836.657839455493, z: -30028.115299839516}
   Camera.setPosition (-2816.41) 27836.65 (-30028.11) camera
   Scene.debug scene
   Camera.debug camera

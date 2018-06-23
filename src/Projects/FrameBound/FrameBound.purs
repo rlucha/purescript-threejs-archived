@@ -5,6 +5,7 @@ where
 import Data.Either
 import Data.List.Types
 import Prelude
+import Projects.FrameBound.Types
 
 import Control.Extend ((<<=))
 import Control.Monad.Eff (Eff)
@@ -27,6 +28,7 @@ import Math as Math
 import Projects.BaseProject (Project)
 import Projects.BaseProject as BaseProject
 import Projects.FrameBound.MapLoader as MapLoader
+import Projects.FrameBound.Projection as Projection
 import Pure3.Point (Point(..))
 import Pure3.Point as Point
 import Three as Three
@@ -34,6 +36,7 @@ import Three.Extras.Core.Shape as Shape
 import Three.Geometry.BoxGeometry as BoxGeometry
 import Three.Geometry.ExtrudeGeometry as ExtrudeGeometry
 import Three.Materials.MeshPhongMaterial as MeshPhongMaterial
+import Three.Object3D (setPosition)
 import Three.Object3D as Object3D
 import Three.Object3D.Light.AmbientLight as AmbientLight
 import Three.Object3D.Light.DirectionalLight as DirectionalLight
@@ -41,13 +44,11 @@ import Three.Object3D.Light.HemisphereLight as HemisphereLight
 import Three.Object3D.Mesh as Object3D.Mesh
 import Three.Types (Object3D, THREE, ThreeEff, Vector2)
 
-import Projects.FrameBound.Types
-import Projects.FrameBound.Projection as Projection
-
 elements = 50
 area = 500.0
-boxColor = "#d2cbc5"
-directionalColor = "#fff8e7"
+boxColor = "#e3cdac"
+directionalColor = "#ffffff"
+dIntensity = 0.3
 skyColor = "#fff8e7"
 groundColor = "7cfc00"
 
@@ -80,7 +81,8 @@ buildingToMesh ps = do
   boxColor <- Three.createColor boxColor
   vs <- traverse (projectBuildingPoint scale) ps
   sh <- Shape.create vs
-  ex <- ExtrudeGeometry.create 1.0 sh 
+  -- Pass estrusion from config, eventually use LIDAR
+  ex <- ExtrudeGeometry.create 2.0 sh 
   mat <- MeshPhongMaterial.create boxColor true
   Object3D.Mesh.create ex mat
 
@@ -114,7 +116,8 @@ create = do
   sColor <- Three.createColor skyColor
   gColor <- Three.createColor groundColor
   dColor <- Three.createColor directionalColor
-  dlight <-  DirectionalLight.create dColor 0.75
+  dlight <-  DirectionalLight.create dColor dIntensity
+  _ <- setPosition (-1.0) 1.75 1.0 dlight
   hlight <- HemisphereLight.create sColor gColor 0.75
   -- Json to Building types
   buildingsData <- loadBuildingsData
