@@ -22,10 +22,12 @@ type ModuleEff a = ∀ e. Eff (console :: CONSOLE, three :: THREE, dom :: DOM | 
 doT :: Timeline.Frame -> Number
 doT n = toNumber n
 
+backgroundColor = "#e3e0db"
+
 initScene :: ThreeEff Scene
 initScene = do 
   scene <- Scene.create
-  bgColor <- Three.createColor "#dddddd"
+  bgColor <- Three.createColor backgroundColor
   Scene.setBackground bgColor scene
   pure scene
 

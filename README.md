@@ -31,7 +31,6 @@ Run a local server from project folder to see it move
 - Make Project a graph and provide a way to traverse it (Functor Project?)
 - Generalize the project file utils into a project object in Pure3
 - Connect datGUI to those params to get some interactivity
-- Next steps: Try to reproduce hierarchy2 example from threejs 
 - Create a set of JS utils to make IFF less painful
   - Get webpack to serve all files using purs-loader or similar
     - Will this do dead code elimination?
@@ -49,3 +48,4 @@ Run a local server from project folder to see it move
 - Replace Maintype with Effect, currently Timeline is coupled
 - [NEWTYPE] Wrap / Unwrap using newtype instance for Line and other Pure3 types 
 - Flip shape matrix to the ground
+- Center FrameBound scene

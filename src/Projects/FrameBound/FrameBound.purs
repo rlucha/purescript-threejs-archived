@@ -41,28 +41,14 @@ import Three.Object3D.Light.HemisphereLight as HemisphereLight
 import Three.Object3D.Mesh as Object3D.Mesh
 import Three.Types (Object3D, THREE, ThreeEff, Vector2)
 
+import Projects.FrameBound.Types
+
 elements = 50
 area = 500.0
-boxColor = "#dddddd"
+boxColor = "#d2cbc5"
 directionalColor = "#fff8e7"
 skyColor = "#fff8e7"
 groundColor = "7cfc00"
-
-
-newtype Coords = Coords { x :: Number, y :: Number, z :: Number }
-derive instance newtypeCoords :: Newtype Coords _
-derive instance genCoords :: Generic Coords _
-instance decCoords :: Decode Coords where
-  decode = genericDecode opts
-
-newtype Building = Building { coordinates :: Array Coords } 
-
-opts = defaultOptions { unwrapSingleConstructors = true }
-
-derive instance newtypeBuilding :: Newtype Building _
-derive instance genBuilding :: Generic Building _
-instance decBuilding :: Decode Building where
-  decode = genericDecode opts
 
 -- Create polygon from x points
 -- map coords to local coord sytem
@@ -88,14 +74,14 @@ setPositionByPoint (Point {x, y, z}) o = Object3D.setPosition x y z o
 
 createBuildings :: Array Building -> ModuleEff (Array Object3D)
 createBuildings bs = do
-  let ps = buildingToPoint <$> bs
-  boxMeshes <- traverse doBuilding ps
+  let ps = buildingCoordsToPoints <$> bs
+  boxMeshes <- traverse buildingToMesh ps
   -- Do proper numbers here instead of magic
   sequence_ $ Object3D.setRotation (-90.0 * (Math.pi / 180.0)) 0.0 0.0 <$> boxMeshes
   pure $ Array.fromFoldable boxMeshes
 
-doBuilding :: Array Point -> ModuleEff Object3D
-doBuilding ps = do 
+buildingToMesh :: Array Point -> ModuleEff Object3D
+buildingToMesh ps = do 
   let scale = 10.0 -- calculateProjection ps
   -- _ <- log $ show scale
   boxColor <- Three.createColor boxColor
@@ -105,16 +91,9 @@ doBuilding ps = do
   mat <- MeshPhongMaterial.create boxColor true
   Object3D.Mesh.create ex mat
 
-buildingToPoint :: Building -> Array Point
-buildingToPoint (Building b) = 
+buildingCoordsToPoints :: Building -> Array Point
+buildingCoordsToPoints (Building b) = 
   (\(Coords {x, y, z}) -> Point.create x y z) <$> _.coordinates b
-
-calculateProjection :: Array Point -> Number
-calculateProjection ps =
-  let maxX  = fromMaybe 0.0 $ maximum $ _.x <<< unwrap <$> ps
-      maxZ  = fromMaybe 0.0 $ maximum $ _.z <<< unwrap <$> ps
-      scale = fromMaybe 0.0 $ maximum [maxX, maxZ]
-  in (scale / 10.0) 
 
 -- project to desired scale
 -- get example working in the js only playground and reproduce here
@@ -125,15 +104,27 @@ projectBuildingPoint sc (Point {x, y, z}) =
   where x' = ((x * sc) + (10000.0 * sc))
         z' = ((z * sc) - (6705000.5 * sc))
 
+
+-- projectToCenter :: Array Building -> Array Building
+-- projectToCenter bs = 
+--   let maxX  = fromMaybe 0.0 $ maximum $ _.x <<< unwrap <$> bs
+--       maxZ  = fromMaybe 0.0 $ maximum $ _.z <<< unwrap <$> bs
+--       scale = fromMaybe 0.0 $ maximum [maxX, maxZ]
+--   in (scale / 100.0) 
+
 create :: ModuleEff Project
 create = do
-  map <- loadBuildings
   sColor <- Three.createColor skyColor
   gColor <- Three.createColor groundColor
   dColor <- Three.createColor directionalColor
   dlight <-  DirectionalLight.create dColor 0.75
   hlight <- HemisphereLight.create sColor gColor 0.75  
-  boxes <- createBuildings $ doBuildings map
+  -- Json to Building types
+  buildingsData <- loadBuildingsData
+  -- scale buildingsData to proper scale
+  -- buildingsData' <- projectToCenter buildingsData
+  -- Building types to meshes
+  boxes <- createBuildings $ doBuildings buildingsData
   pure $ BaseProject.Project { objects: Array.concat [boxes <> [dlight, hlight]], vectors: [] }
 
 -- use Functor instead of this function
@@ -143,12 +134,12 @@ doBuildings b = case b of
   -- Do not return a fake Building on error, handle upwards
   Left _ -> [Building { coordinates: [Coords {x: 0.0, y:0.0, z:0.0}]}]
 
-loadBuildings 
+loadBuildingsData 
   :: forall e. 
   Eff (| e) 
     (Either 
       (NonEmptyList ForeignError) 
       (Array Building))
-loadBuildings = do
+loadBuildingsData = do
   map <- MapLoader.loadMap
   pure $ runExcept (decodeJSON map :: _ (Array Building))
