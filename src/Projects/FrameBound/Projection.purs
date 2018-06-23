@@ -28,27 +28,5 @@ calculateProjection buildings =
       -- scale = fromMaybe 0.0 $ maxX <> maxZ
   in center
 
-doBuildings 
-  :: forall e
-  .  (Either (NonEmptyList ForeignError) (Array Building)) 
-  -> Array Building
-doBuildings b = case b of 
-  Right f -> f
-  -- Do not return a fake Building on error, handle upwards
-  Left _ -> [Building { coordinates: [Coords {x: 0.0, y:0.0, z:0.0}]}]
-
-loadBuildingsData 
-  :: forall e.
-  Eff (| e) 
-    (Either 
-      (NonEmptyList ForeignError) 
-      (Array Building))
-loadBuildingsData = do
-  map <- MapLoader.loadMap
-  pure $ runExcept (decodeJSON map :: _ (Array Building))
-
-test :: ∀ e. Eff (|e) {x :: Number, z :: Number}
-test = do
-  buildingsData <- loadBuildingsData
-  let buildings =  doBuildings buildingsData
-  pure $ calculateProjection buildings 
+calculate :: ∀ e. Array Building -> {x :: Number, z :: Number}
+calculate bs = calculateProjection bs 

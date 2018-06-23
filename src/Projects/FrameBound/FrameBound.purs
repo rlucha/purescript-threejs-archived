@@ -42,6 +42,7 @@ import Three.Object3D.Mesh as Object3D.Mesh
 import Three.Types (Object3D, THREE, ThreeEff, Vector2)
 
 import Projects.FrameBound.Types
+import Projects.FrameBound.Projection as Projection
 
 elements = 50
 area = 500.0
@@ -121,10 +122,17 @@ create = do
   hlight <- HemisphereLight.create sColor gColor 0.75  
   -- Json to Building types
   buildingsData <- loadBuildingsData
+  let buildingsData' = doBuildings buildingsData
+      center = Projection.calculate buildingsData'
+  -- buildingsData' <- doBuildings buildingsData
   -- scale buildingsData to proper scale
   -- buildingsData' <- projectToCenter buildingsData
   -- Building types to meshes
-  boxes <- createBuildings $ doBuildings buildingsData
+  -- PROJECTION HERE <<<<<-------------------------
+  -- pas center to createBuildings, then buildingCoordsToPoints
+  log $ show $ _.x center
+  log $ show $ _.z center
+  boxes <- createBuildings buildingsData'
   pure $ BaseProject.Project { objects: Array.concat [boxes <> [dlight, hlight]], vectors: [] }
 
 -- use Functor instead of this function
