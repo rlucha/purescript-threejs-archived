@@ -3,6 +3,7 @@ module Projects.CircleStuff
 where
 
 import Prelude
+import Effect
 import Data.Array as Array
 import Data.Int as Int
 import Data.List (List, (..))
@@ -16,7 +17,7 @@ import Pure3.Point as Point
 import Pure3.Interpolate as Interpolate
 
 import Three as Three
-import Three.Types (Object3D, ThreeEff)
+import Three.Types (Object3D)
 import Three.Geometry.BoxGeometry as BoxGeometry
 import Three.Materials.MeshPhongMaterial as MeshPhongMaterial
 import Three.Object3D as Object3D
@@ -47,7 +48,7 @@ circles = flip Circle.create radius <$> centers
 points :: List Point
 points = List.concat $ Interpolate.interpolate steps <$> circles
 
-updateBox :: Number -> Point -> Object3D -> ThreeEff Unit
+updateBox :: Number -> Point -> Object3D -> Effect Unit
 updateBox t (Point {x,y,z}) o = do
   let tLoop = Math.cos(t * speed)
       -- offset = Math.cos(t * speed)
@@ -60,11 +61,11 @@ updateBox t (Point {x,y,z}) o = do
   -- Ideas, set rotation to one/two axis only
   Object3D.setRotation rot rot rot o
 
-update :: Project -> Number -> ThreeEff Unit
+update :: Project -> Number -> Effect Unit
 update p t = 
   Traversable.sequence_ $ Array.zipWith (updateBox t) (Array.fromFoldable points) (BaseProject.getProjectObjects p) 
 
-createBoxes :: List Point -> ThreeEff (Array Object3D)
+createBoxes :: List Point -> Effect (Array Object3D)
 createBoxes ps = do
   boxColor <- Three.createColor boxColor
   boxMat <- MeshPhongMaterial.create boxColor true
@@ -73,11 +74,11 @@ createBoxes ps = do
   -- _ <- sequence_ $ zipWith setPositionByPoint points boxMeshes
   pure $ Array.fromFoldable boxMeshes
 
-setPositionByPoint :: Point -> Object3D -> ThreeEff Unit
+setPositionByPoint :: Point -> Object3D -> Effect Unit
 -- Maybe make Object3D.setPosition accept a Point || Vector3 so we can avoid unwrapping points here?
 setPositionByPoint (Point {x, y, z}) o = Object3D.setPosition x y z o
 
-create :: ThreeEff Project
+create :: Effect Project
 create = do
   boxes <- createBoxes points
   dColor <- Three.createColor directionalColor

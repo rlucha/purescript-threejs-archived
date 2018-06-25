@@ -1,6 +1,7 @@
 module Three.Materials.PointsMaterial where
 
-import Three.Types (ThreeEff, Material)
+import Effect 
+import Three.Types (Material)
 
 foreign import create :: 
-  ThreeEff Material 
+  Effect Material 

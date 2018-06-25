@@ -1,5 +1,6 @@
 module Projects.Sealike.SeaMaterial where
 
-import Three.Types (ThreeEff, Material)
+import Effect
+import Three.Types (Material)
 
-foreign import createSeaMaterial :: ThreeEff Material 
+foreign import createSeaMaterial :: Effect Material 

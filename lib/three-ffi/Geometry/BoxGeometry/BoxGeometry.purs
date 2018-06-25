@@ -1,6 +1,7 @@
 module Three.Geometry.BoxGeometry where
 
-import Three.Types (ThreeEff, Geometry)
+import Effect
+import Three.Types (Geometry)
 
 type Width = Number
 type Height = Number
@@ -11,4 +12,4 @@ foreign import create
   :: Width 
   -> Height 
   -> Depth 
-  -> ThreeEff Geometry
+  -> Effect Geometry

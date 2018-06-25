@@ -8,15 +8,16 @@ import Prelude
 import Projects.FrameBound.Types
 
 import Control.Extend ((<<=))
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, log)
+import Effect
+import Effect.Class.Console as Console
 import Control.Monad.Except (runExcept)
-import DOM (DOM)
+
 import Data.Array as Array
-import Data.Array as Arry
-import Data.Foreign (ForeignError(..))
-import Data.Foreign.Class (class Decode, class Encode)
-import Data.Foreign.Generic (decodeJSON, defaultOptions, genericDecode, genericDecodeJSON, genericEncode)
+import Foreign (ForeignError(..))
+import Foreign.Class (class Decode, class Encode)
+import Foreign.Generic (decodeJSON, defaultOptions, genericDecode, genericDecodeJSON, genericEncode)
+
+
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.List (List, (..), zipWith, (:))
@@ -42,7 +43,7 @@ import Three.Object3D.Light.AmbientLight as AmbientLight
 import Three.Object3D.Light.DirectionalLight as DirectionalLight
 import Three.Object3D.Light.HemisphereLight as HemisphereLight
 import Three.Object3D.Mesh as Object3D.Mesh
-import Three.Types (Object3D, THREE, ThreeEff, Vector2)
+import Three.Types (Object3D, Vector2)
 
 elements = 50
 area = 500.0
@@ -55,29 +56,26 @@ groundColor = "7cfc00"
 -- Create polygon from x points
 -- map coords to local coord sytem
 
-type ModuleEff a = ∀ e. Eff (console :: CONSOLE, three :: THREE, dom :: DOM | e) a
-
 -- Can we call this function x times without passing a param? like sequence x times without input?
--- randomPoint :: ∀ e. Int -> ModuleEff Point
+-- randomPoint :: ∀ e. Int -> Effect Point
 -- randomPoint a = do
 --   x <- Math.random
 --   y <- Math.random
 --   pure $ Point.create (x*area - (area / 2.0)) 0.0 (y*area - (area / 2.0))
 
--- createRandomPoints :: ModuleEff (List Point )
+-- createRandomPoints :: Effect (List Point )
 -- createRandomPoints = traverse randomPoint (-elements..elements)
 
-update :: Project -> Number -> ModuleEff Unit
+update :: Project -> Number -> Effect  Unit
 update p t = pure unit
 
-setPositionByPoint :: Point -> Object3D -> ThreeEff Unit
+setPositionByPoint :: Point -> Object3D -> Effect  Unit
 -- Maybe make Object3D.setPosition accept a Point || Vector3 so we can avoid unwrapping points here?
 setPositionByPoint (Point {x, y, z}) o = Object3D.setPosition x y z o
 
-buildingToMesh :: Array Point -> ModuleEff Object3D
+buildingToMesh :: Array Point -> Effect Object3D
 buildingToMesh ps = do 
   let scale = 10.0 -- calculateProjection ps
-  -- _ <- log $ show scale
   boxColor <- Three.createColor boxColor
   vs <- traverse (projectBuildingPoint scale) ps
   sh <- Shape.create vs
@@ -89,7 +87,7 @@ buildingToMesh ps = do
 -- project to desired scale
 -- get example working in the js only playground and reproduce here
 -- Using 3d points, we do not need to do most of this stuff and just project those into the view
-projectBuildingPoint :: Number -> Point -> ModuleEff Vector2
+projectBuildingPoint :: Number -> Point -> Effect  Vector2
 projectBuildingPoint sc (Point {x, y, z}) = 
   Three.createVector2 x' z'
   where x' = x * sc
@@ -103,7 +101,7 @@ buildingCoordsToPoints (Building b) =
 translateToCenter :: Point -> Array Point -> Array Point
 translateToCenter center ps = (-) center <$> ps
 
-createBuildings :: Array Building -> Point -> ModuleEff (Array Object3D)
+createBuildings :: Array Building -> Point -> Effect  (Array Object3D)
 createBuildings bs center = do
   let ps = translateToCenter center <<< buildingCoordsToPoints <$> bs
   boxMeshes <- traverse buildingToMesh ps
@@ -111,7 +109,7 @@ createBuildings bs center = do
   sequence_ $ Object3D.setRotation (-90.0 * (Math.pi / 180.0)) 0.0 0.0 <$> boxMeshes
   pure $ Array.fromFoldable boxMeshes
 
-create :: ModuleEff Project
+create :: Effect  Project
 create = do
   sColor <- Three.createColor skyColor
   gColor <- Three.createColor groundColor
@@ -133,18 +131,21 @@ create = do
   pure $ BaseProject.Project { objects: Array.concat [boxes <> [dlight, hlight]], vectors: [] }
 
 -- use Functor instead of this function
-doBuildings :: forall e. (Either (NonEmptyList ForeignError) (Array Building)) -> Array Building
+doBuildings 
+  :: (Either (NonEmptyList ForeignError) (Array Building)) 
+  -> Array Building
+-- 
 doBuildings b = case b of 
   Right f -> f
   -- Do not return a fake Building on error, handle upwards
   Left _ -> [Building { coordinates: [Coords {x: 0.0, y:0.0, z:0.0}]}]
 
 loadBuildingsData 
-  :: forall e. 
-  Eff (| e) 
-    (Either 
-      (NonEmptyList ForeignError) 
-      (Array Building))
+  :: Effect
+      (Either 
+        (NonEmptyList ForeignError) 
+        (Array Building))
+-- 
 loadBuildingsData = do
   map <- MapLoader.loadMap
   pure $ runExcept (decodeJSON map :: _ (Array Building))

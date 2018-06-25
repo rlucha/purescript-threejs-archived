@@ -1,7 +1,8 @@
 module Three.Camera where
 
 import Prelude
-import Three.Types (ThreeEff, Camera)
+import Effect
+import Three.Types (Camera)
 
 type Fov = Number
 type Aspect = Number
@@ -13,19 +14,19 @@ type Y = Number
 type Z = Number
 
 foreign import create 
-  :: Fov -> Aspect -> Near -> Far -> ThreeEff Camera
+  :: Fov -> Aspect -> Near -> Far -> Effect Camera
 
-foreign import debug :: Camera -> ThreeEff Unit
+foreign import debug :: Camera -> Effect Unit
 
 -- TODO Use Object3D setPoasition instead
 foreign import setPosition 
-  :: X -> Y -> Z -> Camera -> ThreeEff Unit
+  :: X -> Y -> Z -> Camera -> Effect Unit
 
 foreign import lookAt
-  :: X -> Y -> Z -> Camera -> ThreeEff Unit
+  :: X -> Y -> Z -> Camera -> Effect Unit
 
 foreign import setAspect
-  :: Number -> Camera -> ThreeEff Unit
+  :: Number -> Camera -> Effect Unit
 
 foreign import updateProjectionMatrix 
-  :: Camera -> ThreeEff Unit
+  :: Camera -> Effect Unit

@@ -2,8 +2,9 @@ module Projects.FrameBound.Types where
 
 import Prelude
 
-import Data.Foreign.Class (class Decode)
-import Data.Foreign.Generic (defaultOptions, genericDecode)
+import Foreign.Class (class Decode)
+import Foreign.Generic (defaultOptions, genericDecode)
+
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.Newtype (class Newtype)

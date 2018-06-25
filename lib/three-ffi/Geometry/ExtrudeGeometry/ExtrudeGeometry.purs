@@ -1,6 +1,7 @@
 module Three.Geometry.ExtrudeGeometry where
 
-import Three.Types (Geometry, Shape, ThreeEff)
+import Effect
+import Three.Types (Geometry, Shape)
 
 type Depth = Number
 
@@ -8,4 +9,4 @@ type Depth = Number
 foreign import create 
   :: Depth
   -> Shape
-  -> ThreeEff Geometry
+  -> Effect Geometry

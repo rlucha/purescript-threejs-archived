@@ -1,5 +1,5 @@
 module Projects.FrameBound.MapLoader where
 
-import Control.Monad.Eff (Eff)
+import Effect
 
-foreign import loadMap :: ∀ e. (Eff e) String
+foreign import loadMap :: Effect String

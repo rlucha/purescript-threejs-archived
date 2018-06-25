@@ -1,10 +1,11 @@
 module Three.Renderer where
 
 import Prelude (Unit)
-import Three.Types (ThreeEff, Renderer, Scene, Camera)
+import Three.Types (Renderer, Scene, Camera)
+import Effect
 
-foreign import createWebGLRenderer :: ∀ e. ThreeEff Renderer
-foreign import setPixelRatio :: ∀ e. Renderer -> ThreeEff Unit
-foreign import setSize :: ∀ e. Number -> Number -> Renderer -> ThreeEff Unit
-foreign import mount :: ∀ e. Renderer -> ThreeEff Unit
-foreign import render :: ∀ e. Scene -> Camera -> Renderer -> ThreeEff Unit
+foreign import createWebGLRenderer :: Effect Renderer
+foreign import setPixelRatio :: Renderer -> Effect Unit
+foreign import setSize :: Number -> Number -> Renderer -> Effect Unit
+foreign import mount :: Renderer -> Effect Unit
+foreign import render :: Scene -> Camera -> Renderer -> Effect Unit

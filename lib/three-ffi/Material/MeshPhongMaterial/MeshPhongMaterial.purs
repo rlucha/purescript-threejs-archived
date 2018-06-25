@@ -1,10 +1,11 @@
 module Three.Materials.MeshPhongMaterial where
 
-import Three.Types (ThreeEff, Material, Color)
+import Effect
+import Three.Types (Material, Color)
 
 type Lights = Boolean
 
 foreign import create 
   :: Color
   -> Lights
-  -> ThreeEff Material 
+  -> Effect Material 

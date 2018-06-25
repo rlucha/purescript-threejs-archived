@@ -2,13 +2,13 @@ module Projects.FrameBound.Projection where
 
 import Prelude
 
-import Control.Monad.Eff (Eff)
+import Effect
 import Control.Monad.Except (runExcept)
 import Data.Array (concat)
 import Data.Either (Either(..))
 import Data.Foldable (maximum, minimum)
-import Data.Foreign (ForeignError)
-import Data.Foreign.Generic (decodeJSON)
+import Foreign (ForeignError)
+import Foreign.Generic (decodeJSON)
 import Data.List.Types (NonEmptyList)
 import Data.Maybe (fromMaybe)
 import Data.Newtype (unwrap)

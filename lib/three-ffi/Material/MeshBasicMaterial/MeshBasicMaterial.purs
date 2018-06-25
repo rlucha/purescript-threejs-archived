@@ -1,7 +1,8 @@
 module Three.Materials.MeshBasicMaterial where
 
-import Three.Types (ThreeEff, Material, Color)
+import Effect
+import Three.Types (Material, Color)
 
 foreign import create 
   :: Color
-  -> ThreeEff Material 
+  -> Effect Material 
