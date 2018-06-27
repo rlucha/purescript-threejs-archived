@@ -49,3 +49,20 @@ Run a local server from project folder to see it move
 - [NEWTYPE] Wrap / Unwrap using newtype instance for Line and other Pure3 types 
 - Flip shape matrix to the ground
 - Center FrameBound scene
+- custom height for buildings
+- get shadows to work
+- create a base material object (typeclass? to deal with common properties)
+- only get lines with all points inside query from osm-cutemaps
+- makes some sense of the lineString geom type
+
+From stackoverflow:
+```
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16) / 255,
+        g: parseInt(result[2], 16) / 255,
+        b: parseInt(result[3], 16) / 255
+    } : null;
+}
+```

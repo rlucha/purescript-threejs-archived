@@ -2,4 +2,6 @@ module Projects.FrameBound.MapLoader where
 
 import Effect
 
-foreign import loadMap :: Effect String
+foreign import loadBuildings :: Effect String
+foreign import loadStreets :: Effect String
+ 

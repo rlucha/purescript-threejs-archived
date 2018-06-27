@@ -42,19 +42,21 @@ init controls scene project camera renderer =
         , \_ -> Controls.update controls 
         , \_ -> Renderer.render scene camera renderer ]
 
-main :: Effect  Unit
+main :: Effect Unit
 main = do
   ar <- BaseProject.unsafeGetAspectRatio
   scene    <- initScene
   project  <- FrameBound.create
   camera   <- Camera.create 30.0 ar 1.0 1000000.0
+  -- Renderer
   renderer <- BaseProject.createRenderer
+  _ <- Renderer.setShadowMap true renderer
+  -- EO Renderer
   controls <- BaseProject.createControls camera scene
   -- Controls.setAutoRotate true controls
   BaseProject.attachAxesHelper scene 10000.0
   -- Camera.lookAt 1000.0 0.0 1000.0 camera
-  -- {x: -2816.4106737900843, y: 27836.657839455493, z: -30028.115299839516}
-  Camera.setPosition (-2816.41) 27836.65 (-30028.11) camera
+  Camera.setPosition (-2773.91) 8905.60 (-10409.96) camera
   Scene.debug scene
   Camera.debug camera
   traverse_ (Scene.add scene) (BaseProject.exportProjectObjects project)

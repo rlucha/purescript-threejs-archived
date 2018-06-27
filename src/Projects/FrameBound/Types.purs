@@ -27,6 +27,14 @@ instance decBuilding :: Decode Building where
 instance showBuilding :: Show Building where
   show = genericShow
 
+newtype Street = Street { coordinates :: Array Coords }
+derive instance newtypeStreet :: Newtype Street _
+derive instance genStreet :: Generic Street _
+instance decStreet :: Decode Street where
+  decode = genericDecode opts
+instance showStreet :: Show Street where
+  show = genericShow
+
 
 unBuilding :: Building -> Array { x :: Number, y :: Number, z :: Number }
 unBuilding (Building {coordinates}) = (\(Coords c) -> c) <$> coordinates

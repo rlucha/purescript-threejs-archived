@@ -28,5 +28,6 @@ foreign import data Object3D_ :: Type
 data Object3D = Mesh Object3D_
               | Points Object3D_
               | Light Object3D_
+              | Line Object3D_
 
 foreign import data AxesHelper :: Type
