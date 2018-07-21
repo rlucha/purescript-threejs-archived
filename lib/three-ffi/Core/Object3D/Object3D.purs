@@ -7,6 +7,8 @@ import Three (getVector3Position)
 import Three.Camera (setPosition)
 import Three.Types (Object3D(..), Object3D_, Vector3)
 
+-- Can we reduce some boilerplate? this functions are doing the same thing all over...
+
 foreign import setPosition_ :: Number -> Number -> Number -> Object3D_ -> Effect Unit
 foreign import getPosition_ :: Object3D_ -> Effect Vector3
 foreign import setRotation_ :: Number -> Number -> Number -> Object3D_ -> Effect Unit

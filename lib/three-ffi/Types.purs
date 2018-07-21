@@ -43,6 +43,7 @@ foreign import data AxesHelper :: Type
 
 -- from chexxor #purescript-beginners
 data Object3DTag = Mesh | Points | Light | Line
+
 newtype Object3D = Object3D
   { unObject3D :: Object3D_
   , tag :: Object3DTag 
