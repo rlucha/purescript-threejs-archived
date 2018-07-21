@@ -55,6 +55,8 @@ Run a local server from project folder to see it move
 - only get lines with all points inside query from osm-cutemaps
 - makes some sense of the lineString geom type
 - explore solutions like https://www.nextzen.org/ or https://wiki.openstreetmap.org/wiki/Overpass_API to get the data
+- Finish ThreeJS bindings module structure, set placeholders for every module in the original repo
+- Check lineGeometry, lineMaterial, etc.
 
 From stackoverflow:
 ```

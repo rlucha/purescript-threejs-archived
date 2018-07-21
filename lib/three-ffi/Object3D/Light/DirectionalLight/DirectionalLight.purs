@@ -2,7 +2,7 @@ module Three.Object3D.Light.DirectionalLight where
 
 import Prelude
 import Effect
-import Three.Types (Color, Object3D(Light), Object3D_)
+import Three.Types (Object3D(..), Object3DTag(..), Object3D_, Color, Geometry, Material)
 
 type Intensity = Number
 
@@ -11,4 +11,4 @@ foreign import create_ :: Color -> Intensity -> Effect Object3D_
 create :: Color -> Intensity -> Effect Object3D
 create c i = do
   l <- create_ c i
-  pure $ Light l
+  pure $ Object3D { unObject3D: l, tag: Light }

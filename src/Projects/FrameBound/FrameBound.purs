@@ -29,25 +29,28 @@ import Pure3.Point (Point(..))
 import Pure3.Point as Point
 import Three as Three
 import Three.Extras.Core.Shape as Shape
+import Three.Geometry as Geometry
 import Three.Geometry.BoxGeometry as BoxGeometry
 import Three.Geometry.ExtrudeGeometry as ExtrudeGeometry
 import Three.Geometry.PlaneGeometry as PlaneGeometry
-import Three.Materials.MeshPhongMaterial as MeshPhongMaterial
 import Three.Materials.LineBasicMaterial as LineBasicMaterial
+import Three.Materials.MeshPhongMaterial as MeshPhongMaterial
+import Three.Math as Three.Math
 import Three.Math as ThreeMath
 import Three.Object3D (setPosition)
 import Three.Object3D as Object3D
 import Three.Object3D.Light.AmbientLight as AmbientLight
 import Three.Object3D.Light.DirectionalLight as DirectionalLight
 import Three.Object3D.Light.HemisphereLight as HemisphereLight
-import Three.Object3D.Mesh as Object3D.Mesh
 import Three.Object3D.Line as Object3D.Line
-import Three.Types (Object3D, Vector2)
+import Three.Object3D.Mesh as Object3D.Mesh
+import Three.Types (Object3D, Vector2, Vector3)
 
 scale = 3.0
 elements = 50
 area = 500.0
 boxColor = "#FCCA46"
+lineColor = "#666666"
 directionalColor = "#ffffff"
 dIntensity = 0.3
 skyColor = "#ffffff"
@@ -76,24 +79,27 @@ buildingToMesh ps = do
 
 streetToLine :: Array Point -> Effect Object3D
 streetToLine ps = do 
-  boxColor <- Three.createColor boxColor
-  vs <- traverse (projectBuildingPoint scale) ps
-  sh <- Shape.create vs
-  -- Pass estrusion from config, eventually use LIDAR
-  ex <- ExtrudeGeometry.create 2.0 sh 
-  mat <- LineBasicMaterial.create boxColor
+  lineColor' <- Three.createColor lineColor
+  vs <- traverse (projectStreetPoint scale) ps
+  ex <- Geometry.create
+  _ <- traverse_ (Three.pushVertices ex) vs
+  mat <- LineBasicMaterial.create lineColor'
   o3d <- Object3D.Line.create ex mat
-  _ <- Object3D.setReceiveShadow true o3d
-  _ <- Object3D.setCastShadow true o3d
   pure o3d 
-
 
 -- project to desired scale
 -- get example working in the js only playground and reproduce here
 -- Using 3d points, we do not need to do most of this stuff and just project those into the view
-projectBuildingPoint :: Number -> Point -> Effect  Vector2
+projectBuildingPoint :: Number -> Point -> Effect Vector2
 projectBuildingPoint sc (Point {x, y, z}) = 
   Three.createVector2 x' z'
+  where x' = x * sc
+        z' = z * sc
+
+-- Remove duplication and apply fn to fields (multiply point)
+projectStreetPoint :: Number -> Point -> Effect Vector3
+projectStreetPoint sc (Point {x, y, z}) = 
+  Three.createVector3 x' y z'
   where x' = x * sc
         z' = z * sc
 
@@ -121,8 +127,8 @@ createLines :: Array Street -> Point -> Effect  (Array Object3D)
 createLines sts center = do
   let ps = translateToCenter center <<< streetCoordsToPoints <$> sts
   lineMeshes <- traverse streetToLine ps
-  -- Do proper numbers here instead of magic
-  sequence_ $ Object3D.setRotation (-90.0 * (Math.pi / 180.0)) 0.0 0.0 <$> lineMeshes
+  rot <- Three.Math.degToRad(180.0)
+  sequence_ $ Object3D.setRotation 0.0 rot rot <$> lineMeshes
   pure $ Array.fromFoldable lineMeshes
 
 createPlane :: Effect Object3D
