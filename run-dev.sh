@@ -1,6 +1,6 @@
-npm run start:dev:js &
+npm run js &
 P1=$!
-npm run start:dev:ps &
+npm run ps &
 P2=$!
 http-server -c1 &
 P3=$!

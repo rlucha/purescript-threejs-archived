@@ -22,6 +22,15 @@ Run a local server from project folder to see it move
 - Main
   - Entry point
 
+## Creating a new scene
+- Create a new Projects folder with the project name
+- Duplicate Main.purs of another project, set scene, camera, etc.
+- Create a new Project file, import it in main
+- Project should export create (Effect Project) and update functions (Effect Unit)
+- create a new link in index.html
+    ``` <a href="#/04" onclick="go()" class="page">04</a> ```
+- create a new route in index.js
+
 ## TODO
 - Use import Control.Monad.Eff.Uncurried instead of custom js-ffi
 - Make udpdate functions in projects NOT perform side effects but get a collection of objects and properties and

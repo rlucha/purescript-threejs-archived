@@ -127,9 +127,9 @@ createLines :: Array Street -> Point -> Effect  (Array Object3D)
 createLines sts center = do
   let ps = translateToCenter center <<< streetCoordsToPoints <$> sts
   lineMeshes <- traverse streetToLine ps
-  rot <- Three.Math.degToRad(180.0)
   sequence_ $ Object3D.setRotation 0.0 rot rot <$> lineMeshes
   pure $ Array.fromFoldable lineMeshes
+  where rot = Three.Math.degToRad(180.0)
 
 createPlane :: Effect Object3D
 createPlane = do
@@ -142,9 +142,9 @@ createPlane = do
   m <- MeshPhongMaterial.create c true
   p <- Object3D.Mesh.create g m
   _ <- Object3D.setReceiveShadow true p
-  rx <- ThreeMath.degToRad(-90.0)
   _ <- Object3D.setRotation (rx) 0.0 0.0 p
   pure p
+  where rx = ThreeMath.degToRad(-90.0)
   
 create :: Effect  Project
 create = do
