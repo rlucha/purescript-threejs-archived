@@ -47,7 +47,7 @@ initCamera = do
   Camera.debug camera
   pure camera
 
-main :: Effect  Unit
+main :: Effect Unit
 main = do
 -- TODO we can move all this initializatio (camera, scene, renderer to a common file)
   scene    <- initScene

@@ -30,8 +30,8 @@ import Three.Types (Object3D)
 
 radius = 150.0
 steps = 120
-amplitude = 0.000025
-speed = 0.025
+amplitude = 0.5
+speed = 0.015
 distance = 150.0
 elements = 1
 size = 600.0
@@ -39,6 +39,11 @@ boxColor = "#FEEBA6"
 directionalColor = "#AEDDFF"
 ambientColor = "#AEFFD3"
 boxSize = 5.0
+
+-- Add normals
+-- helpers = scene.children.filter(isMesh).map(o =>  new THREE.FaceNormalsHelper( o, 80, 0x00ff00, 1 ));
+-- helpers.forEach(hj => scene.add(hj))
+
 
 points :: List Point
 points = Interpolate.interpolate steps circle
@@ -48,16 +53,18 @@ points = Interpolate.interpolate steps circle
 updateBox :: Number -> Point -> Object3D -> Effect Unit 
 updateBox t (Point {x,y,z}) o = do
   let tLoop = Math.cos(t * speed)
-      waveOutX = x + ((x * tLoop) * ((z * z * amplitude)))
-      waveOutY = y + ((y * tLoop) * ((z * z * amplitude)))
-      -- rot = (x + y) * 0.001 + (t * speed)
+      -- waveOutX = x + ((x * tLoop) * ((z * z * 0.1)))
       -- TODO Move rad <-> deg to library
-      -- TODO use quaternions to make them all spin on same direction
       rot1 = (Math.atan2 y x)
       rot2 = rot1 + (t * speed)
-  Object3D.setPosition waveOutX waveOutY z o
-  -- TODO rotate relative to center of circle
-  Object3D.setRotation rot2 rot2 rot1 o
+      rot3 = Math.sin (y/x * 0.5)
+      -- scale1 = (y/x)
+  Object3D.setPosition x y z o
+  Object3D.setRotation 0.0 0.0 rot1 o
+  -- _ <- Console.log (show tLoop)
+  -- Object3D.setScale rot0 rot0 rot0 o
+  v3 <- Three.createVector3 0.0 1.0 0.0
+  Object3D.rotateOnAxis v3 rot2 o
 
 update :: Project -> Number -> Effect Unit
 update p t = 
