@@ -5,7 +5,7 @@ const seaLike = require("./output/Projects.Sealike.Main");
 const frameBound = require("./output/Projects.FrameBound.Main");
 const foo = require("./output/Projects.Foo.Main");
 
-const editorFactory = require("./src/editor/main");
+const editorFactory = require("./src/Editor/main");
 
 const route = rlite(notFound, {
   "": function() {
