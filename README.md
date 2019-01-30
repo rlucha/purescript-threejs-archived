@@ -1,14 +1,22 @@
 Purescript simple scene model and geometric operations. Simple ThreeJS bindings included.
 
-This is a personal exploratoty project to learn more Purescript and WegGL.
+This is a personal exploratoty project to learn more Purescript and WebGL.
 
 See it live at [Purescript ThreeJS](https://rlucha.github.io/purescript-threejs/)
 
+# Getting started
+
+1. Install all dependencies:
 ```
-npm run js
-npm run ps
+npm install -g purescript pulp psc-package-bin-simple
+npm install
+psc-package install
 ```
-Run a local server from project folder to see it move
+2. Start the project (will start build and server background processes):
+```
+npm start
+```
+3. Enter http://127.0.0.1:8080/ and watch it go!
 
 ## Project hierarchy
 - Editor
